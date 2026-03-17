@@ -1,0 +1,228 @@
+/* =====================
+   GLOBAL STYLES
+===================== */
+body {
+  background: radial-gradient(circle at top, #0f1020, #05050b);
+  color: #ffffff;
+  font-family: "Segoe UI", system-ui, sans-serif;
+}
+
+section {
+  max-width: 1100px;
+  margin: 80px auto;
+  padding: 0 20px;
+}
+
+h1, h2, h3 {
+  font-weight: 700;
+}
+
+p {
+  color: #cfd3ff;
+  line-height: 1.7;
+}
+
+/* =====================
+   HERO SECTION
+===================== */
+.product-hero {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 50px;
+  align-items: center;
+}
+
+.hero-text h1 {
+  font-size: 42px;
+  margin-bottom: 15px;
+}
+
+.tagline {
+  font-size: 18px;
+  margin: 15px 0;
+}
+
+.starting-price {
+  font-size: 20px;
+  margin: 20px 0;
+}
+
+.hero-image img {
+  width: 100%;
+  border-radius: 20px;
+  box-shadow: 0 30px 80px rgba(0,0,0,.8);
+}
+
+/* =====================
+   BUTTONS
+===================== */
+.btn {
+  display: inline-block;
+  padding: 14px 30px;
+  border-radius: 50px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all .35s ease;
+}
+
+.btn.primary {
+  background: linear-gradient(90deg, #1e3cff, #c2185b);
+  color: #fff;
+  box-shadow: 0 0 25px rgba(140,80,255,.6);
+}
+
+.btn.primary:hover {
+  transform: scale(1.08);
+  box-shadow: 0 0 45px rgba(140,80,255,.9);
+}
+
+.btn.outline {
+  border: 1px solid rgba(255,255,255,.25);
+  color: #fff;
+}
+
+.btn.outline:hover {
+  background: rgba(255,255,255,.08);
+}
+
+.btn.big {
+  font-size: 18px;
+  padding: 18px 45px;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 15px;
+  margin-top: 25px;
+}
+
+/* =====================
+   DEMO NOTE
+===================== */
+.demo-note {
+  background: linear-gradient(
+    180deg,
+    rgba(255,255,255,.08),
+    rgba(255,255,255,.02)
+  );
+  border-radius: 16px;
+  padding: 18px;
+  text-align: center;
+  box-shadow: 0 20px 50px rgba(0,0,0,.7);
+}
+
+/* =====================
+   GLASS CARDS
+===================== */
+.box,
+.price-card {
+  background: linear-gradient(
+    180deg,
+    rgba(255,255,255,.07),
+    rgba(255,255,255,.02)
+  );
+  border-radius: 18px;
+  padding: 28px;
+  border: 1px solid rgba(255,255,255,.08);
+  box-shadow: 0 25px 60px rgba(0,0,0,.7);
+  transition: transform .4s ease, box-shadow .4s ease;
+}
+
+.box:hover,
+.price-card:hover {
+  transform: translateY(-10px) scale(1.03);
+  box-shadow:
+    0 35px 80px rgba(0,0,0,.85),
+    0 0 35px rgba(120,100,255,.3);
+}
+
+/* =====================
+   INCLUDED SECTION
+===================== */
+.included-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px,1fr));
+  gap: 30px;
+}
+
+.box ul li {
+  margin: 10px 0;
+}
+
+/* =====================
+   TECH STACK
+===================== */
+.tech-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.tech-list li {
+  padding: 10px 16px;
+  border-radius: 30px;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.12);
+  font-size: 14px;
+}
+
+/* =====================
+   PRICING
+===================== */
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px,1fr));
+  gap: 30px;
+}
+
+.price {
+  font-size: 36px;
+  margin: 15px 0;
+}
+
+.price-card.featured {
+  border: 1px solid rgba(140,120,255,.5);
+  box-shadow: 0 0 60px rgba(140,120,255,.45);
+  position: relative;
+}
+
+.badge {
+  position: absolute;
+  top: -14px;
+  right: 20px;
+  background: linear-gradient(90deg,#ff9800,#ff5722);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+}
+
+/* =====================
+   AUDIENCE
+===================== */
+.audience ul li {
+  margin: 10px 0;
+}
+
+/* =====================
+   CTA
+===================== */
+.cta {
+  text-align: center;
+  background: linear-gradient(
+    180deg,
+    rgba(255,255,255,.07),
+    rgba(255,255,255,.02)
+  );
+  padding: 60px 20px;
+  border-radius: 25px;
+  box-shadow: 0 30px 80px rgba(0,0,0,.8);
+}
+
+/* =====================
+   RESPONSIVE
+===================== */
+@media (max-width: 900px) {
+  .product-hero {
+    grid-template-columns: 1fr;
+  }
+}

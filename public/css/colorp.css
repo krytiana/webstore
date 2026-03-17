@@ -1,0 +1,190 @@
+/* =========================
+   GLOBAL
+========================= */
+body {
+  background: radial-gradient(circle at top, #0f1020, #05050b);
+  color: #fff;
+  font-family: "Segoe UI", system-ui, sans-serif;
+}
+
+section {
+  max-width: 1200px;
+  margin: 70px auto;
+  padding: 0 20px;
+}
+
+h1, h2 {
+  font-weight: 700;
+}
+
+/* =========================
+   FILTER FORM
+========================= */
+.filter-form {
+  max-width: 1200px;
+  margin: 50px auto 30px;
+  padding: 18px;
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+  border-radius: 18px;
+  background: linear-gradient(
+    180deg,
+    rgba(255,255,255,.07),
+    rgba(255,255,255,.02)
+  );
+  box-shadow: 0 25px 60px rgba(0,0,0,.75);
+}
+
+.filter-form input,
+.filter-form select {
+  flex: 1;
+  padding: 14px 18px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,.15);
+  background: rgba(0,0,0,.4);
+  color: #fff;
+  outline: none;
+}
+
+.filter-form button {
+  padding: 14px 28px;
+  border-radius: 50px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  background: linear-gradient(90deg, #1e3cff, #c2185b);
+  color: #fff;
+  box-shadow: 0 0 30px rgba(140,80,255,.6);
+  transition: all .35s ease;
+}
+
+.filter-form button:hover {
+  transform: scale(1.08);
+  box-shadow: 0 0 45px rgba(140,80,255,.9);
+}
+
+/* =========================
+   PRODUCTS GRID
+========================= */
+.products h1 {
+  text-align: center;
+  font-size: 38px;
+  margin-bottom: 50px;
+}
+
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px,1fr));
+  gap: 35px;
+}
+
+/* =========================
+   PRODUCT CARD
+========================= */
+.product-card {
+  background: linear-gradient(
+    180deg,
+    rgba(255,255,255,.07),
+    rgba(255,255,255,.02)
+  );
+  border-radius: 22px;
+  padding: 22px;
+  border: 1px solid rgba(255,255,255,.08);
+  box-shadow: 0 25px 60px rgba(0,0,0,.75);
+  transition: transform .4s ease, box-shadow .4s ease;
+}
+
+.product-card:hover {
+  transform: translateY(-12px) scale(1.03);
+  box-shadow:
+    0 35px 90px rgba(0,0,0,.9),
+    0 0 40px rgba(120,100,255,.3);
+}
+
+/* =========================
+   IMAGE
+========================= */
+.product-image img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 16px;
+  margin-bottom: 15px;
+}
+
+/* =========================
+   TEXT
+========================= */
+.product-card h2 {
+  font-size: 20px;
+  margin-bottom: 5px;
+}
+
+.category {
+  font-size: 13px;
+  opacity: .7;
+}
+
+.price {
+  margin: 10px 0;
+  font-size: 16px;
+}
+
+.description {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #cfd3ff;
+  margin-bottom: 18px;
+}
+
+/* =========================
+   ACTION BUTTONS
+========================= */
+.card-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.btn-demo,
+.btn-buy {
+  flex: 1;
+  text-align: center;
+  padding: 12px 18px;
+  border-radius: 40px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all .35s ease;
+}
+
+/* Demo button */
+.btn-demo {
+  border: 1px solid rgba(255,255,255,.25);
+  color: #fff;
+}
+
+.btn-demo:hover {
+  background: rgba(255,255,255,.08);
+}
+
+/* Buy button */
+.btn-buy {
+  background: linear-gradient(90deg, #1e3cff, #c2185b);
+  color: #fff;
+  box-shadow: 0 0 25px rgba(140,80,255,.6);
+}
+
+.btn-buy:hover {
+  transform: scale(1.07);
+  box-shadow: 0 0 45px rgba(140,80,255,.9);
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+@media (max-width: 768px) {
+  .product-image img {
+    height: 180px;
+  }
+}

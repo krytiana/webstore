@@ -1,0 +1,131 @@
+<%- include("partials/header") %>
+
+<link rel="stylesheet" href="/css/colors.css" />
+
+
+<section class="product-hero" data-aos="fade-up">
+  <div class="hero-text">
+    <h1><%= product.name %></h1>
+
+    <div class="hero-image">
+    <img src="<%= product.media.image %>" alt="<%= product.name %>" />
+  </div>
+    <p class="tagline">
+      A complete business website with admin dashboard and database integration
+    </p>
+
+    <p class="starting-price">
+      Starting from <strong>$<%= product.pricing.sourceCode %></strong>
+    </p>
+
+    <div class="hero-actions">
+      <a href="#pricing" class="btn primary">View Pricing</a>
+      <a href="<%= product.media.demoUrl %>" target="_blank" class="btn outline">
+        Live Demo
+      </a>
+    </div>
+  </div>
+
+  
+</section>
+
+<section class="demo-note">
+  🔍 <strong>Live demo shows frontend only.</strong>
+  Backend (admin, database, authentication) is included in delivery.
+</section>
+
+<section class="overview">
+  <h2>Product Overview</h2>
+  <p><%= product.description %></p>
+</section>
+
+<section class="included">
+  <h2>What’s Included</h2>
+
+  <div class="included-grid">
+    <div class="box" data-aos="fade-up" data-aos-delay="150">
+      <h3>🖥️ Frontend</h3>
+      <ul>
+        <% product.features.frontend.forEach(item => { %>
+          <li>✔ <%= item %></li>
+        <% }) %>
+      </ul>
+    </div>
+
+    <div class="box">
+      <h3>⚙️ Backend</h3>
+      <ul>
+        <% product.features.backend.forEach(item => { %>
+          <li>✔ <%= item %></li>
+        <% }) %>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="tech">
+  <h2>Technical Stack</h2>
+  <ul class="tech-list">
+    <% product.features.techStack.split(",").forEach(t => { %>
+      <li><%= t.trim() %></li>
+    <% }) %>
+  </ul>
+</section>
+
+<section id="pricing" class="pricing">
+  <h2>Delivery & Pricing</h2>
+
+  <div class="pricing-grid">
+    <div class="price-card" data-aos="zoom-in" data-aos-delay="200">
+      <h3>Source Code</h3>
+      <p class="price">$<%= product.pricing.sourceCode %></p>
+      <ul>
+        <li>Full source code</li>
+        <li>Database schema</li>
+        <li>Setup guide</li>
+      </ul>
+    </div>
+
+    <div class="price-card featured">
+      <span class="badge">Most Popular</span>
+      <h3>Assisted Setup</h3>
+      <p class="price">$<%= product.pricing.assistedSetup %></p>
+      <ul>
+        <li>Everything above</li>
+        <li>Installation help</li>
+        <li>Database setup</li>
+      </ul>
+    </div>
+
+    <div class="price-card">
+      <h3>Done For You</h3>
+      <p class="price">$<%= product.pricing.doneForYou %></p>
+      <ul>
+        <li>Full installation</li>
+        <li>Server deployment</li>
+        <li>Ready to use</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="audience">
+  <h2>Who This Is For</h2>
+  <ul>
+    <li> Small businesses</li>
+    <li> Startups</li>
+    <li> Freelancers</li>
+    <li> Not for total beginners</li>
+  </ul>
+</section>
+
+<section class="cta" data-aos="zoom-in">
+  <h2>Choose your delivery option</h2>
+  <a href="/contact?product=<%= product.slug %>" class="btn primary big">
+    Get This Website
+  </a>
+</section>
+
+<script src="/js/product-details.js"></script>
+
+<%- include("partials/footer") %>

@@ -1,0 +1,17 @@
+<%- include("../partials/header") %>
+
+<section class="admin-form">
+  <h1>Edit Product</h1>
+  <form action="/admin/edit-product/<%= product._id %>?password=1111" method="POST">
+    <input type="text" name="name" placeholder="Product Name" value="<%= product.name %>" required />
+    <input type="text" name="slug" placeholder="Slug (unique)" value="<%= product.slug %>" required />
+    <input type="text" name="category" placeholder="Category" value="<%= product.category %>" required />
+    <input type="number" name="price" placeholder="Price" value="<%= product.price %>" required />
+    <input type="text" name="demoUrl" placeholder="Demo URL" value="<%= product.demoUrl %>" required />
+    <textarea name="description" placeholder="Description"><%= product.description %></textarea>
+    <input type="text" name="features" placeholder="Features (comma separated)" value="<%= product.features.join(', ') %>" />
+    <button type="submit">Update Product</button>
+  </form>
+</section>
+
+<%- include("../partials/footer") %>

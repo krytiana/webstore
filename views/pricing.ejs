@@ -1,0 +1,22 @@
+<%- include("partials/header") %>
+<link rel="stylesheet" href="/css/pricing.css" />
+
+<section class="pricing">
+  <h1>Our Packages</h1>
+  <div class="pricing-grid">
+    <% packages.forEach(pkg => { %>
+      <div class="pricing-card">
+        <h2><%= pkg.name %></h2>
+        <p class="price">$<%= pkg.price %></p>
+        <ul>
+          <% pkg.features.forEach(feature => { %>
+            <li><%= feature %></li>
+          <% }) %>
+        </ul>
+        <a href="/products" class="btn-buy">View Products</a>
+      </div>
+    <% }) %>
+  </div>
+</section>
+
+<%- include("partials/footer") %>

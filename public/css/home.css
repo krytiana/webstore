@@ -1,0 +1,149 @@
+/* FORCE DARK THEME CONSISTENCY */
+body {
+  background: radial-gradient(circle at top, #0f1020, #05050b);
+  color: #ffffff;
+}
+section {
+  max-width: 1200px;
+  margin: 90px auto;
+  padding: 0 20px;
+}
+.feature-card,
+.problem,
+.solution {
+  background: linear-gradient(
+    180deg,
+    rgba(255,255,255,0.07),
+    rgba(255,255,255,0.02)
+  );
+  backdrop-filter: blur(12px);
+}
+section::after {
+  content: "";
+  display: block;
+  width: 60px;
+  height: 4px;
+  margin: 60px auto 0;
+  background: linear-gradient(90deg, #1e3cff, #c2185b);
+  border-radius: 10px;
+  opacity: 0.6;
+}
+
+
+
+
+
+
+/* ======================
+   SECTIONS
+====================== */
+section {
+  max-width: 1200px;
+  margin: 90px auto;
+  padding: 0 20px;
+}
+
+.center {
+  text-align: center;
+}
+
+.section-intro {
+  text-align: center;
+  max-width: 650px;
+  margin: 15px auto 50px;
+  color: #cfd3ff;
+}
+
+/* ======================
+   FEATURES
+====================== */
+.features h2,
+.comparison h2 {
+  text-align: center;
+  font-size: 38px;
+}
+
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px,1fr));
+  gap: 30px;
+}
+
+.feature-card {
+  background: linear-gradient(
+    180deg,
+    rgba(255,255,255,.07),
+    rgba(255,255,255,.02)
+  );
+  border-radius: 22px;
+  padding: 30px;
+  border: 1px solid rgba(255,255,255,.08);
+  box-shadow: 0 25px 60px rgba(0,0,0,.7);
+  transition: transform .4s ease, box-shadow .4s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-12px) scale(1.03);
+  box-shadow:
+    0 35px 90px rgba(0,0,0,.9),
+    0 0 40px rgba(120,100,255,.35);
+}
+
+.feature-card .icon {
+  font-size: 32px;
+  margin-bottom: 15px;
+}
+
+.feature-card h3 {
+  margin-bottom: 10px;
+}
+
+/* ======================
+   COMPARISON
+====================== */
+.comparison-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px,1fr));
+  gap: 40px;
+  margin-top: 50px;
+}
+
+.problem,
+.solution {
+  background: linear-gradient(
+    180deg,
+    rgba(255,255,255,.06),
+    rgba(255,255,255,.02)
+  );
+  border-radius: 24px;
+  padding: 35px;
+  box-shadow: 0 25px 70px rgba(0,0,0,.8);
+}
+
+.problem {
+  border: 1px solid rgba(255,80,80,.3);
+}
+
+.solution {
+  border: 1px solid rgba(120,120,255,.4);
+  box-shadow: 0 0 50px rgba(120,100,255,.4);
+}
+
+.problem ul li,
+.solution ul li {
+  margin: 15px 0;
+}
+
+.cta-text {
+  text-align: center;
+  margin: 50px auto 30px;
+  font-size: 20px;
+}
+
+/* ======================
+   BUTTON (reuse)
+====================== */
+.btn-hero.big {
+  font-size: 20px;
+  padding: 20px 55px;
+}

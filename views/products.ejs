@@ -1,0 +1,85 @@
+<%- include("partials/header") %>
+<link rel="stylesheet" href="/css/colorp.css" />
+<link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
+<script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+<script>
+  AOS.init({ duration: 900, once: true });
+</script>
+<form method="GET" action="/products" class="filter-form">
+  <input
+    type="text"
+    name="search"
+    placeholder="Search websites..."
+    value="<%= searchQuery %>"
+  />
+
+  <select name="category">
+    <option value="all">All Categories</option>
+    <% categories.forEach(cat => { %>
+      <option value="<%= cat %>" <%= selectedCategory === cat ? "selected" : "" %>>
+        <%= cat %>
+      </option>
+    <% }) %>
+  </select>
+
+  <button type="submit">Filter</button>
+</form>
+
+<section class="products">
+  <h1>Our Ready-Made Websites</h1>
+
+  <div class="product-grid">
+    <% if (products.length === 0) { %>
+      <p>No products available right now.</p>
+    <% } else { %>
+      <% products.forEach(product => { %>
+
+        <div class="product-card" data-aos="fade-up" data-aos-delay="150">
+
+          <div class="product-image">
+            <img
+              src="<%= product.media.image %>"
+              alt="<%= product.name %>"
+              loading="lazy"
+            />
+          </div>
+
+          <h2><%= product.name %></h2>
+          <p class="category"><%= product.category %></p>
+
+          <p class="price">
+            Starting from <strong>$<%= product.pricing.sourceCode %></strong>
+          </p>
+
+          <p class="description">
+            <%= product.description.substring(0, 120) %>...
+          </p>
+
+          <div class="card-actions">
+            <% if (product.media.demoUrl) { %>
+              <a
+                href="<%= product.media.demoUrl %>"
+                target="_blank"
+                class="btn-demo"
+              >
+                Live Demo
+              </a>
+            <% } %>
+
+            <a
+              href="/products/<%= product.slug %>"
+              class="btn-buy"
+            >
+              View Details
+            </a>
+          </div>
+
+        </div>
+
+      <% }) %>
+    <% } %>
+  </div>
+</section>
+
+
+<%- include("partials/footer") %>
