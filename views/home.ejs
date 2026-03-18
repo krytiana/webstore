@@ -3,104 +3,173 @@
 <head>
   <title><%= title %></title>
   <link rel="stylesheet" href="/css/home.css" />
-  
-
-
 </head>
 <body>
   
   <%- include("partials/header") %>
 
+  <!-- HERO -->
   <section class="hero">
-    <h1>Ready-Made Websites You Can Launch Fast</h1>
-    <p>No coding. No stress. Just upload and go live.</p>
-    <a href="/products" class="btn-hero">View Live Demos</a>
+    <h1>Launch Your Business Website in Minutes</h1>
+    <p>No coding required. Buy ready-made websites with admin dashboards, payment integration, and full source code.</p>
 
+    <div class="hero-btns">
+      <a href="/products" class="btn-hero">View Templates</a>
+      <a href="/products" class="btn-hero outline">Live Demo</a>
+    </div>
+
+    <p class="trust">
+      ✔ One-time payment &nbsp; ✔ Full ownership &nbsp; ✔ Easy deployment
+    </p>
+  </section>
+
+  <!-- WHAT YOU’RE SELLING -->
+  <section class="intro">
+    <h2>Ready-Made Websites for Any Business</h2>
+    <p>
+      Choose from professionally built websites designed for real businesses.
+      Customize everything easily using the built-in admin dashboard and launch fast.
+    </p>
   </section>
 
   <!-- WHAT YOU GET -->
-<section class="features">
-  <h2>💡 What You Get</h2>
-  <p class="section-intro">
-    Start Your Online Business Today — No Coding. No Developers. No Delay.
-  </p>
+  <section class="features">
+    <h2>💡 What You Get After Purchase</h2>
 
-  <div class="feature-grid">
-    <div class="feature-card">
-      <span class="icon">🚀</span>
-      <h3>Fully Ready to Live Website</h3>
-      <p>Complete, professional website ready to go live instantly. just ownership transfer.</p>
+    <div class="feature-grid">
+
+      <div class="feature-card">
+        <span class="icon">💻</span>
+        <h3>Full Source Code</h3>
+        <p>Frontend and backend code ready to deploy and customize.</p>
+      </div>
+
+      <div class="feature-card">
+        <span class="icon">⚙️</span>
+        <h3>Admin Dashboard</h3>
+        <p>Manage products, text, images, and content without coding.</p>
+      </div>
+
+      <div class="feature-card">
+        <span class="icon">🗄️</span>
+        <h3>Database Setup</h3>
+        <p>Works with MongoDB and ready for real business data.</p>
+      </div>
+
+      <div class="feature-card">
+        <span class="icon">💳</span>
+        <h3>Payment Integration</h3>
+        <p>Supports Paystack and Stripe for online payments.</p>
+      </div>
+
+      <div class="feature-card">
+        <span class="icon">🖼️</span>
+        <h3>Image Upload</h3>
+        <p>Connect ImageKit or Cloudinary for product images.</p>
+      </div>
+
+      <div class="feature-card">
+        <span class="icon">📘</span>
+        <h3>Step-by-Step Guide</h3>
+        <p>Easy tutorial to help you deploy on Render and go live.</p>
+      </div>
+
     </div>
 
-    <div class="feature-card" data-aos="fade-up">
-      <span class="icon">🛒</span>
-      <h3>Preloaded Store</h3>
-      <p>Your store comes pre-loaded with  sample products and optimized for conversions.</p>
+    <div class="center">
+      <a href="/products" class="btn-hero">Browse Templates →</a>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="how-it-works">
+    <h2>🚀 How It Works</h2>
+
+    <div class="steps">
+      <div class="step">
+        <h3>1. Choose a Template</h3>
+        <p>Select a website that fits your business.</p>
+      </div>
+
+      <div class="step">
+        <h3>2. Purchase & Download</h3>
+        <p>Get full access to the source code instantly.</p>
+      </div>
+
+      <div class="step">
+        <h3>3. Follow Setup Guide</h3>
+        <p>Connect database, payment, and deploy easily.</p>
+      </div>
+
+      <div class="step">
+        <h3>4. Launch Your Website</h3>
+        <p>Go live and start your business immediately.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHO IT’S FOR -->
+  <section class="audience">
+    <h2>🎯 Who Is This For?</h2>
+
+    <ul>
+      <li>✔ Small business owners</li>
+      <li>✔ Startups</li>
+      <li>✔ Freelancers</li>
+      <li>✔ Agencies</li>
+    </ul>
+  </section>
+
+  <!-- WHY CHOOSE YOU -->
+  <section class="comparison">
+    <h2>🔥 Why Choose Our Templates?</h2>
+
+    <div class="comparison-grid">
+
+      <div class="problem">
+        <h3>😩 Without This</h3>
+        <ul>
+          <li>Hire expensive developers</li>
+          <li>Spend weeks building a website</li>
+          <li>Struggle with technical setup</li>
+        </ul>
+      </div>
+
+      <div class="solution">
+        <h3>🚀 With Our Templates</h3>
+        <ul>
+          <li>Ready-made professional website</li>
+          <li>Launch in minutes</li>
+          <li>No coding or stress</li>
+        </ul>
+      </div>
+
     </div>
 
-    <div class="feature-card">
-      <span class="icon">🎁</span>
-      <h3>1 Million+ Digital Products</h3>
-      <p>Free resell rights to premium digital products worth thousands.</p>
+    <div class="center">
+      <a href="/products" class="btn-hero big">Start Your Business Today →</a>
     </div>
+  </section>
 
-    <div class="feature-card">
-      <span class="icon">⚡</span>
-      <h3>Sell Instantly</h3>
-      <p>No waiting, no approval. Start generating revenue immediately.</p>
-    </div>
+  <!-- FINAL CTA -->
+  <section class="final-cta">
+    <h2>Start Your Online Business Today</h2>
+    <p>Choose a template, customize it, and launch your website in minutes.</p>
 
-    <div class="feature-card">
-      <span class="icon">💰</span>
-      <h3>100% Profits</h3>
-      <p>No middlemen. No commissions. Keep everything you earn.</p>
-    </div>
+    <a href="/products" class="btn-hero">View Templates</a>
+  </section>
 
-    <div class="feature-card">
-      <span class="icon">🔒</span>
-      <h3>Lifetime Ownership</h3>
-      <p>Own it forever with 6 months of free technical support.</p>
-    </div>
-  </div>
-
-  <div class="center">
-    <a href="/products" class="btn-hero">Get Started Today →</a>
-  </div>
-</section>
-
-<!-- WHY THIS IS FOR YOU -->
-<section class="comparison">
-  <h2>🔥 Why This Is Perfect for You</h2>
-
-  <div class="comparison-grid">
-    <div class="problem" data-aos="fade-right">
-      <h3>😩 The Problems You Face</h3>
-      <ul>
-        <li>Struggling to start a side income</li>
-        <li>Confusing affiliate & dropshipping systems</li>
-        <li>Overwhelmed by technical requirements</li>
-      </ul>
-    </div>
-
-    <div class="solution" data-aos="fade-left">
-      <h3>🚀 Your Perfect Solution</h3>
-      <ul>
-        <li>Done-for-you store that earns from Day 1</li>
-        <li>No coding, no design, no tech skills</li>
-        <li>Start selling immediately with confidence</li>
-      </ul>
-    </div>
-  </div>
-
-  <p class="cta-text">
-    Ready to skip the struggle and start earning today?
-  </p>
-
-  <div class="center">
-    <a href="/products" class="btn-hero big">Get Your Store Now →</a>
-  </div>
-</section>
-
+  <section class="DemosLinks">
+    <a href="/demos/Fashionfamme/temu.html">Temu</a>
+    <a href="/demos/Fashionfamme/stikyCat.html">StikyCat</a>
+    <a href="/demos/Fashionfamme/proTrade.html">ProTrade</a>
+    <a href="/demos/Fashionfamme/novaShop.html">NovaShope</a>
+    <a href="/demos/Fashionfamme/lazyShop.html">LazyShope</a>
+    <a href="/demos/Fashionfamme/jumia.html">Jumia</a>
+    <a href="/demos/Fashionfamme/gringoMall.html">GringoMall</a>
+    <a href="/demos/Fashionfamme/fashionFemme.html">Temu</a>
+    <a href="/demos/Fashionfamme/darkyMall.html">Temu</a>
+  </section>
 
   <%- include("partials/footer") %>
 

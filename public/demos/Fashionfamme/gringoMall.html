@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GringoMall</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,sans-serif;background:#f6f7fb;color:#111}
+:root{--primary:#111827;--muted:#6b7280;--card:#fff;--radius:20px}
+
+header{background:#fff;border-bottom:1px solid #eee}
+.nav{max-width:1200px;margin:auto;padding:16px 24px;display:flex;justify-content:space-between;align-items:center}
+.logo{font-weight:800;font-size:22px}
+.nav-right{display:flex;gap:10px}
+input{padding:10px 12px;border-radius:14px;border:1px solid #ddd}
+button{border:none;border-radius:14px;padding:10px 16px;background:var(--primary);color:#fff;cursor:pointer}
+button.outline{background:#fff;color:#111;border:1px solid #ddd}
+
+.section-title{font-size:28px;font-weight:700;margin:40px 20px 20px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:30px;margin:0 20px}
+.grid a {text-decoration: none; color: inherit; }
+.grid a:hover {text-decoration: underline; color: red;}
+.card{background:#fff;border-radius:var(--radius);overflow:hidden;box-shadow:0 10px 25px rgba(0,0,0,.08);transition:.3s;cursor:pointer}
+.card:hover{transform:translateY(-8px)}
+.card img{width:100%;height:320px;object-fit:cover}
+.card-body{padding:18px}
+.card-body h3{font-size:20px;margin-bottom:8px}
+.price{font-size:16px;color:var(--muted);margin-top:6px}
+.rating{font-size:14px;margin-top:4px;color:#f59e0b}
+.card-body p{margin-top:8px;color:var(--muted);font-size:14px}
+.card-body button{width:100%;margin-top:12px;padding:12px}
+
+footer{margin-top:60px;background:#fff;border-top:1px solid #eee}
+footer div{max-width:1200px;margin:auto;padding:20px;color:var(--muted)}
+
+@media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:520px){.grid{grid-template-columns:1fr}
+      .nav {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .logo {
+    text-align: center;
+  }
+
+  .nav-right {
+    width: 100%;
+    display: flex;
+    gap: 10px;
+  }
+
+  .nav-right input {
+    flex: 1;
+  }
+
+  .cart-icon {
+    text-decoration: none;
+  }
+
+}
+}
+  
+</style>
+</head>
+<body>
+
+<header>
+<div class="nav">
+<div class="logo">GringoMall</div>
+<div class="nav-right">
+<input id="search" placeholder="Search…">
+<button class="outline">🧑‍🦱</button>
+</div>
+</div>
+</header>
+
+<div class="section-title">Premium Collection</div>
+<div id="productGrid" class="grid"></div>
+
+<footer><div>© 2026 GringoMall — Premium Layout</div></footer>
+  <script src="js/data.js"></script>
+<script>
+
+
+const grid=document.getElementById('productGrid');
+const search=document.getElementById('search');
+let current='all';
+
+function render(list){grid.innerHTML='';list.forEach(p=>{grid.innerHTML+=`   <a href="productDetail.html?id=${p.id}" class="product-link"><div class="card"><img src="${p.images[0]}"/><div class="card-body"><h3>${p.name}</h3><div class="price">$${p.price}</div><div class="rating">⭐ ${p.rating} (${p.reviews})</div><p>${p.description}</p><button>Add to Cart</button></div></div></a>`})}
+
+function apply(){let q=search.value.toLowerCase();let list=products.filter(p=>p.name.toLowerCase().includes(q));render(list)}
+
+render(products);
+search.addEventListener('input',apply);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Dashboard - ShopLite</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial;}
+body{background:#f2f2f2;}
+
+/* HEADER */
+.header{
+  background:#6a1b9a;
+  padding:12px;
+  color:white;
+  text-align:center;
+  font-weight:bold;
+}
+
+/* LAYOUT */
+.dashboard{
+  display:flex;
+  min-height:100vh;
+}
+
+/* SIDEBAR */
+.sidebar{
+  width:220px;
+  background:white;
+  padding:20px;
+  box-shadow:2px 0 8px rgba(0,0,0,0.05);
+}
+
+.sidebar h3{
+  margin-bottom:20px;
+}
+
+.sidebar ul{
+  list-style:none;
+}
+
+.sidebar li{
+  padding:10px 0;
+  cursor:pointer;
+  color:#333;
+}
+
+.sidebar li:hover{
+  color:#6a1b9a;
+  font-weight:bold;
+}
+
+/* MAIN CONTENT */
+.content{
+  flex:1;
+  padding:20px;
+}
+
+/* CARDS */
+.card{
+  background:white;
+  padding:15px;
+  border-radius:8px;
+  margin-bottom:15px;
+  box-shadow:0 2px 8px rgba(0,0,0,0.05);
+}
+
+/* OVERVIEW GRID */
+.overview{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:10px;
+}
+
+.stat{
+  background:#6a1b9a;
+  color:white;
+  padding:15px;
+  border-radius:8px;
+  text-align:center;
+}
+
+/* ORDER ITEM */
+.order-item{
+  border-bottom:1px solid #ddd;
+  padding:10px 0;
+}
+
+/* MOBILE */
+@media(max-width:768px){
+  .dashboard{
+    flex-direction:column;
+  }
+  .sidebar{
+    width:100%;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  My Dashboard
+</div>
+
+<div class="dashboard">
+
+  <div class="sidebar">
+    <h3 id="welcomeUser">Hi 👋</h3>
+    <ul>
+      <li onclick="showSection('overview')">Dashboard</li>
+      <li onclick="showSection('orders')">My Orders</li>
+      <li onclick="showSection('wishlist')">Wishlist</li>
+      <li onclick="logout()">Logout</li>
+    </ul>
+  </div>
+
+  <div class="content">
+
+    <!-- OVERVIEW -->
+    <div id="overviewSection" class="section">
+      <div class="card">
+        <h2>Account Overview</h2>
+      </div>
+
+      <div class="overview">
+        <div class="stat">
+          <div id="totalOrders">0</div>
+          <small>Orders</small>
+        </div>
+
+        <div class="stat">
+          <div id="wishlistCount">0</div>
+          <small>Wishlist</small>
+        </div>
+
+        <div class="stat">
+          <div id="cartCount">0</div>
+          <small>Cart</small>
+        </div>
+
+        <div class="stat">
+          <div id="totalSpent">GH₵ 0</div>
+          <small>Total Spent</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- ORDERS -->
+    <div id="ordersSection" class="section" style="display:none;">
+      <div class="card">
+        <h2>My Orders</h2>
+        <div id="ordersList"></div>
+      </div>
+    </div>
+
+    <!-- WISHLIST -->
+    <div id="wishlistSection" class="section" style="display:none;">
+      <div class="card">
+        <h2>Wishlist</h2>
+        <div id="wishlistItems"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="js/data.js"></script>
+
+<script>
+
+/* ===== AUTH CHECK ===== */
+const currentUser = localStorage.getItem("currentUser");
+
+if(!currentUser){
+  window.location.href = "login.html";
+}
+
+document.getElementById("welcomeUser").textContent = "Hi, " + currentUser + " 👋";
+
+/* ===== MOCK DATA (if not exists) ===== */
+if(!localStorage.getItem("orders")){
+  localStorage.setItem("orders", JSON.stringify([]));
+}
+if(!localStorage.getItem("wishlist")){
+  localStorage.setItem("wishlist", JSON.stringify([]));
+}
+if(!localStorage.getItem("cart")){
+  localStorage.setItem("cart", JSON.stringify([]));
+}
+
+/* ===== LOAD DATA ===== */
+const orders = JSON.parse(localStorage.getItem("orders"));
+const wishlist = JSON.parse(localStorage.getItem("wishlist"));
+const cart = JSON.parse(localStorage.getItem("cart"));
+
+/* ===== OVERVIEW ===== */
+document.getElementById("totalOrders").textContent = orders.length;
+document.getElementById("wishlistCount").textContent = wishlist.length;
+document.getElementById("cartCount").textContent = cart.length;
+
+const totalSpent = orders.reduce((sum,order)=>sum+order.total,0);
+document.getElementById("totalSpent").textContent = "GH₵ " + totalSpent;
+
+/* ===== RENDER ORDERS ===== */
+const ordersList = document.getElementById("ordersList");
+
+if(orders.length === 0){
+  ordersList.innerHTML = "No orders yet.";
+} else {
+  ordersList.innerHTML = orders.map(order=>`
+    <div class="order-item">
+      <strong>Order #${order.id}</strong><br>
+      Status: ${order.status}<br>
+      Total: GH₵ ${order.total}
+    </div>
+  `).join("");
+}
+
+/* ===== RENDER WISHLIST ===== */
+const wishlistItems = document.getElementById("wishlistItems");
+
+if(wishlist.length === 0){
+  wishlistItems.innerHTML = "Wishlist is empty.";
+} else {
+  wishlistItems.innerHTML = wishlist.map(id=>{
+    const product = products.find(p=>p.id===id);
+    return product ? `
+      <div class="order-item">
+        ${product.name} - GH₵ ${product.price}
+      </div>
+    ` : "";
+  }).join("");
+}
+
+/* ===== SECTION SWITCHER ===== */
+function showSection(section){
+  document.getElementById("overviewSection").style.display="none";
+  document.getElementById("ordersSection").style.display="none";
+  document.getElementById("wishlistSection").style.display="none";
+
+  if(section==="overview") document.getElementById("overviewSection").style.display="block";
+  if(section==="orders") document.getElementById("ordersSection").style.display="block";
+  if(section==="wishlist") document.getElementById("wishlistSection").style.display="block";
+}
+
+/* ===== LOGOUT ===== */
+function logout(){
+  localStorage.removeItem("currentUser");
+  window.location.href="index.html";
+}
+
+</script>
+
+</body>
+</html>

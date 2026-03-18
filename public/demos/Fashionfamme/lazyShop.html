@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LazyShop</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,sans-serif;background:#f6f7fb;color:#111}
+:root{--primary:#111827;--muted:#6b7280;--card:#fff;--radius:18px}
+
+/* Header */
+header{background:#fff;border-bottom:1px solid #eee}
+.nav{max-width:1200px;margin:auto;padding:16px 24px;display:flex;justify-content:space-between;align-items:center}
+.logo{font-weight:800;font-size:20px}
+.nav-right{display:flex;gap:10px}
+input{padding:10px 12px;border-radius:12px;border:1px solid #ddd}
+button{border:none;border-radius:12px;padding:10px 14px;background:var(--primary);color:#fff;cursor:pointer}
+button.outline{background:#fff;color:#111;border:1px solid #ddd}
+
+/* Layout */
+.main{max-width:1200px;margin:30px auto;display:grid;grid-template-columns:240px 1fr;gap:24px;padding:0 20px}
+
+/* Sidebar */
+.sidebar{background:#fff;border-radius:18px;padding:16px;height:fit-content;box-shadow:0 6px 18px rgba(0,0,0,.05)}
+.sidebar h3{margin-bottom:10px}
+.sidebar button{width:100%;margin-bottom:8px;background:#fff;color:#111;border:1px solid #ddd}
+.sidebar button.active{background:var(--primary);color:#fff}
+
+/* Products */
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.grid a {text-decoration: none; color: inherit}
+.card{background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 6px 18px rgba(0,0,0,.06);transition:.2s}
+.card:hover{transform:translateY(-5px)}
+.card img{width:100%;height:180px;object-fit:cover}
+.card-body{padding:14px}
+.price{font-size:14px;color:var(--muted);margin-top:4px}
+.rating{font-size:13px;margin-top:4px}
+.card-body button{width:100%;margin-top:10px}
+
+/* Floating cart */
+.floating-cart{
+  position:fixed;
+  bottom:20px;
+  right:20px;
+  background:black;
+  color:white;
+  width:55px;
+  height:55px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:24px;
+  text-decoration:none;
+  box-shadow:0 6px 20px rgba(0,0,0,.3);
+  z-index:1000;
+}
+.floating-cart-count{
+  position:absolute;
+  top:-5px;
+  right:-5px;
+  background:red;
+  color:white;
+  font-size:12px;
+  padding:2px 6px;
+  border-radius:50%;
+  min-width:18px;
+  text-align:center;
+  display:none;
+}
+
+/* Toast */
+.toast{
+  position:fixed;
+  bottom:90px;
+  right:20px;
+  background:#111;
+  color:#fff;
+  padding:12px 16px;
+  border-radius:12px;
+  font-size:14px;
+  opacity:0;
+  transform:translateY(10px);
+  transition:.3s ease;
+  z-index:2000;
+  pointer-events:none;
+}
+.toast.show{
+  opacity:1;
+  transform:translateY(0);
+}
+
+/* Footer */
+footer{margin-top:50px;background:#fff;border-top:1px solid #eee}
+footer div{max-width:1200px;margin:auto;padding:20px;color:var(--muted)}
+
+@media(max-width:900px){
+  .main{grid-template-columns:1fr}
+  .grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:520px){
+  .grid{grid-template-columns:1fr}
+  .nav-right a { display: none;}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="nav">
+    <div class="logo">LazyShop</div>
+    <div class="nav-right">
+      <input id="search" placeholder="Search products…" />
+      <a href="cart.html">
+        <button class="outline">Cart</button>
+      </a>
+    </div>
+  </div>
+</header>
+
+<div class="main">
+
+  <aside class="sidebar">
+    <h3>Categories</h3>
+    <button class="active" data-cat="all">All</button>
+    <button data-cat="dress">Dresses</button>
+    <button data-cat="shoe">Shoes</button>
+    <button data-cat="accessories">Accessories</button>
+    <button data-cat="kitchen">Kitchen</button>
+    <button data-cat="light">Lighting</button>
+  </aside>
+
+  <section>
+    <div id="productGrid" class="grid"></div>
+  </section>
+
+</div>
+
+<a href="cart.html" class="floating-cart">
+  🛒
+  <span id="floatingCartCount" class="floating-cart-count">0</span>
+</a>
+
+<div id="toast" class="toast"></div>
+
+<footer>
+  <div>© 2026 NovaShop — Sidebar Layout</div>
+</footer>
+
+<!-- DATA -->
+<script src="js/data.js"></script>
+
+<!-- CART LOGIC -->
+<script src="js/cartUtils.js"></script>
+<script src="js/cartBadge.js"></script>
+
+<!-- PAGE SCRIPT -->
+<script>
+const grid = document.getElementById("productGrid");
+const search = document.getElementById("search");
+const toast = document.getElementById("toast");
+
+let current = "all";
+let toastTimer;
+
+/* Toast */
+function showToast(msg){
+  toast.textContent = msg;
+  toast.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>toast.classList.remove("show"),2000);
+}
+
+/* Render */
+function render(list){
+  grid.innerHTML = "";
+  list.forEach(p=>{
+    const card=document.createElement("div");
+    card.className="card";
+    card.innerHTML=`
+       <a href="productDetail.html?id=${p.id}" class="product-link">
+
+      <img src="${p.images[0]}" />
+      <div class="card-body">
+        <strong>${p.name}</strong>
+        <div class="price">$${p.price}</div>
+        <div class="rating">⭐ ${p.rating} (${p.reviews})</div>
+        <button>Add to Cart</button>
+      </div>
+    </a>
+    `;
+    card.querySelector("button").onclick=()=>addToCart(p);
+    grid.appendChild(card);
+  });
+}
+
+/* Filters */
+function apply(){
+  const q=search.value.toLowerCase();
+  let list=products.filter(p=>p.name.toLowerCase().includes(q));
+  if(current!=="all") list=list.filter(p=>p.category===current);
+  render(list);
+}
+
+/* Cart */
+function addToCart(product){
+  const cart=getCart();
+  const existing=cart.find(i=>i.id===product.id);
+
+  if(existing){
+    existing.quantity+=1;
+    showToast("Quantity updated in cart");
+  }else{
+    cart.push({
+      id:product.id,
+      name:product.name,
+      price:product.price,
+      image:product.images[0],
+      quantity:1
+    });
+    showToast("Added to cart");
+  }
+  saveCart(cart);
+}
+
+/* Init */
+render(products);
+search.addEventListener("input",apply);
+
+document.querySelectorAll(".sidebar button").forEach(btn=>{
+  btn.onclick=()=>{
+    document.querySelectorAll(".sidebar button").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    current=btn.dataset.cat;
+    apply();
+  };
+});
+</script>
+
+</body>
+</html>

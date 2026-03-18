@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DarkyMall</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/darkyMall.css" />
+
+</head>
+<body>
+
+
+<header>
+  <div class="nav">
+    
+    <div class="logo">DarkyMall</div>
+    <div class="nav-right">
+      <input id="search" type="text" placeholder="Search products…" />
+          <a href="login.html" class="cart-icon">
+            <button class="outline cart-btn" >
+                    🧑
+                
+                    
+                </button>
+          </a>
+      
+
+    </div>
+  </div>
+</header>
+
+<section class="container hero">
+  <div>
+    <h1>Modern essentials for everyday life</h1>
+    <p>Discover clean design, quality products, and fast delivery.</p>
+    <br />
+    <button>Shop Now</button>
+  </div>
+  <img src="https://images.unsplash.com/photo-1512436991641-6745cdb1723f?q=80&w=1000" />
+</section>
+
+<section class="container">
+  <div class="section-title">Products</div>
+  <div class="filters">
+    <button class="active" data-cat="all">All</button>
+    <button data-cat="dress">Dresses</button>
+    <button data-cat="shoe">Shoes</button>
+    <button data-cat="accessories">Accessories</button>
+    <button data-cat="light">Lighting & Deco</button>
+    <button data-cat="kitchen">Cooking equipments</button>
+    
+  </div>
+
+  <div id="productGrid" class="grid"></div>
+</section>
+
+  <!-- Floating Cart -->
+  <a href="cart.html" class="floating-cart">
+    🛒
+    <span id="floatingCartCount" class="floating-cart-count">0</span>
+  </a>
+
+<footer>
+  <div class="container">© 2026 NovaShop — Powered by your data</div>
+</footer>
+
+<script src="js/data.js" defer></script>
+
+<script src="js/cartUtils.js" defer></script>
+<script src="js/cartBadge.js" defer></script>
+
+<script src="js/darkyMall.js" defer></script>
+
+
+</body>
+</html>

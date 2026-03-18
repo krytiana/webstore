@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Product | FashionFemme</title>
+  <link rel="stylesheet" href="css/detailedProduct.css" />
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="logo">FashionFemme</div>
+  <nav>
+    <a href="index.html">Shop More -></a>
+
+  </nav>
+</header>
+
+<!-- PRODUCT -->
+<main class="product-container">
+
+  <!-- Floating Cart -->
+  <a href="cart.html" class="floating-cart">
+    🛒
+    <span id="floatingCartCount" class="floating-cart-count">0</span>
+  </a>
+
+  <!-- IMAGES -->
+  <div class="product-images">
+    <div class="image-zoom">
+      <img id="mainProductImage" class="main-image" />
+    </div>
+
+    <div class="thumbnail-row">
+      <!-- thumbnails injected by JS -->
+    </div>
+  </div>
+
+  <!-- INFO -->
+  <div class="product-info">
+    <h1></h1>
+    <p class="price"></p>
+
+    <div class="rating"></div>
+
+    <!-- Dynamic description -->
+    <div class="description" id="productDescription"></div>
+    <div class="product-options" id="productOptions"></div>
+    <!-- Quantity -->
+    <div class="quantity">
+      <span>Qty:</span>
+      <button id="decreaseQty">−</button>
+      <input type="text" id="quantityInput" value="1" readonly />
+      <button id="increaseQty">+</button>
+    </div>
+
+    <!-- Buttons -->
+    <button class="add-to-cart">Add to Cart</button>
+    <button class="wishlist">♡ Add to Wishlist</button>
+  </div>
+
+</main>
+
+<!-- DETAILS -->
+<section class="details">
+  <h2>Product Details</h2>
+  <ul id="productSpecs"></ul>
+</section>
+
+<!-- RECOMMENDED -->
+<section class="recommended">
+  <h2>You may also like</h2>
+  <div class="recommended-grid" id="recommendedProducts">
+    <!-- injected by JS -->
+  </div>
+</section>
+
+<!-- SCRIPTS -->
+<script src="js/data.js"></script>
+<script src="js/cartUtils.js"></script>
+<script src="js/cartBadge.js"></script>
+<script src="js/detailedProduct.js"></script>
+
+</body>
+</html>
