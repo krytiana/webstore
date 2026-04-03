@@ -1,3 +1,4 @@
+//src/controllers/adminController.ts
 import { Request, Response } from "express";
 import Product from "../models/ProductModel";
 
@@ -34,7 +35,7 @@ export const postAddProduct = async (req: Request, res: Response) => {
       priceDone,
       imageFolder,
       imageName,
-      demoFolder,
+      demoName,
     } = req.body;
 
     // Handle category if "Other" is selected
@@ -44,8 +45,8 @@ export const postAddProduct = async (req: Request, res: Response) => {
         : category;
 
     // Construct media URLs
-    const image = `/images/${imageFolder}/${imageName}`;
-    const demoUrl = demoFolder ? `/demos/${demoFolder}/index.html` : "";
+    const image = `/${imageFolder}/${imageName}`;
+    const demoUrl = demoName ? `/demos/Fashionfamme/${demoName}` : "";
 
     // Create product
     await Product.create({

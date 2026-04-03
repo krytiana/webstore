@@ -1,3 +1,4 @@
+//src/routes/productsRoute.ts
 import { Router } from "express";
 import { getProducts, getProductDetails } from "../controllers/productController";
 

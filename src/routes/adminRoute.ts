@@ -1,3 +1,5 @@
+//src/routes/adminRoute.ts
+
 import { Router, Request, Response, NextFunction } from "express";
 import { 
   getAdminDashboard, 

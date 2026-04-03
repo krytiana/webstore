@@ -1,3 +1,5 @@
+//src/controllers/pricingController.ts
+
 import { Request, Response } from "express";
 
 // Pricing page

@@ -1,3 +1,5 @@
+//src/models/ProductModel.ts
+
 import { Schema, model, Document } from "mongoose";
 
 export interface IProduct extends Document {
@@ -31,7 +33,7 @@ const ProductSchema = new Schema<IProduct>(
   {
     name: { type: String, required: true },
 
-    slug: { type: String, required: true, unique: true },
+    slug: { type: String,  unique: true },
 
     category: { type: String, required: true },
 
