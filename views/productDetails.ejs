@@ -36,7 +36,16 @@
 
 <section class="overview">
   <h2>Product Overview</h2>
-  <p><%= product.description %></p>
+
+  <div 
+    class="product-description collapsed" 
+    id="desc"
+    data-description='<%- JSON.stringify(product.description) %>'
+  ></div>
+
+  <button id="toggleDesc" class="read-more-btn">
+    Read More
+  </button>
 </section>
 
 <section class="included">
