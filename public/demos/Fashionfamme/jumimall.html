@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JumiMall</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial;}
+body{background:#f2f2f2;}
+
+/* HEADER */
+.header{
+  background:#6a1b9a;
+  padding:12px;
+  position:sticky;
+  top:0;
+  z-index:100;
+}
+
+.top-bar {
+  display: flex;
+  justify-content: space-between; /* 🔥 THIS is the fix */
+  align-items: center;            /* optional but cleaner */
+  font-size: 14px;
+  color: white;
+  margin-bottom: 10px;
+}
+
+.top-bar a{
+  color:white;
+  text-decoration:none;
+  margin-left:10px;
+}
+.logo {
+  font-weight: bold;
+  font-size: 18px;
+}
+.search-box{
+  background:white;
+  padding:10px 15px;
+  border-radius:30px;
+}
+
+.search-box input{
+  border:none;
+  outline:none;
+  width:100%;
+  font-size:15px;
+}
+  .search-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:10px;
+  padding:10px;
+}
+  /* HERO */
+.hero{
+  height:120px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:white;
+  font-weight:bold;
+  font-size:22px;
+  background:linear-gradient(90deg,#6a1b9a,#ff1c42);
+}
+
+/* DELIVERY */
+.delivery{
+  background:#fff8e1;
+  padding:10px;
+  display:flex;
+  justify-content:space-between;
+  font-size:14px;
+}
+
+@media(min-width:768px){
+  .search-grid{
+    grid-template-columns:repeat(4,1fr);
+  }
+}
+
+/* SECTION STYLE */
+.section{
+  margin-top:15px;
+}
+
+.section-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  background:#6a1b9a;
+  color:white;
+  padding:12px;
+  font-weight:bold;
+}
+
+.section-header a{
+  color:white;
+  text-decoration:none;
+  font-size:13px;
+}
+
+/* HORIZONTAL PRODUCTS */
+.horizontal-products{
+  display:flex;
+  overflow-x:auto;
+  gap:10px;
+  padding:10px;
+}
+
+.horizontal-products::-webkit-scrollbar{
+  display:none;
+}
+
+.product-card{
+  min-width:150px;
+  background:white;
+  border-radius:8px;
+  padding:8px;
+  position:relative;
+  box-shadow:0 2px 6px rgba(0,0,0,0.05);
+}
+
+.product-card img{
+  width:100%;
+  height:120px;
+  object-fit:cover;
+  border-radius:6px;
+}
+
+.discount-badge{
+  position:absolute;
+  top:6px;
+  left:6px;
+  background:#ff9800;
+  color:white;
+  font-size:11px;
+  padding:3px 6px;
+  border-radius:4px;
+}
+
+.title{
+  font-size:13px;
+  margin:6px 0;
+  height:32px;
+  overflow:hidden;
+}
+
+.price{
+  color:#ff3b30;
+  font-weight:bold;
+  font-size:14px;
+}
+
+.rating{
+  font-size:12px;
+  color:#777;
+}
+
+/* SCROLL TO TOP */
+.scroll-top{
+  position:fixed;
+  bottom:20px;
+  right:20px;
+  background:white;
+  width:50px;
+  height:50px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:22px;
+  text-decoration:none;
+  box-shadow:0 5px 15px rgba(0,0,0,0.2);
+  display:none;
+}
+
+    .floating-cart {
+  position: fixed;
+  bottom: 90px;
+  right: 20px;
+  background: black;
+  color: white;
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  text-decoration: none;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+}
+
+.floating-cart-count {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: red;
+  color: white;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 50%;
+  min-width: 18px;
+  text-align: center;
+  display: none;
+}
+/* DESKTOP */
+@media(min-width:768px){
+  .horizontal-products{
+    gap:15px;
+  }
+  .product-card{
+    min-width:200px;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="top-bar">
+    <div class="logo">JumiMall</div>
+    <div id="userSection"></div>
+  </div>
+
+  <div class="search-box">
+    <input type="text" id="searchInput" placeholder="Search products...">
+    </div>
+</div>
+  <a href="cart.html" class="floating-cart">
+  🛒
+  <span id="floatingCartCount" class="floating-cart-count">0</span>
+</a>
+  <div id="searchResults" style="display:none;"></div>
+<div id="hero" class="hero">
+  Mega Shopping Festival 🔥
+</div>
+
+<div id="delivery" class="delivery">
+  <div>🚚 Free Shipping</div>
+  <div>🔒 Secure Payment</div>
+</div>
+
+<div id="categorySections"></div>
+
+<a href="#" class="scroll-top" id="scrollTopBtn">⬆</a>
+
+<script src="js/data.js"></script>
+<script src="js/cartUtils.js" defer></script>
+<script src="js/cartBadge.js" defer></script>
+<script src="js/login.js" defer></script>
+
+<script>
+
+/* ===== GROUP PRODUCTS ===== */
+function groupByCategory(products){
+  return products.reduce((acc,product)=>{
+    if(!acc[product.category]){
+      acc[product.category]=[];
+    }
+    acc[product.category].push(product);
+    return acc;
+  },{});
+}
+
+/* ===== RENDER SECTIONS ===== */
+function renderSections(){
+  const container=document.getElementById("categorySections");
+  const grouped=groupByCategory(products);
+
+  for(const category in grouped){
+
+    const section=document.createElement("div");
+    section.className="section";
+
+    section.innerHTML=`
+      <div class="section-header">
+        <span>${category.toUpperCase()}</span>
+        <a href="category.html?cat=${category}">See All</a>
+      </div>
+      <div class="horizontal-products">
+        ${grouped[category].slice(0,6).map(product=>`
+          <div class="product-card">
+            ${product.discount ? `<div class="discount-badge">-${product.discount}%</div>`:""}
+            <a href="productDetail.html?id=${product.id}" style="text-decoration:none;color:black;">
+              <img src="${product.images[0]}" alt="${product.name}">
+              <div class="title">${product.name}</div>
+              <div class="price">GH₵ ${product.price.toFixed(2)}</div>
+              <div class="rating">⭐ ${product.rating} (${product.reviews})</div>
+            </a>
+          </div>
+        `).join("")}
+      </div>
+    `;
+
+    container.appendChild(section);
+  }
+}
+
+renderSections();
+
+/* ===== SCROLL TO TOP ===== */
+const scrollBtn=document.getElementById("scrollTopBtn");
+
+window.addEventListener("scroll",()=>{
+  if(window.scrollY>300){
+    scrollBtn.style.display="flex";
+  }else{
+    scrollBtn.style.display="none";
+  }
+});
+
+scrollBtn.addEventListener("click",(e)=>{
+  e.preventDefault();
+  window.scrollTo({top:0,behavior:"smooth"});
+});
+  
+  const searchInput = document.getElementById("searchInput");
+const searchResults = document.getElementById("searchResults");
+const categorySections = document.getElementById("categorySections");
+  const hero = document.getElementById("hero");
+ const delivery = document.getElementById("delivery");
+
+searchInput.addEventListener("input", function(){
+
+  const value = this.value.toLowerCase().trim();
+
+  if(value === ""){
+    searchResults.style.display = "none";
+    categorySections.style.display = "block";
+    hero.style.display = "block";
+    delivery.style.display = "block";
+    return;
+  }
+
+  const filtered = products.filter(product =>
+    product.name.toLowerCase().includes(value) ||
+    product.category.toLowerCase().includes(value)
+  );
+
+  categorySections.style.display = "none";
+  hero.style.display = "none";
+  delivery.style.display = "none";
+  searchResults.style.display = "block";
+
+  if(filtered.length === 0){
+    searchResults.innerHTML = "<p style='padding:15px;'>No products found.</p>";
+    return;
+  }
+
+  searchResults.innerHTML = `
+    <div class="search-grid">
+      ${filtered.map(product=>`
+        <div class="product-card">
+          ${product.discount ? `<div class="discount-badge">-${product.discount}%</div>`:""}
+          <a href="productDetail.html?id=${product.id}" style="text-decoration:none;color:black;">
+            <img src="${product.images[0]}" alt="${product.name}">
+            <div class="title">${product.name}</div>
+            <div class="price">GH₵ ${product.price.toFixed(2)}</div>
+            <div class="rating">⭐ ${product.rating} (${product.reviews})</div>
+          </a>
+        </div>
+      `).join("")}
+    </div>
+  `;
+});
+
+</script>
+
+</body>
+</html>

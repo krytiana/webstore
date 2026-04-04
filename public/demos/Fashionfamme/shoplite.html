@@ -6,24 +6,24 @@
 <title>ShopLite</title>
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:Arial;}
-body{background:#f2f2f2;}
+* { margin:0; padding:0; box-sizing:border-box; font-family:Arial; }
+body { background:#f5f5f5; }
 
 /* HEADER */
 .header{
-  background:#6a1b9a;
-  padding:12px;
+  background:#ff3b30;
+  padding:15px;
   position:sticky;
   top:0;
   z-index:100;
 }
-
-.top-bar{
-  display:flex;
-  justify-content:flex-end;
-  font-size:14px;
-  color:white;
-  margin-bottom:10px;
+.top-bar {
+  display: flex;
+  justify-content: space-between; /* 🔥 THIS is the fix */
+  align-items: center;            /* optional but cleaner */
+  font-size: 14px;
+  color: white;
+  margin-bottom: 10px;
 }
 
 .top-bar a{
@@ -31,10 +31,14 @@ body{background:#f2f2f2;}
   text-decoration:none;
   margin-left:10px;
 }
+.logo {
+  font-weight: bold;
+  font-size: 18px;
+}
 
 .search-box{
   background:white;
-  padding:10px 15px;
+  padding:12px 15px;
   border-radius:30px;
 }
 
@@ -42,15 +46,34 @@ body{background:#f2f2f2;}
   border:none;
   outline:none;
   width:100%;
-  font-size:15px;
+  font-size:16px;
 }
-  .search-grid{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:10px;
-  padding:10px;
+
+/* Categories */
+.categories{
+  display:flex;
+  gap:20px;
+  overflow-x:auto;
+  margin-top:12px;
 }
-  /* HERO */
+
+.categories::-webkit-scrollbar{ display:none; }
+
+.category-item{
+  color:white;
+  white-space:nowrap;
+  font-size:14px;
+  cursor:pointer;
+  opacity:0.8;
+}
+
+.category-item.active{
+  font-weight:bold;
+  opacity:1;
+  border-bottom:2px solid white;
+}
+
+/* HERO */
 .hero{
   height:120px;
   display:flex;
@@ -59,7 +82,7 @@ body{background:#f2f2f2;}
   color:white;
   font-weight:bold;
   font-size:22px;
-  background:linear-gradient(90deg,#6a1b9a,#ff1c42);
+  background:linear-gradient(90deg,#ff3b30,#ff8c42);
 }
 
 /* DELIVERY */
@@ -71,76 +94,35 @@ body{background:#f2f2f2;}
   font-size:14px;
 }
 
-@media(min-width:768px){
-  .search-grid{
-    grid-template-columns:repeat(4,1fr);
-  }
-}
-
-/* SECTION STYLE */
-.section{
-  margin-top:15px;
-}
-
-.section-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  background:#6a1b9a;
-  color:white;
-  padding:12px;
-  font-weight:bold;
-}
-
-.section-header a{
-  color:white;
-  text-decoration:none;
-  font-size:13px;
-}
-
-/* HORIZONTAL PRODUCTS */
-.horizontal-products{
-  display:flex;
-  overflow-x:auto;
+/* PRODUCT GRID */
+.products{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
   gap:10px;
   padding:10px;
 }
 
-.horizontal-products::-webkit-scrollbar{
-  display:none;
-}
-
 .product-card{
-  min-width:150px;
   background:white;
   border-radius:8px;
   padding:8px;
-  position:relative;
-  box-shadow:0 2px 6px rgba(0,0,0,0.05);
 }
 
 .product-card img{
   width:100%;
-  height:120px;
+  height:140px;
   object-fit:cover;
   border-radius:6px;
 }
-
-.discount-badge{
-  position:absolute;
-  top:6px;
-  left:6px;
-  background:#ff9800;
-  color:white;
-  font-size:11px;
-  padding:3px 6px;
-  border-radius:4px;
-}
+  
+  .product-link{
+    text-decoration: none;
+  }
 
 .title{
   font-size:13px;
   margin:6px 0;
-  height:32px;
+  height:34px;
   overflow:hidden;
 }
 
@@ -154,28 +136,10 @@ body{background:#f2f2f2;}
   font-size:12px;
   color:#777;
 }
-
-/* SCROLL TO TOP */
-.scroll-top{
-  position:fixed;
-  bottom:20px;
-  right:20px;
-  background:white;
-  width:50px;
-  height:50px;
-  border-radius:50%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:22px;
-  text-decoration:none;
-  box-shadow:0 5px 15px rgba(0,0,0,0.2);
-  display:none;
-}
-
-    .floating-cart {
+  
+  .floating-cart {
   position: fixed;
-  bottom: 90px;
+  bottom: 20px;
   right: 20px;
   background: black;
   color: white;
@@ -204,13 +168,11 @@ body{background:#f2f2f2;}
   text-align: center;
   display: none;
 }
-/* DESKTOP */
+
+/* Desktop */
 @media(min-width:768px){
-  .horizontal-products{
-    gap:15px;
-  }
-  .product-card{
-    min-width:200px;
+  .products{
+    grid-template-columns:repeat(4,1fr);
   }
 }
 </style>
@@ -218,151 +180,121 @@ body{background:#f2f2f2;}
 <body>
 
 <div class="header">
-  <div class="top-bar">
-    <div id="userSection"></div>
-  </div>
+
+<div class="top-bar">
+  <div class="logo">ShopLite</div>
+  <div id="userSection"></div>
+</div>
 
   <div class="search-box">
     <input type="text" id="searchInput" placeholder="Search products...">
-    </div>
+  </div>
+
+  <div class="categories" id="categoryContainer"></div>
+
 </div>
-  <a href="cart.html" class="floating-cart">
+<a href="cart.html" class="floating-cart">
   🛒
   <span id="floatingCartCount" class="floating-cart-count">0</span>
 </a>
-  <div id="searchResults" style="display:none;"></div>
-<div id="hero" class="hero">
+
+<div class="hero">
   Mega Shopping Festival 🔥
 </div>
 
-<div id="delivery" class="delivery">
+<div class="delivery">
   <div>🚚 Free Shipping</div>
   <div>🔒 Secure Payment</div>
 </div>
 
-<div id="categorySections"></div>
-
-<a href="#" class="scroll-top" id="scrollTopBtn">⬆</a>
-
+<div class="products" id="productContainer"></div>
 <script src="js/data.js"></script>
 <script src="js/cartUtils.js" defer></script>
 <script src="js/cartBadge.js" defer></script>
 <script src="js/login.js" defer></script>
+<script type="module">
 
-<script>
 
-/* ===== GROUP PRODUCTS ===== */
-function groupByCategory(products){
-  return products.reduce((acc,product)=>{
-    if(!acc[product.category]){
-      acc[product.category]=[];
-    }
-    acc[product.category].push(product);
-    return acc;
-  },{});
-}
+const productContainer = document.getElementById("productContainer");
+const categoryContainer = document.getElementById("categoryContainer");
+const searchInput = document.getElementById("searchInput");
 
-/* ===== RENDER SECTIONS ===== */
-function renderSections(){
-  const container=document.getElementById("categorySections");
-  const grouped=groupByCategory(products);
+let currentCategory = "all";
 
-  for(const category in grouped){
+/* ========= RENDER PRODUCTS ========= */
+function renderProducts(productList){
+  productContainer.innerHTML = "";
 
-    const section=document.createElement("div");
-    section.className="section";
+  if(productList.length === 0){
+    productContainer.innerHTML = "<p>No products found.</p>";
+    return;
+  }
 
-    section.innerHTML=`
-      <div class="section-header">
-        <span>${category.toUpperCase()}</span>
-        <a href="category.html?cat=${category}">See All</a>
-      </div>
-      <div class="horizontal-products">
-        ${grouped[category].slice(0,6).map(product=>`
-          <div class="product-card">
-            ${product.discount ? `<div class="discount-badge">-${product.discount}%</div>`:""}
-            <a href="productDetail.html?id=${product.id}" style="text-decoration:none;color:black;">
-              <img src="${product.images[0]}" alt="${product.name}">
-              <div class="title">${product.name}</div>
-              <div class="price">GH₵ ${product.price.toFixed(2)}</div>
-              <div class="rating">⭐ ${product.rating} (${product.reviews})</div>
-            </a>
-          </div>
-        `).join("")}
-      </div>
+  productList.forEach(product=>{
+    const card = document.createElement("div");
+    card.className = "product-card";
+
+    card.innerHTML = `
+    <a href="productDetail.html?id=${product.id}" class="product-link">
+      <img src="${product.images[0]}" alt="${product.name}">
+      <div class="title">${product.name}</div>
+      <div class="price">$${product.price.toFixed(2)}</div>
+      <div class="rating">⭐ ${product.rating} (${product.reviews})</div>
+    </a>
     `;
 
-    container.appendChild(section);
-  }
+    productContainer.appendChild(card);
+  });
 }
 
-renderSections();
+/* ========= GENERATE CATEGORIES ========= */
+function generateCategories(){
+  const categories = ["all", ...new Set(products.map(p=>p.category))];
 
-/* ===== SCROLL TO TOP ===== */
-const scrollBtn=document.getElementById("scrollTopBtn");
+  categories.forEach(cat=>{
+    const div = document.createElement("div");
+    div.className = "category-item";
+    div.textContent = cat.toUpperCase();
 
-window.addEventListener("scroll",()=>{
-  if(window.scrollY>300){
-    scrollBtn.style.display="flex";
-  }else{
-    scrollBtn.style.display="none";
-  }
-});
+    if(cat === "all") div.classList.add("active");
 
-scrollBtn.addEventListener("click",(e)=>{
-  e.preventDefault();
-  window.scrollTo({top:0,behavior:"smooth"});
-});
-  
-  const searchInput = document.getElementById("searchInput");
-const searchResults = document.getElementById("searchResults");
-const categorySections = document.getElementById("categorySections");
-  const hero = document.getElementById("hero");
- const delivery = document.getElementById("delivery");
+    div.addEventListener("click", ()=>{
+      document.querySelectorAll(".category-item")
+        .forEach(item=>item.classList.remove("active"));
 
-searchInput.addEventListener("input", function(){
+      div.classList.add("active");
+      currentCategory = cat;
+      filterProducts();
+    });
 
-  const value = this.value.toLowerCase().trim();
+    categoryContainer.appendChild(div);
+  });
+}
 
-  if(value === ""){
-    searchResults.style.display = "none";
-    categorySections.style.display = "block";
-    hero.style.display = "block";
-    delivery.style.display = "block";
-    return;
+/* ========= FILTER FUNCTION ========= */
+function filterProducts(){
+  let filtered = products;
+
+  if(currentCategory !== "all"){
+    filtered = filtered.filter(p=>p.category === currentCategory);
   }
 
-  const filtered = products.filter(product =>
-    product.name.toLowerCase().includes(value) ||
-    product.category.toLowerCase().includes(value)
-  );
-
-  categorySections.style.display = "none";
-  hero.style.display = "none";
-  delivery.style.display = "none";
-  searchResults.style.display = "block";
-
-  if(filtered.length === 0){
-    searchResults.innerHTML = "<p style='padding:15px;'>No products found.</p>";
-    return;
+  const searchValue = searchInput.value.toLowerCase();
+  if(searchValue){
+    filtered = filtered.filter(p =>
+      p.name.toLowerCase().includes(searchValue)
+    );
   }
 
-  searchResults.innerHTML = `
-    <div class="search-grid">
-      ${filtered.map(product=>`
-        <div class="product-card">
-          ${product.discount ? `<div class="discount-badge">-${product.discount}%</div>`:""}
-          <a href="productDetail.html?id=${product.id}" style="text-decoration:none;color:black;">
-            <img src="${product.images[0]}" alt="${product.name}">
-            <div class="title">${product.name}</div>
-            <div class="price">GH₵ ${product.price.toFixed(2)}</div>
-            <div class="rating">⭐ ${product.rating} (${product.reviews})</div>
-          </a>
-        </div>
-      `).join("")}
-    </div>
-  `;
-});
+  renderProducts(filtered);
+}
+
+/* ========= SEARCH ========= */
+searchInput.addEventListener("input", filterProducts);
+
+/* ========= INIT ========= */
+generateCategories();
+renderProducts(products);
 
 </script>
 

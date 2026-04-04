@@ -3,6 +3,7 @@ body {
   background: radial-gradient(circle at top, #0f1020, #05050b);
   color: #ffffff;
   font-family: "Inter", sans-serif;
+    overflow-x: hidden;
 }
 * {
   scroll-behavior: smooth;
@@ -74,8 +75,9 @@ section::before {
 .hero::before {
   content: "";
   position: absolute;
-  width: 500px;
-  height: 500px;
+  width: 90vw;
+  height: 90vw;
+  
   background: radial-gradient(circle, rgba(120,100,255,.25), transparent 70%);
   top: -100px;
   left: 50%;
