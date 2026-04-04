@@ -30,6 +30,7 @@ p {
   grid-template-columns: 1.2fr 1fr;
   gap: 50px;
   align-items: center;
+  margin-top: 0px;
 }
 
 .hero-text h1 {
