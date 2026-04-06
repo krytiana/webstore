@@ -1,29 +1,40 @@
 import express, { Application } from "express";
 import dotenv from "dotenv";
+dotenv.config();
 import connectDB from "./config/db";
 
 import pageRoutes from "./routes/pagesRoute";
 import productRoutes from "./routes/productsRoute";
 import pricingRoutes from "./routes/pricingRoute";
 import adminRoutes from "./routes/adminRoute";
+import userRoutes from "./routes/userRoutes";
+import authRoutes from "./routes/authRoute";
+import { refreshToken } from "./middlewares/authMiddleware";
+import stripeRoute from "./routes/stripeRoute"
 
 import Product from "./models/ProductModel";
 
 
 
-dotenv.config();
+
 
 const app: Application = express();
 
 // Middleware
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static("public"));
+
+app.post("/api/refresh-token", refreshToken);
 
 app.set("view engine", "ejs");
 app.set("views", "views");
 
 // Routes
+app.use("/api/users", userRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/payments", stripeRoute);
 app.use("/", pageRoutes);
 app.use("/products", productRoutes); 
 app.use("/pricing", pricingRoutes);

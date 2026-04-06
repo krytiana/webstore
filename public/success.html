@@ -1,0 +1,30 @@
+<!-- public/success.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment Success | FashionFemme</title>
+  <link rel="stylesheet" href="/css/cart.css" />
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }
+    h1 { color: green; }
+    a { display: inline-block; margin-top: 20px; text-decoration: none; color: #fff; background: #ff4081; padding: 10px 20px; border-radius: 5px; }
+  </style>
+</head>
+<body>
+  <h1>✅ Payment Successful!</h1>
+  <p>Thank you for your purchase. Your order is being processed.</p>
+  <p id="sessionId"></p>
+  <a href="/">Return to Home</a>
+
+  <script>
+    // Show session_id from Stripe in the URL
+    const params = new URLSearchParams(window.location.search);
+    const sessionId = params.get('session_id');
+    if(sessionId) {
+      document.getElementById('sessionId').textContent = `Session ID: ${sessionId}`;
+    }
+  </script>
+</body>
+</html>

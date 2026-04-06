@@ -1,0 +1,154 @@
+* {
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  background: #111;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 18px;
+}
+
+.auth-modal {
+  background: #000;
+  width: 380px;
+  padding: 30px;
+  color: #fff;
+  position: relative;
+}
+
+.close-btn {
+  position: absolute;
+  right: 15px;
+  top: 10px;
+  background: none;
+  color: #fff;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+h1 {
+  margin-bottom: 5px;
+}
+
+.subtitle {
+  margin-bottom: 20px;
+  color: #ccc;
+}
+
+label {
+  display: block;
+  margin-top: 15px;
+  margin-bottom: 5px;
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  background: #222;
+  border: 1px solid #444;
+  color: #fff;
+}
+
+.password-wrapper {
+  position: relative;
+}
+    .error-msg {
+      color: red;
+      margin-bottom: 10px;
+    }
+
+.eye {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+
+.checkbox {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+.checkbox input {
+  width: auto;
+  margin-right: 8px;
+}
+
+.primary-btn {
+  width: 100%;
+  margin-top: 20px;
+  padding: 12px;
+  background: #b02a00;
+  border: none;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 20px;
+}
+
+.primary-btn:hover {
+  background: #d83400;
+}
+
+.text-link {
+  text-align: center;
+  margin-top: 15px;
+  font-size: 14px;
+}
+
+.text-link a {
+  color: #fff;
+  text-decoration: underline;
+}
+
+.divider {
+  text-align: center;
+  margin: 20px 0;
+  font-size: 13px;
+  color: #aaa;
+}
+
+.oauth {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.google-btn,
+.facebook-btn {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  color: #fff;
+  font-size: 20px;
+}
+
+.google-btn {
+  background: #db4437;
+}
+
+.facebook-btn {
+  background: #1877f2;
+}
+.forgot {
+  text-align: right;
+  margin-top: 5px;
+}
+
+.forgot a {
+  font-size: 13px;
+  color: #ccc;
+  text-decoration: underline;
+}

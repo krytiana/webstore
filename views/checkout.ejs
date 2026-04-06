@@ -1,0 +1,53 @@
+<%- include("partials/header") %>
+
+<link rel="stylesheet" href="/css/colors.css" />
+
+<section class="checkout">
+  <h1>Checkout: <%= product.name %></h1>
+  <p>Selected Plan: <strong><%= planLabel %></strong></p>
+  <p>Price: <strong>$<%= planPrice %></strong></p>
+
+  <button id="checkoutBtn" class="btn primary big">Proceed to Payment</button>
+</section>
+
+<script src="https://js.stripe.com/v3/"></script>
+
+<script>
+  console.log("Stripe key:", "<%= stripeKey %>");
+  const stripe = Stripe("<%= stripeKey %>");
+  const checkoutBtn = document.getElementById("checkoutBtn");
+
+  checkoutBtn.addEventListener("click", async () => {
+    try {
+      const token = localStorage.getItem("token"); // ✅ get token
+
+      console.log("TOKEN:", token); // debug
+
+      const res = await fetch("/api/payments/cart-checkout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}` // ✅ ADD THIS
+        },
+        body: JSON.stringify({
+          productSlug: "<%= product.slug %>",
+          plan: "<%= plan %>"
+        })
+      });
+
+      const data = await res.json();
+
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        alert("Failed to create checkout session");
+        console.error(data);
+      }
+    } catch (err) {
+      console.error("Checkout error:", err);
+      alert("Something went wrong, try again.");
+    }
+  });
+</script>
+
+<%- include("partials/footer") %>

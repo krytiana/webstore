@@ -130,11 +130,17 @@
 
 <section class="cta" data-aos="zoom-in">
   <h2>Choose your delivery option</h2>
-  <a href="/contact?product=<%= product.slug %>" class="btn primary big">
+  <a 
+    id="getWebsiteBtn" 
+    href="#" 
+    class="btn primary big" 
+    data-product="<%= product.slug %>"
+  >
     Get This Website
   </a>
 </section>
-
+<script type="module" src="/js/product-details.js"></script>
 <script src="/js/product-details.js"></script>
+
 
 <%- include("partials/footer") %>
