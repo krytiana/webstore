@@ -109,7 +109,7 @@ if (ctaBtn) {
 
       // 🔥 Better UX (redirect back after login)
       const url = ctaBtn.getAttribute("href");
-      window.location.href = "/login?redirect=" + encodeURIComponent(url);
+      window.location.href = "/register?redirect=" + encodeURIComponent(url);
       return;
     }
 
