@@ -1,17 +1,28 @@
-//src/routes/stripeRoute.ts
+// src/routes/stripeRoute.ts
 import express from "express";
 import { createCartCheckoutSession, stripeWebhook } from "../controllers/stripeController";
 import { authenticateToken } from "../middlewares/authMiddleware";
 
 const router = express.Router();
 
-// Only logged-in users can create checkout session
-router.post("/cart-checkout", authenticateToken, createCartCheckoutSession);
-
+// ----------------------------
+// 🚨 STRIPE WEBHOOK (NO AUTH!)
+// Must use raw body ONLY
+// ----------------------------
 router.post(
   "/webhook",
   express.raw({ type: "application/json" }),
   stripeWebhook
+);
+
+// ----------------------------
+// 💳 Checkout (Protected)
+// ----------------------------
+router.post(
+  "/cart-checkout",
+  authenticateToken,
+  express.json(), // ensure JSON parsing here
+  createCartCheckoutSession
 );
 
 export default router;

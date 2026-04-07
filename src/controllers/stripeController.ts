@@ -6,49 +6,95 @@ import User from "../models/User";
 import DownloadLink from "../models/DownloadLink";
 
 // ----------------------------
-// Single product checkout
+// Types
 // ----------------------------
 const validPlans = ["sourceCode", "assistedSetup", "doneForYou"] as const;
 type PlanType = typeof validPlans[number];
 
+// ----------------------------
+// CREATE CHECKOUT SESSION
+// ----------------------------
 export const createCartCheckoutSession = async (req: any, res: Response) => {
   try {
-    const userId: string = req.user.userId;
-    const productSlug: string = req.body.productSlug;
-    const planRaw: string = req.body.plan;
+    console.log("🛒 Checkout request received");
 
-    // Validate plan
-    if (!validPlans.includes(planRaw as PlanType)) {
-      return res.status(400).json({ success: false, message: "Invalid plan selected" });
+    const userId: string = req.user?.userId;
+
+    // Support BOTH query + body (prevents crashes)
+    const productSlug: string = req.body.productSlug || req.query.product;
+    const planRaw: string = req.body.plan || req.query.plan;
+
+    console.log("BODY:", req.body);
+    console.log("QUERY:", req.query);
+    console.log("USER:", userId);
+
+    // Validate inputs
+    if (!userId) {
+      return res.status(401).json({ success: false, message: "Unauthorized" });
     }
+
+    if (!productSlug || !planRaw) {
+      return res.status(400).json({
+        success: false,
+        message: "Missing product or plan",
+      });
+    }
+
+    if (!validPlans.includes(planRaw as PlanType)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid plan selected",
+      });
+    }
+
     const plan: PlanType = planRaw as PlanType;
 
     // Fetch product
+    console.log("🔍 Fetching product...");
     const product: IProduct | null = await Product.findOne({ slug: productSlug });
-    if (!product) return res.status(404).json({ success: false, message: "Product not found" });
+
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        message: "Product not found",
+      });
+    }
 
     // Get price
     const price = product.pricing[plan];
 
-    // Create Stripe checkout session
+    if (!price) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid pricing",
+      });
+    }
+
+    console.log("💵 Price:", price);
+
+    const BASE_URL = process.env.BASE_URL || "https://codecarthub.com";
+
+    // Create Stripe session
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
+      mode: "payment",
+
       line_items: [
         {
           price_data: {
             currency: "usd",
             product_data: {
               name: `${product.name} - ${plan}`,
-              
             },
             unit_amount: price * 100,
           },
           quantity: 1,
         },
       ],
-      mode: "payment",
-        success_url: "https://codecarthub.com/success.html?session_id={CHECKOUT_SESSION_ID}",
-        cancel_url: "https://codecarthub.com/cancel.html",
+
+      success_url: `${BASE_URL}/success.html?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${BASE_URL}/cancel.html`,
+
       metadata: {
         userId: userId.toString(),
         productId: product._id.toString(),
@@ -56,18 +102,21 @@ export const createCartCheckoutSession = async (req: any, res: Response) => {
       },
     });
 
-    return res.json({ url: session.url });
+    console.log("✅ Stripe session created:", session.id);
 
+    return res.json({ url: session.url });
   } catch (err) {
-    console.error("Stripe checkout error:", err);
-    return res.status(500).json({ success: false, message: "Stripe checkout failed" });
+    console.error("❌ Stripe checkout error:", err);
+    return res.status(500).json({
+      success: false,
+      message: "Stripe checkout failed",
+    });
   }
 };
 
 // ----------------------------
-// Stripe webhook for order creation & download link
+// STRIPE WEBHOOK
 // ----------------------------
-
 export const stripeWebhook = async (req: Request, res: Response) => {
   console.log("📩 Webhook endpoint HIT");
 
@@ -75,7 +124,7 @@ export const stripeWebhook = async (req: Request, res: Response) => {
   const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET!;
 
   if (!sig) {
-    console.error("❌ No Stripe signature found in headers");
+    console.error("❌ Missing Stripe signature");
     return res.status(400).send("No signature");
   }
 
@@ -83,47 +132,42 @@ export const stripeWebhook = async (req: Request, res: Response) => {
 
   try {
     event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
-    console.log("✅ Webhook signature verified");
+    console.log("✅ Signature verified");
   } catch (err: any) {
-    console.error("⚠️ Signature verification failed:", err.message);
+    console.error("⚠️ Signature error:", err.message);
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
 
-  console.log("📦 Event received:", event.type);
+  console.log("📦 Event:", event.type);
 
-  // ------------------------
-  // Handle checkout success
-  // ------------------------
+  // ----------------------------
+  // HANDLE SUCCESSFUL PAYMENT
+  // ----------------------------
   if (event.type === "checkout.session.completed") {
-    console.log("💰 Checkout session completed event triggered");
+    console.log("💰 Payment completed");
 
     const session: any = event.data.object;
-
-    console.log("🧾 Full session object:", JSON.stringify(session, null, 2));
-
     const metadata = session.metadata || {};
+
+    console.log("📌 Metadata:", metadata);
+
     const { userId, productId, plan } = metadata;
 
-    console.log("📌 Extracted metadata:", metadata);
-
     if (!userId || !productId || !plan) {
-      console.error("❌ Missing metadata:", { userId, productId, plan });
+      console.error("❌ Missing metadata");
       return res.status(400).send("Missing metadata");
     }
 
     try {
-      console.log("🔍 Validating plan...");
       if (!validPlans.includes(plan as PlanType)) {
         throw new Error("Invalid plan type");
       }
 
       console.log("🔍 Fetching user...");
       const user = await User.findById(userId);
-      console.log("User found:", !!user);
 
       console.log("🔍 Fetching product...");
       const product = await Product.findById(productId);
-      console.log("Product found:", !!product);
 
       if (!user || !product) {
         throw new Error("User or product not found");
@@ -133,15 +177,14 @@ export const stripeWebhook = async (req: Request, res: Response) => {
 
       const downloadUrl = `${BASE_URL}/downloads/${product.slug}-${plan}-${Date.now()}-${Math.random()
         .toString(36)
-        .substr(2, 8)}.zip`;
+        .slice(2, 10)}.zip`;
 
-      console.log("🔗 Generated download URL:", downloadUrl);
+      console.log("🔗 Download URL:", downloadUrl);
 
-      console.log("💾 Saving download link...");
       const downloadLink = await DownloadLink.create({
         user: user._id,
         product: product._id,
-        plan: plan as PlanType,
+        plan,
         url: downloadUrl,
         maxDownloads: 3,
         successfulDownloads: 0,
@@ -150,15 +193,15 @@ export const stripeWebhook = async (req: Request, res: Response) => {
 
       console.log("✅ Download link saved:", downloadLink._id);
 
-      console.log(`🎉 SUCCESS: Email ${user.email} should receive link`);
+      // OPTIONAL: send email here
+      console.log(`📧 Send email to: ${user.email}`);
     } catch (err) {
-      console.error("❌ Error inside webhook processing:", err);
+      console.error("❌ Webhook processing error:", err);
     }
   } else {
-    console.log("ℹ️ Unhandled event type:", event.type);
+    console.log("ℹ️ Ignored event:", event.type);
   }
 
-  console.log("📤 Sending 200 response to Stripe\n");
-
+  console.log("📤 Responding to Stripe\n");
   res.status(200).json({ received: true });
 };

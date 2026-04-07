@@ -1,6 +1,7 @@
 import express, { Application } from "express";
 import dotenv from "dotenv";
 dotenv.config();
+
 import connectDB from "./config/db";
 
 import pageRoutes from "./routes/pagesRoute";
@@ -11,14 +12,15 @@ import userRoutes from "./routes/userRoutes";
 import authRoutes from "./routes/authRoute";
 import { refreshToken } from "./middlewares/authMiddleware";
 import stripeRoute from "./routes/stripeRoute";
-import webhookRoute from "./routes/stripeRoute";
 
 import Product from "./models/ProductModel";
 
-const app: Application = express(); // ✅ app must exist first
+const app: Application = express();
 
-// ✅ FIRST THING
-app.use("/api/payments", webhookRoute);
+// ------------------------
+// 🚨 STRIPE ROUTES FIRST
+// ------------------------
+app.use("/api/payments", stripeRoute);
 
 // ------------------------
 // Middleware
@@ -27,19 +29,16 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static("public"));
 
-// Refresh token route
+// ------------------------
+// Other routes
+// ------------------------
 app.post("/api/refresh-token", refreshToken);
 
-// View engine
 app.set("view engine", "ejs");
 app.set("views", "views");
 
-// ------------------------
-// Routes
-// ------------------------
 app.use("/api/users", userRoutes);
 app.use("/api/auth", authRoutes);
-app.use("/api/payments", stripeRoute);
 app.use("/", pageRoutes);
 app.use("/products", productRoutes);
 app.use("/pricing", pricingRoutes);
