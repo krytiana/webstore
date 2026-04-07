@@ -11,25 +11,14 @@ import userRoutes from "./routes/userRoutes";
 import authRoutes from "./routes/authRoute";
 import { refreshToken } from "./middlewares/authMiddleware";
 import stripeRoute from "./routes/stripeRoute";
-import { stripeWebhook } from "./controllers/stripeController";
+import webhookRoute from "./routes/stripeRoute";
 
 import Product from "./models/ProductModel";
 
 const app: Application = express(); // ✅ app must exist first
 
-// ------------------------
-// Stripe webhook (must be BEFORE express.json())
-// ------------------------
-app.post(
-  "/api/payments/webhook",
-  express.raw({ type: "application/json" }),
-  stripeWebhook
-);
-
-app.post("/webhook-test", (req, res) => {
-  console.log("🔥 WEBHOOK TEST HIT");
-  res.send("ok");
-});
+// ✅ FIRST THING
+app.use("/api/payments", webhookRoute);
 
 // ------------------------
 // Middleware
