@@ -4,6 +4,8 @@ import { stripe } from "../config/stripe";
 import Product, { IProduct } from "../models/ProductModel";
 import User from "../models/User";
 import DownloadLink from "../models/DownloadLink";
+import { sendDownloadLinkEmail } from "../services/emailService";
+
 
 // ----------------------------
 // Types
@@ -115,7 +117,6 @@ export const stripeWebhook = async (req: Request, res: Response) => {
   let event;
 
   try {
-    // Use raw body for verification
     event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
     console.log("✅ Signature verified");
   } catch (err: any) {
@@ -149,26 +150,38 @@ export const stripeWebhook = async (req: Request, res: Response) => {
 
       const BASE_URL = process.env.BASE_URL || "https://codecarthub.com";
 
-      const downloadUrl = `${BASE_URL}/downloads/${product.slug}-${plan}-${Date.now()}-${Math.random()
-        .toString(36)
-        .slice(2, 10)}.zip`;
-
+      // ✅ Step 1: Create download record FIRST
       const downloadLink = await DownloadLink.create({
         user: user._id,
         product: product._id,
         plan,
-        url: downloadUrl,
+        url: "", // will update after
         maxDownloads: 3,
         successfulDownloads: 0,
         expiresAt: new Date(Date.now() + 48 * 60 * 60 * 1000),
       });
 
+      // ✅ Step 2: Generate secure link using ID
+      const downloadUrl = `${BASE_URL}/downloads/${downloadLink._id}`;
+
+      // ✅ Step 3: Save URL
+      downloadLink.url = downloadUrl;
+      await downloadLink.save();
+
+      // ✅ Step 4: Send email
+      await sendDownloadLinkEmail(
+        user.email,
+        downloadUrl,
+        product.name,
+        plan
+      );
+
       console.log("✅ Download link saved:", downloadLink._id);
-      console.log(`📧 Send email to: ${user.email} (optional)`);
+      console.log("🔗 Secure URL:", downloadUrl);
+      console.log(`📧 Email sent to: ${user.email}`);
 
     } catch (err: any) {
       console.error("❌ Webhook processing error:", err.message);
-      // Still return 200 to prevent Stripe retries
       return res.status(200).json({ received: true, error: err.message });
     }
   } else {
