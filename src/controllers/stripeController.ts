@@ -67,15 +67,17 @@ export const createCartCheckoutSession = async (req: any, res: Response) => {
 // ----------------------------
 // Stripe webhook for order creation & download link
 // ----------------------------
+
 export const stripeWebhook = async (req: Request, res: Response) => {
   const sig = req.headers["stripe-signature"];
   const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET!;
 
   let event;
+
   try {
     event = stripe.webhooks.constructEvent(req.body, sig!, endpointSecret);
   } catch (err: any) {
-    console.error("⚠️ Webhook signature mismatch", err.message);
+    console.error("⚠️ Webhook signature mismatch:", err.message);
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
 
@@ -83,24 +85,22 @@ export const stripeWebhook = async (req: Request, res: Response) => {
     const session: any = event.data.object;
     const { userId, productId, plan } = session.metadata;
 
+    console.log("Webhook metadata:", session.metadata);
+
     if (!userId || !productId || !plan) {
       console.error("Webhook metadata missing userId/productId/plan");
       return res.status(400).send("Missing metadata");
     }
 
     try {
-      // Validate plan type
       if (!validPlans.includes(plan as PlanType)) throw new Error("Invalid plan type");
 
-      // Fetch user & product
       const user = await User.findById(userId);
       const product = await Product.findById(productId);
       if (!user || !product) throw new Error("User or product not found");
 
-      // Generate secure download link
-      const downloadUrl = `/downloads/${product.slug}-${plan}-${Date.now()}-${Math.random()
-        .toString(36)
-        .substr(2, 8)}.zip`;
+      const BASE_URL = process.env.BASE_URL || "https://codecarthub.com";
+      const downloadUrl = `${BASE_URL}/downloads/${product.slug}-${plan}-${Date.now()}-${Math.random().toString(36).substr(2, 8)}.zip`;
 
       const downloadLink = await DownloadLink.create({
         user: user._id,
@@ -112,8 +112,9 @@ export const stripeWebhook = async (req: Request, res: Response) => {
         expiresAt: new Date(Date.now() + 48 * 60 * 60 * 1000), // 48h
       });
 
-      // TODO: Send email to user with downloadLink.url
       console.log(`✅ Payment received. Download link for ${user.email}: ${downloadLink.url}`);
+
+      // TODO: Send email to user with downloadLink.url
 
     } catch (err) {
       console.error("❌ Error processing checkout webhook:", err);
