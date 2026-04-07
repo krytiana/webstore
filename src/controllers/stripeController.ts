@@ -69,39 +69,75 @@ export const createCartCheckoutSession = async (req: any, res: Response) => {
 // ----------------------------
 
 export const stripeWebhook = async (req: Request, res: Response) => {
+  console.log("📩 Webhook endpoint HIT");
+
   const sig = req.headers["stripe-signature"];
   const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET!;
+
+  if (!sig) {
+    console.error("❌ No Stripe signature found in headers");
+    return res.status(400).send("No signature");
+  }
 
   let event;
 
   try {
-    event = stripe.webhooks.constructEvent(req.body, sig!, endpointSecret);
+    event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
+    console.log("✅ Webhook signature verified");
   } catch (err: any) {
-    console.error("⚠️ Webhook signature mismatch:", err.message);
+    console.error("⚠️ Signature verification failed:", err.message);
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
 
-  if (event.type === "checkout.session.completed") {
-    const session: any = event.data.object;
-    const { userId, productId, plan } = session.metadata;
+  console.log("📦 Event received:", event.type);
 
-    console.log("Webhook metadata:", session.metadata);
+  // ------------------------
+  // Handle checkout success
+  // ------------------------
+  if (event.type === "checkout.session.completed") {
+    console.log("💰 Checkout session completed event triggered");
+
+    const session: any = event.data.object;
+
+    console.log("🧾 Full session object:", JSON.stringify(session, null, 2));
+
+    const metadata = session.metadata || {};
+    const { userId, productId, plan } = metadata;
+
+    console.log("📌 Extracted metadata:", metadata);
 
     if (!userId || !productId || !plan) {
-      console.error("Webhook metadata missing userId/productId/plan");
+      console.error("❌ Missing metadata:", { userId, productId, plan });
       return res.status(400).send("Missing metadata");
     }
 
     try {
-      if (!validPlans.includes(plan as PlanType)) throw new Error("Invalid plan type");
+      console.log("🔍 Validating plan...");
+      if (!validPlans.includes(plan as PlanType)) {
+        throw new Error("Invalid plan type");
+      }
 
+      console.log("🔍 Fetching user...");
       const user = await User.findById(userId);
+      console.log("User found:", !!user);
+
+      console.log("🔍 Fetching product...");
       const product = await Product.findById(productId);
-      if (!user || !product) throw new Error("User or product not found");
+      console.log("Product found:", !!product);
+
+      if (!user || !product) {
+        throw new Error("User or product not found");
+      }
 
       const BASE_URL = process.env.BASE_URL || "https://codecarthub.com";
-      const downloadUrl = `${BASE_URL}/downloads/${product.slug}-${plan}-${Date.now()}-${Math.random().toString(36).substr(2, 8)}.zip`;
 
+      const downloadUrl = `${BASE_URL}/downloads/${product.slug}-${plan}-${Date.now()}-${Math.random()
+        .toString(36)
+        .substr(2, 8)}.zip`;
+
+      console.log("🔗 Generated download URL:", downloadUrl);
+
+      console.log("💾 Saving download link...");
       const downloadLink = await DownloadLink.create({
         user: user._id,
         product: product._id,
@@ -109,17 +145,20 @@ export const stripeWebhook = async (req: Request, res: Response) => {
         url: downloadUrl,
         maxDownloads: 3,
         successfulDownloads: 0,
-        expiresAt: new Date(Date.now() + 48 * 60 * 60 * 1000), // 48h
+        expiresAt: new Date(Date.now() + 48 * 60 * 60 * 1000),
       });
 
-      console.log(`✅ Payment received. Download link for ${user.email}: ${downloadLink.url}`);
+      console.log("✅ Download link saved:", downloadLink._id);
 
-      // TODO: Send email to user with downloadLink.url
-
+      console.log(`🎉 SUCCESS: Email ${user.email} should receive link`);
     } catch (err) {
-      console.error("❌ Error processing checkout webhook:", err);
+      console.error("❌ Error inside webhook processing:", err);
     }
+  } else {
+    console.log("ℹ️ Unhandled event type:", event.type);
   }
+
+  console.log("📤 Sending 200 response to Stripe\n");
 
   res.status(200).json({ received: true });
 };
