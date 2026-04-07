@@ -47,8 +47,8 @@ export const createCartCheckoutSession = async (req: any, res: Response) => {
         },
       ],
       mode: "payment",
-      success_url: `$/success.html?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `$/cancel.html`,
+        success_url: "https://codecarthub.com/success.html?session_id={CHECKOUT_SESSION_ID}",
+        cancel_url: "https://codecarthub.com/cancel.html",
       metadata: {
         userId: userId.toString(),
         productId: product._id.toString(),
