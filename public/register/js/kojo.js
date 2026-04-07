@@ -1,5 +1,5 @@
 //public/register/js/kojo.js
-const API_BASE = "http://localhost:3000";
+
 
 document.addEventListener('DOMContentLoaded', function () {
     const showFeedback = (message, type) => {
@@ -84,7 +84,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 return;
             }
 
-            fetch(`${API_BASE}/api/users/signup`, {
+            fetch(`/api/users/signup`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(Object.fromEntries(formData.entries()))
@@ -117,7 +117,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const formData = createFormData(this);
             if (!formData) return;
 
-            fetch(`${API_BASE}/api/users/signin`, {
+            fetch(`/api/users/signin`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(Object.fromEntries(formData.entries()))
@@ -147,7 +147,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const formData = createFormData(this);
             if (!formData) return;
 
-            fetch(`${API_BASE}/api/users/forgot-password`, {
+            fetch(`/api/users/forgot-password`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(Object.fromEntries(formData.entries()))
