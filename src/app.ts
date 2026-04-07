@@ -26,6 +26,11 @@ app.post(
   stripeWebhook
 );
 
+app.post("/webhook-test", (req, res) => {
+  console.log("🔥 WEBHOOK TEST HIT");
+  res.send("ok");
+});
+
 // ------------------------
 // Middleware
 // ------------------------
