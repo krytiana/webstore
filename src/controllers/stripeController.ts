@@ -114,10 +114,10 @@ export const stripeWebhook = async (req: Request, res: Response) => {
 
   let event;
 
-  // Verify signature
   try {
+    // Use raw body for verification
     event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
-    console.log("✅ Stripe signature verified");
+    console.log("✅ Signature verified");
   } catch (err: any) {
     console.error("⚠️ Signature verification failed:", err.message);
     return res.status(400).send(`Webhook Error: ${err.message}`);
@@ -127,7 +127,6 @@ export const stripeWebhook = async (req: Request, res: Response) => {
 
   if (event.type === "checkout.session.completed") {
     try {
-      // Fetch full session to ensure metadata is present
       const session = await stripe.checkout.sessions.retrieve(
         event.data.object.id
       );
@@ -135,27 +134,21 @@ export const stripeWebhook = async (req: Request, res: Response) => {
       const metadata = session.metadata || {};
       const { userId, productId, plan } = metadata;
 
-      console.log("📌 Metadata:", metadata);
-
       if (!userId || !productId || !plan) {
-        throw new Error("Missing required metadata");
+        throw new Error("Missing metadata in session");
       }
 
       if (!validPlans.includes(plan as PlanType)) {
         throw new Error("Invalid plan type");
       }
 
-      // Fetch user and product from DB
+      // Fetch user & product
       const user = await User.findById(userId);
       const product = await Product.findById(productId);
-
-      if (!user || !product) {
-        throw new Error("User or product not found");
-      }
+      if (!user || !product) throw new Error("User or product not found");
 
       const BASE_URL = process.env.BASE_URL || "https://codecarthub.com";
 
-      // Create a secure download link
       const downloadUrl = `${BASE_URL}/downloads/${product.slug}-${plan}-${Date.now()}-${Math.random()
         .toString(36)
         .slice(2, 10)}.zip`;
@@ -167,23 +160,20 @@ export const stripeWebhook = async (req: Request, res: Response) => {
         url: downloadUrl,
         maxDownloads: 3,
         successfulDownloads: 0,
-        expiresAt: new Date(Date.now() + 48 * 60 * 60 * 1000), // 48 hours
+        expiresAt: new Date(Date.now() + 48 * 60 * 60 * 1000),
       });
 
-      console.log("✅ Download link created:", downloadLink._id);
-      console.log(`📧 Email should be sent to: ${user.email}`);
-
-      // TODO: Send email here (optional)
+      console.log("✅ Download link saved:", downloadLink._id);
+      console.log(`📧 Send email to: ${user.email} (optional)`);
 
     } catch (err: any) {
       console.error("❌ Webhook processing error:", err.message);
-      // Still return 200 to Stripe to avoid repeated calls
+      // Still return 200 to prevent Stripe retries
       return res.status(200).json({ received: true, error: err.message });
     }
   } else {
-    console.log("ℹ️ Event ignored:", event.type);
+    console.log("ℹ️ Ignored event type:", event.type);
   }
 
-  // Always return 200 to Stripe
-  return res.status(200).json({ received: true });
+  res.status(200).json({ received: true });
 };

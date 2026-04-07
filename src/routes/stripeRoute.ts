@@ -11,13 +11,8 @@ const router = express.Router();
 // ----------------------------
 router.post(
   "/webhook",
-  express.raw({ type: "application/json" }),
-  (req, res) => {
-    console.log("🔥 WEBHOOK HIT!");
-    console.log("Headers:", req.headers);
-    console.log("Body length:", (req.body as Buffer).length);
-    res.status(200).send("ok");
-  }
+  express.raw({ type: "application/json" }), // must be raw for Stripe signature
+  stripeWebhook
 );
 
 // ----------------------------
