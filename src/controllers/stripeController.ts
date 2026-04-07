@@ -150,6 +150,7 @@ export const stripeWebhook = async (req: Request, res: Response) => {
 
       const BASE_URL = process.env.BASE_URL || "https://codecarthub.com";
 
+      console.log("🧪 Creating download link...");
       // ✅ Step 1: Create download record FIRST
       const downloadLink = await DownloadLink.create({
         user: user._id,
@@ -160,6 +161,8 @@ export const stripeWebhook = async (req: Request, res: Response) => {
         successfulDownloads: 0,
         expiresAt: new Date(Date.now() + 48 * 60 * 60 * 1000),
       });
+
+      console.log("✅ Created:", downloadLink._id);
 
       // ✅ Step 2: Generate secure link using ID
       const downloadUrl = `${BASE_URL}/downloads/${downloadLink._id}`;
