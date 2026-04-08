@@ -18,7 +18,7 @@ type PlanType = typeof validPlans[number];
 // ----------------------------
 export const createCartCheckoutSession = async (req: any, res: Response) => {
   try {
-    console.log("🛒 Checkout request received");
+
 
     const userId: string = req.user?.userId;
 
@@ -30,8 +30,6 @@ export const createCartCheckoutSession = async (req: any, res: Response) => {
     const productSlug: string = req.body.productSlug || req.query.product;
     const planRaw: string = req.body.plan || req.query.plan;
 
-    console.log("BODY:", req.body);
-    console.log("QUERY:", req.query);
 
     if (!productSlug || !planRaw) {
       return res.status(400).json({
@@ -47,7 +45,6 @@ export const createCartCheckoutSession = async (req: any, res: Response) => {
     const plan: PlanType = planRaw as PlanType;
 
     // Fetch product
-    console.log("🔍 Fetching product...");
     const product = await Product.findOne({ slug: productSlug });
 
     if (!product) {
@@ -59,7 +56,6 @@ export const createCartCheckoutSession = async (req: any, res: Response) => {
       return res.status(400).json({ success: false, message: "Invalid pricing" });
     }
 
-    console.log(`💵 Price for ${plan}: $${price}`);
 
     const BASE_URL = process.env.BASE_URL || "https://codecarthub.com";
 
@@ -104,7 +100,7 @@ export const createCartCheckoutSession = async (req: any, res: Response) => {
 // STRIPE WEBHOOK
 // ----------------------------
 export const stripeWebhook = async (req: Request, res: Response) => {
-  console.log("📩 Stripe webhook hit");
+
 
   const sig = req.headers["stripe-signature"];
   const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET!;
@@ -118,13 +114,13 @@ export const stripeWebhook = async (req: Request, res: Response) => {
 
   try {
     event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
-    console.log("✅ Signature verified");
+    
   } catch (err: any) {
     console.error("⚠️ Signature verification failed:", err.message);
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
 
-  console.log("📦 Event type:", event.type);
+
 
   if (event.type === "checkout.session.completed") {
     try {
@@ -162,7 +158,6 @@ export const stripeWebhook = async (req: Request, res: Response) => {
         expiresAt: new Date(Date.now() + 48 * 60 * 60 * 1000),
       });
 
-      console.log("✅ Created:", downloadLink._id);
 
       // ✅ Step 2: Generate secure link using ID
       const downloadUrl = `${BASE_URL}/downloads/${downloadLink._id}`;
@@ -179,10 +174,8 @@ export const stripeWebhook = async (req: Request, res: Response) => {
         plan
       );
 
-      console.log("✅ Download link saved:", downloadLink._id);
-      console.log("🔗 Secure URL:", downloadUrl);
       console.log(`📧 Email sent to: ${user.email}`);
-
+      
     } catch (err: any) {
       console.error("❌ Webhook processing error:", err.message);
       return res.status(200).json({ received: true, error: err.message });
