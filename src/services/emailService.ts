@@ -7,7 +7,7 @@ export const sendResetEmail = async (email: string, token: string) => {
 
     const data = {
       sender: {
-        name: "Temperate App",
+        name: "Code CartHub",
         email: process.env.EMAIL_SENDER
       },
       to: [
@@ -50,7 +50,7 @@ export const sendDownloadLinkEmail = async (email: string, downloadUrl: string, 
   try {
     const data = {
       sender: {
-        name: "Temperate App",
+        name: "Code CartHub",
         email: process.env.EMAIL_SENDER
       },
       to: [{ email }],
