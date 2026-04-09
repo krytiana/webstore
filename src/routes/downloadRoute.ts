@@ -36,7 +36,7 @@ router.get("/:id", async (req, res) => {
     link.successfulDownloads += 1;
     await link.save();
 
-    console.log("⬇️ Secure download:", filePath);
+  
 
     if (!fs.existsSync(filePath)) {
         return res.status(404).send("File not found on server");

@@ -25,9 +25,6 @@ const authenticateToken = (
   next: NextFunction
 ) => {
 
-  // Debug (optional – remove in production)
-  console.log("HEADERS:", req.headers.authorization);
-  console.log("COOKIES:", req.cookies);
 
   // ✅ Get token from header OR cookie
   const token =

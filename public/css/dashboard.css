@@ -42,3 +42,23 @@ body {
 .blocked {
   color: orange;
 }
+
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.logout-btn {
+  background: #ff4d4d;
+  color: #fff;
+  padding: 8px 14px;
+  text-decoration: none;
+  border-radius: 6px;
+  font-size: 14px;
+  align-self: center;
+}
+
+.logout-btn:hover {
+  background: #e60000;
+}

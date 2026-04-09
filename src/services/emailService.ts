@@ -36,7 +36,7 @@ export const sendResetEmail = async (email: string, token: string) => {
       }
     );
 
-    console.log("✅ Reset email sent:", response.data);
+
 
   } catch (error) {
     console.error("❌ Error sending email:", error);
@@ -69,7 +69,7 @@ export const sendDownloadLinkEmail = async (email: string, downloadUrl: string, 
       { headers: { "api-key": process.env.BREVO_API_KEY, "Content-Type": "application/json" } }
     );
 
-    console.log("✅ Download link email sent:", response.data);
+    
   } catch (error) {
     console.error("❌ Error sending download link email:", error);
   }
