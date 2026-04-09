@@ -54,7 +54,7 @@ app.use("/downloads", downloadRoute);
 app.use("/dashboard", dashboardRoutes);
 
 app.get("/reset-password/:token", (req, res) => {
-    res.sendFile(path.join(__dirname, "public", "reset-password.html"));
+    res.sendFile(path.join( "public", "reset-password.html"));
 });
 
 // Handle 404 errors (keep this last)
