@@ -3,8 +3,10 @@ import express, { Application } from "express";
 import dotenv from "dotenv";
 dotenv.config();
 
+
 import connectDB from "./config/db";
 
+import cookieParser from "cookie-parser";
 import pageRoutes from "./routes/pagesRoute";
 import productRoutes from "./routes/productsRoute";
 import pricingRoutes from "./routes/pricingRoute";
@@ -31,6 +33,7 @@ app.use("/api/payments", stripeRoute);
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static("public"));
+app.use(cookieParser());
 
 // ------------------------
 // Other routes

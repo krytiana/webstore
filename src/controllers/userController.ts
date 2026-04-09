@@ -58,6 +58,14 @@ export const handleSignUp = async (req: Request, res: Response) => {
     newUser.refreshToken = refreshToken;
     await newUser.save();
 
+    // after generating token
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "lax",
+    });
+
     res.status(201).json({
       success: true,
       message: "Sign-up successful",
@@ -85,9 +93,10 @@ export const handleSignIn = async (req: Request, res: Response) => {
     });
 
     if (!user) {
-      return res
-        .status(400)
-        .json({ success: false, message: "User not found." });
+      return res.status(400).json({
+        success: false,
+        message: "User not found.",
+      });
     }
 
     const isPasswordMatch = await bcrypt.compare(
@@ -96,27 +105,43 @@ export const handleSignIn = async (req: Request, res: Response) => {
     );
 
     if (!isPasswordMatch) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Incorrect password." });
+      return res.status(400).json({
+        success: false,
+        message: "Incorrect password.",
+      });
     }
 
+    // ✅ Access Token
     const token = jwt.sign(
-      { userId: user._id, email: user.email, username: user.username },
+      {
+        userId: user._id,
+        email: user.email,
+        username: user.username,
+      },
       process.env.JWT_SECRET as string,
       { expiresIn: "3d" }
     );
 
+    // ✅ Refresh Token
     const refreshToken = generateRefreshToken(user);
     user.refreshToken = refreshToken;
     await user.save();
 
+    // ✅ NEW: Set cookie (for dashboard/browser routes)
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: false, // ⚠️ change to true in production (HTTPS)
+      sameSite: "lax",
+    });
+
+    // ✅ KEEP: JSON response (for APIs)
     res.status(200).json({
       success: true,
       message: "Sign-in successful",
       token,
       refreshToken,
     });
+
   } catch (error) {
     console.error("Error during sign in:", error);
     res.status(500).json({

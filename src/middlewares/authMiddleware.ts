@@ -19,19 +19,51 @@ export interface RequestWithUser extends Request {
 }
 
 // Middleware to authenticate access token
-const authenticateToken = (req: RequestWithUser, res: Response, next: NextFunction) => {
-  const token = req.header('Authorization')?.split(' ')[1];
+const authenticateToken = (
+  req: RequestWithUser,
+  res: Response,
+  next: NextFunction
+) => {
 
+  // Debug (optional – remove in production)
+  console.log("HEADERS:", req.headers.authorization);
+  console.log("COOKIES:", req.cookies);
+
+  // ✅ Get token from header OR cookie
+  const token =
+    req.header("Authorization")?.split(" ")[1] ||
+    req.cookies?.token;
+
+  // ✅ Detect request type
+  const isApiRequest = req.originalUrl.startsWith("/api");
+
+  // ❌ No token
   if (!token) {
-    return res.status(401).json({ message: 'Access Denied. No token provided.' });
+    if (isApiRequest) {
+      return res.status(401).json({
+        message: "Access Denied. No token provided.",
+      });
+    } else {
+      return res.redirect("/register");
+    }
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as CustomJwtPayload;
+    const decoded = jwt.verify(
+      token,
+      process.env.JWT_SECRET as string
+    ) as CustomJwtPayload;
+
     req.user = decoded;
     next();
   } catch (err) {
-    res.status(403).json({ message: 'Invalid Token' });
+    if (isApiRequest) {
+      return res.status(403).json({
+        message: "Invalid Token",
+      });
+    } else {
+      return res.redirect("/login");
+    }
   }
 };
 
