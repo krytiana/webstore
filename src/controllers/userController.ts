@@ -62,7 +62,7 @@ export const handleSignUp = async (req: Request, res: Response) => {
 
     res.cookie("token", token, {
       httpOnly: true,
-      secure: true, // ⚠️ change to true in production (HTTPS)
+      secure: false, // ⚠️ change to true in production (HTTPS)
       sameSite: "lax",
     });
 
@@ -130,7 +130,7 @@ export const handleSignIn = async (req: Request, res: Response) => {
     // ✅ NEW: Set cookie (for dashboard/browser routes)
     res.cookie("token", token, {
       httpOnly: true,
-      secure: true, // ⚠️ change to true in production (HTTPS)
+      secure: false, // ⚠️ change to true in production (HTTPS)
       sameSite: "lax",
     });
 
