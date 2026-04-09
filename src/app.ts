@@ -19,6 +19,7 @@ import downloadRoute from "./routes/downloadRoute";
 import dashboardRoutes from "./routes/dashboardRoute";
 
 import Product from "./models/ProductModel";
+import path from "path";
 
 const app: Application = express();
 
@@ -51,6 +52,15 @@ app.use("/pricing", pricingRoutes);
 app.use("/admin", adminRoutes);
 app.use("/downloads", downloadRoute);
 app.use("/dashboard", dashboardRoutes);
+
+app.get("/reset-password/:token", (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "reset-password.html"));
+});
+
+// Handle 404 errors (keep this last)
+app.use((req, res) => {
+    res.status(404).send("Page not found");
+});
 // ------------------------
 // Connect DB
 // ------------------------
