@@ -53,8 +53,11 @@ app.use("/admin", adminRoutes);
 app.use("/downloads", downloadRoute);
 app.use("/dashboard", dashboardRoutes);
 
+
 app.get("/reset-password/:token", (req, res) => {
-    res.sendFile(path.join( "public", "reset-password.html"));
+    const token = req.params.token;
+
+    res.render("reset-password", { token });
 });
 
 // Handle 404 errors (keep this last)
