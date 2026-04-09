@@ -4,6 +4,9 @@
   <link rel="stylesheet" href="/css/dashboard.css">
 
   <section class="dashboard">
+    <div class="top-bar">
+      <a href="/api/auth/logout" class="logout-btn">Logout</a>
+    </div>
     <h1>Welcome, <%= user.username || user.email %></h1>
     <h4>Your Downloads</h4>
 
