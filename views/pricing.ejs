@@ -1,22 +1,74 @@
 <%- include("partials/header") %>
 <link rel="stylesheet" href="/css/pricing.css" />
+<link rel="stylesheet" href="/css/colors.css" />
 
-<section class="pricing">
-  <h1>Our Packages</h1>
+<section class="pricing container">
+
+  <h1>💰 Simple, Flexible Pricing</h1>
+  <p class="subtitle">
+    Choose the plan that fits your needs. Whether you're a developer, beginner, or business owner — we've got you covered.
+  </p>
+
   <div class="pricing-grid">
     <% packages.forEach(pkg => { %>
-      <div class="pricing-card">
-        <h2><%= pkg.name %></h2>
-        <p class="price">$<%= pkg.price %></p>
-        <ul>
+      <div class="pricing-card <%= pkg.popular ? 'popular' : '' %>">
+
+        <% if (pkg.popular) { %>
+          <div class="badge">Most Popular</div>
+        <% } %>
+
+        <h2><%= pkg.name %> Plan</h2>
+        <p class="plan-subtitle"><%= pkg.subtitle %></p>
+
+        <p class="price-range"><%= pkg.priceRange %></p>
+
+        <ul class="features">
           <% pkg.features.forEach(feature => { %>
-            <li><%= feature %></li>
+            <li class="yes">✔ <%= feature %></li>
           <% }) %>
+
+          <% if (pkg.notIncluded) { %>
+            <% pkg.notIncluded.forEach(item => { %>
+              <li class="no">❌ <%= item %></li>
+            <% }) %>
+          <% } %>
         </ul>
-        <a href="/products" class="btn-buy">View Products</a>
+
+        <p class="best-for">👉 Best for: <%= pkg.bestFor %></p>
+
+        <a href="/products" class="btn-buy">Get Started</a>
       </div>
     <% }) %>
   </div>
+
+  <!-- GLOBAL BENEFITS -->
+  <div class="pricing-section">
+    <h2>🚀 What You Get With Every Purchase</h2>
+    <ul class="global-list">
+      <li>Clean, production-ready code</li>
+      <li>Mobile responsive design</li>
+      <li>Secure backend (Node.js + MongoDB)</li>
+      <li>Payment integration (Stripe)</li>
+      <li>Ready-to-deploy project</li>
+    </ul>
+  </div>
+
+  <!-- DELIVERY -->
+  <div class="pricing-section">
+    <h2>🔒 Secure & Instant Delivery</h2>
+    <ul class="global-list">
+      <li>Secure payment via Stripe</li>
+      <li>Instant email delivery after purchase</li>
+      <li>Download link sent to your email</li>
+    </ul>
+  </div>
+
+  <!-- HELP -->
+  <div class="pricing-section">
+    <h2>❓ Need Help Choosing?</h2>
+    <p>Contact us and we’ll help you pick the right plan for your needs.</p>
+  </div>
+
 </section>
 
 <%- include("partials/footer") %>

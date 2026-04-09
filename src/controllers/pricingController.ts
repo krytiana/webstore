@@ -2,40 +2,54 @@
 
 import { Request, Response } from "express";
 
-// Pricing page
 export const getPricing = (req: Request, res: Response) => {
-  // Sample packages
   const packages = [
     {
       name: "Basic",
-      price: 49,
+      priceRange: "$30.99 – $49.99",
+      subtitle: "For Developers & DIY Users",
+      bestFor: "Developers or users comfortable with basic setup",
       features: [
-        "Single-page website",
-        "Responsive design",
-        "Basic SEO"
+        "Full Source Code",
+        "Setup Guide (setup.md)",
+        "Project Documentation (README.md)",
+        "Lifetime Access"
+      ],
+      notIncluded: [
+        "No support included",
+        "No installation help"
       ]
     },
     {
-      name: "Standard",
-      price: 79,
+      name: "Assisted",
+      priceRange: "$50.99 – $149.99",
+      subtitle: "For Beginners",
+      bestFor: "Non-technical users who want guidance",
       features: [
-        "Up to 5 pages",
-        "Responsive design",
-        "SEO optimized",
-        "Contact form"
-      ]
+        "Everything in Basic",
+        "Step-by-step assistance",
+        "Email support (setup help)",
+        "Priority response"
+      ],
+      popular: true
     },
     {
-      name: "Premium",
-      price: 129,
+      name: "Done-for-You",
+      priceRange: "$150.99+",
+      subtitle: "Sit Back & Relax",
+      bestFor: "Business owners who want everything handled",
       features: [
-        "Unlimited pages",
-        "Responsive + SEO + Analytics",
-        "Contact form + Blog",
-        "Custom branding"
+        "Everything in Assisted",
+        "Full installation & deployment",
+        "Environment setup (Render, database, APIs)",
+        "Testing before delivery",
+        "Dedicated support"
       ]
     }
   ];
 
-  res.render("pricing", { title: "Pricing", packages });
+  res.render("pricing", {
+    title: "Pricing",
+    packages
+  });
 };

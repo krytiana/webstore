@@ -14,6 +14,7 @@ import authRoutes from "./routes/authRoute";
 import { refreshToken } from "./middlewares/authMiddleware";
 import stripeRoute from "./routes/stripeRoute";
 import downloadRoute from "./routes/downloadRoute";
+import dashboardRoutes from "./routes/dashboardRoute";
 
 import Product from "./models/ProductModel";
 
@@ -46,7 +47,7 @@ app.use("/products", productRoutes);
 app.use("/pricing", pricingRoutes);
 app.use("/admin", adminRoutes);
 app.use("/downloads", downloadRoute);
-
+app.use("/dashboard", dashboardRoutes);
 // ------------------------
 // Connect DB
 // ------------------------

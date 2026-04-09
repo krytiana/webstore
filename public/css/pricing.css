@@ -1,37 +1,238 @@
-.pricing {
-  padding: 3rem;
-  text-align: center;
+.container {
+  max-width: 1200px;
+  margin: 50px auto;
+  padding: 0 20px;
 }
 
+/* ======================
+   HEADER
+====================== */
+.pricing-header {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.pricing-header h1 {
+  font-size: 42px;
+  font-weight: 800;
+  background: linear-gradient(90deg, #ffffff, #8ea2ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.pricing-header p {
+  color: #cfd3ff;
+}
+
+/* ======================
+   GRID
+====================== */
 .pricing-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 2rem;
-  margin-top: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 30px;
 }
 
+/* ======================
+   CARD
+====================== */
 .pricing-card {
-  border: 1px solid #ddd;
-  padding: 1.5rem;
-  border-radius: 8px;
-  transition: 0.3s;
+  background: linear-gradient(
+    180deg,
+    rgba(255,255,255,.06),
+    rgba(255,255,255,.02)
+  );
+  border-radius: 24px;
+  padding: 30px;
+  text-align: center;
+  border: 1px solid rgba(255,255,255,.08);
+  box-shadow: 0 25px 70px rgba(0,0,0,.8);
+  transition: all 0.4s ease;
+  position: relative;
 }
 
 .pricing-card:hover {
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  transform: translateY(-12px) scale(1.03);
+  box-shadow:
+    0 35px 90px rgba(0,0,0,.9),
+    0 0 40px rgba(120,100,255,.35);
 }
 
-.pricing-card .price {
-  font-size: 1.5rem;
-  margin: 1rem 0;
+.pricing-card h3 {
+  color: #ffffff;
 }
 
-.pricing-card a.btn-buy {
+/* ======================
+   POPULAR PLAN
+====================== */
+.popular {
+  border: 1px solid rgba(120,120,255,.4);
+  box-shadow: 0 0 50px rgba(120,100,255,.4);
+}
+
+.badge {
+  position: absolute;
+  top: -12px;
+  right: 20px;
+  background: linear-gradient(90deg, #4f6cff, #7b3cff);
+  color: #fff;
+  padding: 6px 12px;
+  font-size: 0.75rem;
+  border-radius: 20px;
+}
+
+/* ======================
+   PRICE
+====================== */
+.price,
+.price-range {
+  font-size: 2.2rem;
+  font-weight: 800;
+  margin: 20px 0;
+  background: linear-gradient(90deg, #ffffff, #8ea2ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ======================
+   TEXT
+====================== */
+.pricing-card p,
+.pricing-card li {
+  color: #cfd3ff;
+}
+
+.plan-subtitle {
+  font-size: 0.95rem;
+  color: #9aa0ff;
+  margin-bottom: 10px;
+}
+
+.best-for {
+  margin: 15px 0;
+  font-size: 0.9rem;
+  color: #b8bcff;
+}
+
+/* ======================
+   FEATURES
+====================== */
+.pricing-card ul {
+  list-style: none;
+  margin: 20px 0;
+  padding: 0;
+}
+
+.pricing-card li {
+  margin: 10px 0;
+}
+
+.features .yes {
+  color: #22c55e;
+}
+
+.features .no {
+  color: #ef4444;
+}
+
+/* ======================
+   BUTTON (USE GLOBAL STYLE)
+====================== */
+.btn-buy {
   display: inline-block;
-  margin-top: 1rem;
-  text-decoration: none;
-  color: white;
-  background: #111;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
+  margin-top: 15px;
+}
+
+/* ======================
+   BENEFITS
+====================== */
+.pricing-benefits {
+  margin-top: 80px;
+  text-align: center;
+}
+
+.benefits-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+/* ======================
+   STEPS
+====================== */
+.pricing-steps {
+  margin-top: 80px;
+  text-align: center;
+}
+
+.steps-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+}
+
+.step {
+  background: rgba(255,255,255,0.04);
+  padding: 25px;
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,.08);
+  width: 250px;
+  transition: 0.3s;
+}
+
+.step:hover {
+  transform: translateY(-8px);
+}
+
+/* ======================
+   TRUST
+====================== */
+.pricing-trust {
+  margin-top: 50px;
+  text-align: center;
+  color: #b8bcff;
+}
+
+.subtitle {
+  text-align: center;
+  margin-bottom: 40px;
+  color: #cfd3ff;
+}
+
+/* ======================
+   SECTION GLOW EFFECT
+====================== */
+.pricing-section {
+  margin-top: 80px;
+  text-align: center;
+  position: relative;
+}
+
+.pricing-section::before {
+  content: "";
+  position: absolute;
+  width: 80%;
+  height: 400px;
+  background: radial-gradient(circle, rgba(120,100,255,.2), transparent 70%);
+  top: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  filter: blur(80px);
+  z-index: -1;
+}
+
+/* ======================
+   GLOBAL LIST
+====================== */
+.global-list {
+  list-style: none;
+  margin-top: 20px;
+  padding: 0;
+}
+
+.global-list li {
+  margin: 10px 0;
+  color: #cfd3ff;
 }

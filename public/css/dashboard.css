@@ -1,0 +1,44 @@
+body {
+  background: #0f1020;
+  color: #fff;
+  font-family: Arial, sans-serif;
+}
+
+.dashboard {
+  max-width: 700px;
+  margin: 60px auto;
+}
+
+.card {
+  background: #1c1d2e;
+  padding: 25px;
+  margin-bottom: 20px;
+  border-radius: 10px;
+}
+
+.card img {
+  display: block;
+  margin-bottom: 15px;
+}
+
+.download-btn {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 10px 20px;
+  background: #00c896;
+  color: #000;
+  text-decoration: none;
+  border-radius: 5px;
+}
+
+.active {
+  color: #00ff99;
+}
+
+.expired {
+  color: red;
+}
+
+.blocked {
+  color: orange;
+}

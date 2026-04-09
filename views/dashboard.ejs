@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>User Dashboard</title>
+  <link rel="stylesheet" href="/css/dashboard.css">
+  <style>
+    body { background: #0f1020; color: #fff; font-family: Arial, sans-serif; }
+    .dashboard { max-width: 900px; margin: 60px auto; padding: 0 20px; }
+    .card { background: #1c1d2e; padding: 25px; margin-bottom: 20px; border-radius: 10px; }
+    .card img { display: block; margin-bottom: 15px; max-width: 150px; }
+    .download-btn { display: inline-block; margin-top: 10px; padding: 10px 20px; background: #00c896; color: #000; text-decoration: none; border-radius: 5px; }
+    .active { color: #00ff99; }
+    .expired { color: red; }
+    .blocked { color: orange; }
+    #feedback { margin-bottom: 20px; display: none; padding: 10px; border-radius: 5px; }
+    #feedback.success { background: #00c896; color: #000; }
+    #feedback.error { background: red; color: #fff; }
+  </style>
+</head>
+<body>
+  <section class="dashboard">
+    <h1>Welcome, <span id="username">User</span></h1>
+    <div id="feedback"></div>
+
+    <div id="downloads-container">
+      <p>Loading your downloads...</p>
+    </div>
+  </section>
+
+  <script>
+    const showFeedback = (message, type) => {
+      const feedback = document.getElementById('feedback');
+      feedback.textContent = message;
+      feedback.className = type;
+      feedback.style.display = 'block';
+      setTimeout(() => feedback.style.display = 'none', 5000);
+    };
+
+    const token = localStorage.getItem('token');
+    if (!token) {
+      window.location.href = '/register';
+    }
+
+    // Fetch current user
+    fetch('/api/auth/me', { headers: { Authorization: 'Bearer ' + token } })
+      .then(res => {
+        if (!res.ok) throw new Error('Invalid token');
+        return res.json();
+      })
+      .then(user => {
+        document.getElementById('username').textContent = user.name || user.username || 'User';
+        // Fetch downloads for this user
+        return fetch('/api/downloads', { headers: { Authorization: 'Bearer ' + token } });
+      })
+      .then(res => res.json())
+      .then(data => {
+        const container = document.getElementById('downloads-container');
+        container.innerHTML = '';
+
+        if (!data.downloads || data.downloads.length === 0) {
+          container.innerHTML = '<p>No downloads available.</p>';
+          return;
+        }
+
+        data.downloads.forEach(download => {
+          const isExpired = new Date(download.expiresAt) < new Date();
+          const canDownload = !isExpired && download.successfulDownloads < download.maxDownloads;
+
+          const card = document.createElement('div');
+          card.className = 'card';
+          card.innerHTML = `
+            <h2>${download.product.name}</h2>
+            ${download.product.media?.image ? `<img src="${download.product.media.image}" alt="${download.product.name}">` : ''}
+            <p><strong>Plan:</strong> ${download.plan}</p>
+            <p><strong>Downloads Used:</strong> ${download.successfulDownloads} / ${download.maxDownloads}</p>
+            <p><strong>Expires At:</strong> ${new Date(download.expiresAt).toLocaleString()}</p>
+            <p><strong>Status:</strong> <span class="${isExpired ? 'expired' : 'active'}">${isExpired ? 'Expired' : 'Active'}</span></p>
+            ${canDownload 
+              ? `<a href="${download.url}?token=${token}" class="download-btn">Download File</a>` 
+              : '<p class="blocked">Download not available</p>'
+            }
+          `;
+          container.appendChild(card);
+        });
+      })
+      .catch(err => {
+        console.error(err);
+        showFeedback('Failed to load dashboard. Please sign in again.', 'error');
+        setTimeout(() => window.location.href = '/register', 2000);
+      });
+  </script>
+</body>
+</html>
