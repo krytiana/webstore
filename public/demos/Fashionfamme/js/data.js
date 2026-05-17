@@ -16,7 +16,7 @@
       description:
         "Light blue floral maxi dress || Flattering V-neckline || Flutter sleeves || Flowing silhouette",
       specs:
-        "material:chiffon | color:light blue floral | length:maxi | sleeves:short flutter | neckline:v-neck",
+        "material:chiffon | color:si | length:maxi | sleeves:short flutter | neckline:v-neck",
       rating: 4.5,
       reviews: 124,
       options: {
