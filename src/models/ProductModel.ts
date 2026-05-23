@@ -27,6 +27,8 @@ export interface IProduct extends Document {
   };
 
   isActive: boolean;
+
+  zipFile: string;
 }
 
 const ProductSchema = new Schema<IProduct>(
@@ -62,6 +64,8 @@ const ProductSchema = new Schema<IProduct>(
     },
 
     isActive: { type: Boolean, default: true },
+    
+    zipFile: { type: String, required: true },
   },
   { timestamps: true }
 );

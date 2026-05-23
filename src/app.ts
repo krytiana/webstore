@@ -6,6 +6,9 @@ dotenv.config();
 
 import connectDB from "./config/db";
 
+import session from "express-session";
+
+
 import cookieParser from "cookie-parser";
 import pageRoutes from "./routes/pagesRoute";
 import productRoutes from "./routes/productsRoute";
@@ -17,11 +20,31 @@ import { refreshToken } from "./middlewares/authMiddleware";
 import stripeRoute from "./routes/stripeRoute";
 import downloadRoute from "./routes/downloadRoute";
 import dashboardRoutes from "./routes/dashboardRoute";
+import deployRoute from "./routes/deployRoute";
+import githubRoute from "./routes/githubRoute";
+
 
 import Product from "./models/ProductModel";
 import path from "path";
 
 const app: Application = express();
+const SESSION_SECRET = process.env.SESSION_SECRET;
+if (!SESSION_SECRET) {
+  throw new Error("SESSION_SECRET must be set");
+}
+
+app.use(
+  session({
+    secret: SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      httpOnly: true,
+      secure: false, // Set to true in production with HTTPS
+    }
+
+  })
+);
 
 // ------------------------
 // 🚨 STRIPE ROUTES FIRST
@@ -52,8 +75,8 @@ app.use("/pricing", pricingRoutes);
 app.use("/admin", adminRoutes);
 app.use("/downloads", downloadRoute);
 app.use("/dashboard", dashboardRoutes);
-
-
+app.use("/deploy", deployRoute);
+app.use(githubRoute);
 app.get("/reset-password/:token", (req, res) => {
     const token = req.params.token;
 

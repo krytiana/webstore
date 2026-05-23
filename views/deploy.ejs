@@ -1,0 +1,102 @@
+<%- include("partials/header") %>
+
+<section class="deploy-page">
+
+  <h1>Deploy <%= product.name %></h1>
+
+  <% if (!github) { %>
+
+    <div class="step">
+      <h3>Step 1: Connect GitHub</h3>
+
+      <p>You need a GitHub account before deployment.</p>
+
+      <a
+        href="https://github.com/signup"
+        target="_blank"
+        class="btn"
+      >
+        Create GitHub Account
+      </a>
+
+      <br><br>
+
+      <a
+        href="/auth/github?productId=<%= product._id %>"
+        class="btn primary"
+      >
+        Connect GitHub
+      </a>
+    </div>
+
+  <% } else if (!githubRepoUrl) { %>
+
+    <div class="step success-box">
+
+      <h3>✅ GitHub Connected</h3>
+
+      <p>
+        Connected as:
+        <strong><%= github.username %></strong>
+      </p>
+
+      <% if (github.email) { %>
+        <p><%= github.email %></p>
+      <% } %>
+
+      <hr>
+
+      <h3>Step 2: Create Repository</h3>
+
+      <form action="/auth/github/create-repo" method="POST">
+
+        <input
+          type="text"
+          name="repoName"
+          value="<%= product.name.toLowerCase() %>"
+          required
+        >
+
+        <button
+          type="submit"
+          class="btn primary"
+        >
+          Create Repository
+        </button>
+
+      </form>
+
+    </div>
+
+  <% } else { %>
+
+    <div class="success-box">
+
+      <h3>✅ Repository Created</h3>
+
+      <p>
+        Repository URL:
+      </p>
+
+      <a
+        href="<%= githubRepoUrl %>"
+        target="_blank"
+      >
+        <%= githubRepoUrl %>
+      </a>
+
+      <br><br>
+
+      <form action="/auth/github/deploy" method="POST">
+        <button class="btn primary">
+          Continue to Render →
+        </button>
+      </form>
+
+    </div>
+
+  <% } %>
+
+</section>
+
+<%- include("partials/footer") %>

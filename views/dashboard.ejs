@@ -31,8 +31,13 @@
 
           <% if (canDownload) { %>
             <a href="<%= download.url %>" class="download-btn">Download</a>
+            
           <% } else { %>
             <p class="blocked">Download not available</p>
+
+            <a href="/deploy/<%= download.product._id %>" class="deploy-btn">
+              Deploy Now
+            </a>
           <% } %>
 
         </div>

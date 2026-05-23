@@ -21,7 +21,7 @@ body {
   margin-bottom: 15px;
 }
 
-.download-btn {
+.download-btn, .deploy-btn {
   display: inline-block;
   margin-top: 10px;
   padding: 10px 20px;

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard | FashionFemme</title>
+
+<link rel="stylesheet" href="/css/dashboard.css">
+
+</head>
+
+<body>
+<button class="menu-toggle" id="menuToggle">
+  ☰
+</button>
+<div class="dashboard">
+
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    
+
+    <ul style="margin-top: 50px;">
+      <li data-tab="profile">Profile</li>
+      <li data-tab="cart">Cart</li>
+      <li data-tab="wishlist">Wishlist</li>
+      <li data-tab="orders">Orders</li>
+      <li data-tab="recent">Recently Viewed</li>
+      <li data-tab="address">Shipping Address</li>
+    </ul>
+
+    <p class="logout" id="logoutBtn">Logout</p>
+  </aside>
+
+  <!-- Content -->
+  <main class="content">
+
+    <!-- Profile -->
+    <div id="profileTab" class="tab active">
+      <h2 id="welcomeText">Loading...</h2>
+      <p id="emailText"></p>
+      <a href="/">Back to Store</a>
+    </div>
+
+        <!-- address -->
+    <div id="addressTab" class="tab">
+      <div class="address-header">
+        <h2>My Addresses</h2>
+        <button id="addAddressBtn">+ Add New</button>
+      </div>
+
+      <p id="emptyState" style="display:none;">
+        You have no shipping address yet.
+      </p>
+
+      <div id="addressList" class="address-grid"></div>
+    </div>
+
+    <!-- Cart -->
+    <div id="cartTab" class="tab">
+      <h2>Your Cart</h2>
+      <div id="cartItems">Loading...</div>
+    </div>
+
+    <!-- Wishlist -->
+    <div id="wishlistTab" class="tab">
+      <h2>Your Wishlist</h2>
+      <div id="wishlistItems">Loading...</div>
+    </div>
+
+    <div id="recentTab" class="tab">
+      <h2>Recently Viewed</h2>
+      <div id="recentItems">Loading...</div>
+    </div>
+
+    <!-- Orders -->
+    <div id="ordersTab" class="tab">
+      <h2>Your Orders</h2>
+      <div id="ordersItems">Loading...</div>
+    </div>
+
+  </main>
+
+</div>
+
+<div id="addressModal" class="modal">
+  <div class="modal-content">
+
+    <span id="closeModal">&times;</span>
+
+    <h3>Add New Address</h3>
+
+    <div id="map" style="height: 100px;"></div>
+    <p id="mapInfo">Click map to select location</p>
+
+    <form id="addressForm">
+      <input type="text" id="fullName" placeholder="Full Name" required>
+      <input type="text" id="phone" placeholder="Phone" required>
+      <input type="text" id="addressLine" placeholder="Address" required>
+      <input type="text" id="city" placeholder="City">
+      <input type="text" id="region" placeholder="Region">
+      <input type="text" id="country" placeholder="Country">
+
+      <button type="submit">Save Address</button>
+    </form>
+
+  </div>
+</div>
+
+
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script type="module" src="/js/dashboard.js"></script>
+<script src="/js/address.js"></script>
+</body>
+</html>
