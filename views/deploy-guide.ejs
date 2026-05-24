@@ -16,9 +16,17 @@
 }
 
 .guide-step {
-  margin-bottom: 25px;
-  padding-bottom: 20px;
-  border-bottom: 1px solid #e5e7eb;
+ display: none; /* hide all steps by default */
+}
+
+.guide-step.active {
+  display: block; /* only active step shows */
+}
+
+.step-nav {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
 }
 
 .guide-step:last-child {
@@ -76,13 +84,18 @@
 
   <div class="guide-card">
 
-    <div class="guide-step">
+    <div class="step-nav">
+        <button class="btn" id="prevBtn">⬅ Back</button>
+        <button class="btn primary" id="nextBtn">Next ➡</button>
+    </div>
+
+    <div class="guide-step active">
 
       <h3>Step 1: Create a Render Account</h3>
 
       <p>
         If you don't already have a Render account,
-        create one before continuing.
+        create one before continuing or skip.
       </p>
 
       <div class="guide-actions">
@@ -190,6 +203,165 @@
       </div>
 
     </div>
+    
+    <div class="guide-step">
+
+    <h3>🗄️ MongoDB Setup (Required)</h3>
+
+    <p>
+        Follow these steps carefully to create your MongoDB database and connection string.
+    </p>
+
+    <div class="guide-actions">
+
+        <a href="https://account.mongodb.com/account/register"
+        target="_blank"
+        class="btn primary">
+        🔥 Step 1: Create MongoDB Account
+        </a>
+
+    </div>
+
+    <hr>
+
+    <!-- STEP 1 -->
+    <h4>🔥 Step 1: Create MongoDB Account</h4>
+    <ul>
+        <li>Click Get Started</li>
+        <li>Continue with Google (fastest)</li>
+        <li>Accept privacy terms</li>
+        <li>Skip personalization</li>
+    </ul>
+
+    <hr>
+
+    <!-- STEP 2 -->
+    <h4>🧱 Step 2: Create Cluster</h4>
+    <ul>
+        <li>Click <b>Create Cluster</b></li>
+        <li>Select <b>FREE (M0)</b></li>
+        <li>Click <b>Create Deployment</b></li>
+        <li>Wait 1–3 minutes for setup</li>
+    </ul>
+
+    <hr>
+
+    <!-- STEP 3 -->
+    <h4>👤 Step 3: Create Database User</h4>
+
+    <div class="guide-actions">
+        <a href="https://cloud.mongodb.com/security/database/users"
+        target="_blank"
+        class="btn">
+        Open Database Users
+        </a>
+    </div>
+
+    <ul>
+        <li>Go to Database Access</li>
+        <li>Click Create User</li>
+        <li>Set username (auto or custom)</li>
+        <li>Set password (SAVE IT)</li>
+        <li>Click Create User</li>
+    </ul>
+
+    <hr>
+
+    <!-- STEP 4 -->
+    <h4>🌐 Step 4: Network Access</h4>
+
+    <div class="guide-actions">
+        <a href="https://cloud.mongodb.com/security/networking"
+        target="_blank"
+        class="btn">
+        Open Network Settings
+        </a>
+    </div>
+
+    <ul>
+        <li>Click Add IP Address</li>
+        <li>Select: <b>Allow Access From Anywhere (0.0.0.0/0)</b></li>
+    </ul>
+
+    <hr>
+
+    <!-- STEP 5 -->
+    <h4>🗃️ Step 5: Create Database</h4>
+
+    <ul>
+        <li>Open your cluster</li>
+        <li>Click Browse Collections</li>
+        <li>Click Create Database</li>
+        <li>Database Name: <b>lazyshop</b></li>
+        <li>Collection Name: <b>users</b></li>
+        <li>Click Create</li>
+    </ul>
+
+    <hr>
+
+    <!-- STEP 6 -->
+    <h4>🔌 Step 6: Get Connection String</h4>
+
+    <ul>
+        <li>Click <b>Connect</b></li>
+        <li>Select <b>Drivers</b></li>
+        <li>Choose <b>Node.js</b></li>
+        <li>Leave version default</li>
+    </ul>
+
+    <div class="code-box">
+        mongodb+srv://codecarthub_db_user:&lt;db_password&gt;@cluster0.i9lxxj7.mongodb.net/?appName=Cluster0
+    </div>
+
+    <hr>
+
+    <!-- STEP 7 -->
+    <h4>🔐 Step 7: Fix Password in URL</h4>
+
+    <ul>
+        <li>Replace <b>&lt;db_password&gt;</b> with your actual password</li>
+    </ul>
+
+    <div class="code-box">
+        mongodb+srv://codecarthub_db_user:MyStrongPassword123@cluster0.i9lxxj7.mongodb.net/lazyshop?retryWrites=true&w=majority
+    </div>
+
+    <hr>
+
+    <!-- WARNING -->
+    <div class="success-banner">
+
+        ⚠️ <b>IMPORTANT</b><br><br>
+
+        Never share your MongoDB password publicly.<br>
+        Treat this like a secret key.
+
+    </div>
+
+    </div>
+
+    <div class="guide-step">
+
+  <h3>Step 5.2: Add Environment Variables</h3>
+
+  <p>
+    In Render, scroll to <strong>Environment Variables</strong> and add the following:
+  </p>
+
+  <div class="code-box">
+    MONGODB_URI = your-mongodb-connection-string<br>
+    ADMIN_EMAIL = your-admin-email<br>
+    ADMIN_PASSWORD = your-secure-password<br>
+    JWT_SECRET = any-long-random-string
+  </div>
+
+  <p>
+    ⚠️ Without these, your application will not start.
+  </p>
+
+    </div>
+
+
 
     <div class="guide-step">
 
@@ -226,7 +398,41 @@
     </div>
 
   </div>
+<script>
+  const steps = document.querySelectorAll(".guide-step");
+  const nextBtn = document.getElementById("nextBtn");
+  const prevBtn = document.getElementById("prevBtn");
 
+  let currentStep = 0;
+
+  function showStep(index) {
+    steps.forEach((step, i) => {
+      step.classList.toggle("active", i === index);
+    });
+
+    prevBtn.style.display = index === 0 ? "none" : "inline-block";
+    nextBtn.textContent = index === steps.length - 1 ? "Finish 🎉" : "Next ➡";
+  }
+
+  nextBtn.addEventListener("click", () => {
+    if (currentStep < steps.length - 1) {
+      currentStep++;
+      showStep(currentStep);
+    } else {
+      alert("Deployment guide completed 🎉");
+    }
+  });
+
+  prevBtn.addEventListener("click", () => {
+    if (currentStep > 0) {
+      currentStep--;
+      showStep(currentStep);
+    }
+  });
+
+  // init
+  showStep(currentStep);
+</script>
 </section>
 
 <%- include("partials/footer") %>
