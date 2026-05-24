@@ -26,6 +26,8 @@ export interface IProduct extends Document {
     demoUrl?: string;
   };
 
+  templateRepoUrl: string;
+
   isActive: boolean;
 
   zipFile: string;
@@ -62,6 +64,8 @@ const ProductSchema = new Schema<IProduct>(
       image: { type: String, required: true },
       demoUrl: { type: String },
     },
+
+    templateRepoUrl: { type: String, required: true },
 
     isActive: { type: Boolean, default: true },
     

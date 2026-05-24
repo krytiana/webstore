@@ -3,9 +3,13 @@ import { Request, Response } from "express";
 import axios from "axios";
 import "express-session";
 import path from "path";
+import simpleGit from "simple-git";
+import os from "os";
+import fs from "fs";
 import Product from "../models/ProductModel";
+import { fstat } from "fs";
 
-import { pushTemplateToGitHub } from "../utils/pushTemplateToGitHub";
+
 
 declare module "express-session" {
   interface SessionData {
@@ -14,10 +18,14 @@ declare module "express-session" {
       username: string;
       email?: string;
       accessToken: string;
-
     };
+
     currentProductId?: string;
+
     githubRepoUrl?: string;
+    githubRepoName?: string;
+
+    sourceCodePushed?: boolean;
   }
 }
 
@@ -152,6 +160,7 @@ export const createRepo = async (req: Request, res: Response) => {
 
     if (exists) {
       req.session.githubRepoUrl = repoUrl;
+      req.session.githubRepoName = repoName;
 
       console.log("Repo already exists, reusing it");
 
@@ -163,7 +172,7 @@ export const createRepo = async (req: Request, res: Response) => {
       "https://api.github.com/user/repos",
       {
         name: repoName,
-        private: false
+        private: true
       },
       {
         headers: {
@@ -174,7 +183,7 @@ export const createRepo = async (req: Request, res: Response) => {
     );
 
     req.session.githubRepoUrl = repoUrl;
-
+    req.session.githubRepoName = repoName;
     console.log("Repo created:", repoUrl);
 
     return res.redirect(`/deploy/${req.session.currentProductId}`);
@@ -191,46 +200,146 @@ export const createRepo = async (req: Request, res: Response) => {
   }
 };
 
-// deploy to repo
-export const deployToRepo = async (req: Request, res: Response) => {
+export const deployToRepo = async (
+  req: Request,
+  res: Response
+) => {
   try {
-    const github = req.session.github;
-    const repoUrl = req.session.githubRepoUrl;
-    const productId = req.session.currentProductId;
 
-    if (!github || !repoUrl || !productId) {
-      return res.redirect("/dashboard");
+    const productId =
+      req.session.currentProductId;
+
+    if (!productId) {
+      return res.status(400).send(
+        "No product selected"
+      );
     }
 
-    // ✅ LOAD PRODUCT FROM DATABASE
+    const product =
+      await Product.findById(productId);
+
+    if (!product) {
+      return res.status(404).send(
+        "Product not found"
+      );
+    }
+
+    const {
+      username,
+      accessToken
+    } = req.session.github!;
+
+    const repoName =
+      req.session.githubRepoName!;
+
+    const tempDir = path.join(
+      os.tmpdir(),
+      `clone-test-${Date.now()}`
+    );
+
+    const git = simpleGit();
+
+    await git.clone(
+      `https://${process.env.GITHUB_PAT}@github.com/krytiana/megamall.git`,
+      tempDir
+    );
+
+    const repoGit = simpleGit(tempDir);
+
+    // Remove template repo remote
+    await repoGit.removeRemote("origin");
+
+    // Add customer repo remote
+    await repoGit.addRemote(
+      "origin",
+      `https://${accessToken}@github.com/${username}/${repoName}.git`
+    );
+
+    await repoGit.push(
+      "origin",
+      "main",
+      { "--force": null }
+    );
+
+    req.session.sourceCodePushed = true;
+
+    return res.redirect(
+      `/deploy/${productId}`
+    );
+
+  } catch (error: any) {
+
+    console.error(error);
+
+    return res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+};
+
+// Deactivated function, no more used, but keeping it for reference in case we want to re-enable Render deployment in the future
+// it route is removed from routes.ts and the button to trigger it is removed from the frontend, 
+// so it won't be accessible by users, but we keep the code here for reference in case we want to re-enable it in the future
+export const deployToRender = async (req: Request, res: Response) => {
+  try {
+    const productId = req.session.currentProductId;
+
+    if (!productId) {
+      return res.status(400).send("No product selected");
+    }
+
     const product = await Product.findById(productId);
 
     if (!product) {
       return res.status(404).send("Product not found");
     }
 
-    const repoName = repoUrl.split("/").pop()!;
+    const repoName = req.session.githubRepoName;
+    const github = req.session.github;
 
-    const zipPath = path.join(
-      process.cwd(),
-      "storage/downloads",
-      product.zipFile
-    );
+    if (!repoName || !github) {
+      return res.status(400).send("Missing GitHub session data");
+    }
 
-    await pushTemplateToGitHub(
-      zipPath,
-      repoName,
-      github.username,
-      github.accessToken
+    const repoFullName = `${github.username}/${repoName}`;
+
+    const response = await axios.post(
+      "https://api.render.com/v1/services",
+      {
+        type: "web_service",
+        name: repoName,
+        repo: repoFullName,
+        branch: "main",
+        runtime: "node",
+        buildCommand: "npm install && npm run build",
+        startCommand: "npm start"
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.RENDER_API_KEY}`,
+          "Content-Type": "application/json"
+        }
+      }
     );
 
     return res.json({
       success: true,
-      message: "Template deployed to GitHub"
+      renderServiceId: response.data.id,
+      message: "Render deployment started"
     });
 
-  } catch (error) {
-    console.error(error);
-    return res.status(500).send("Deployment failed");
+  } catch (error: any) {
+    console.error(error.response?.data || error);
+
+    console.error(
+      "RENDER ERROR:",
+      error.response?.data || error
+    );
+
+    return res.status(500).json({
+      success: false,
+      error: error.response?.data || error.message
+    });
   }
 };

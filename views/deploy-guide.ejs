@@ -1,0 +1,232 @@
+<%- include("partials/header") %>
+
+<style>
+.guide-page {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 20px;
+}
+
+.guide-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 20px;
+}
+
+.guide-step {
+  margin-bottom: 25px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.guide-step:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.guide-step h3 {
+  margin-bottom: 10px;
+}
+
+.guide-step p {
+  margin-bottom: 10px;
+  line-height: 1.6;
+}
+
+.guide-actions {
+  margin-top: 10px;
+}
+
+.guide-actions .btn {
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
+
+.code-box {
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 12px;
+  margin-top: 10px;
+  font-family: monospace;
+  word-break: break-all;
+}
+
+.success-banner {
+  background: #ecfdf5;
+  border: 1px solid #10b981;
+  color: #065f46;
+  border-radius: 10px;
+  padding: 15px;
+  margin-bottom: 20px;
+}
+</style>
+
+<section class="guide-page">
+
+  <h1><%= product.name %> Deployment Guide</h1>
+
+  <div class="success-banner">
+    ✅ Your template source code has been uploaded successfully.
+    You can now deploy it on Render.
+  </div>
+
+  <div class="guide-card">
+
+    <div class="guide-step">
+
+      <h3>Step 1: Create a Render Account</h3>
+
+      <p>
+        If you don't already have a Render account,
+        create one before continuing.
+      </p>
+
+      <div class="guide-actions">
+
+        <a
+          href="https://render.com/register"
+          target="_blank"
+          class="btn primary"
+        >
+          Create Render Account
+        </a>
+
+      </div>
+
+    </div>
+
+    <div class="guide-step">
+
+      <h3>Step 2: Open Render Dashboard</h3>
+
+      <p>
+        Sign in and open your Render dashboard.
+      </p>
+
+      <div class="guide-actions">
+
+        <a
+          href="https://dashboard.render.com"
+          target="_blank"
+          class="btn"
+        >
+          Open Render Dashboard
+        </a>
+
+      </div>
+
+    </div>
+
+    <div class="guide-step">
+
+      <h3>Step 3: Create a New Web Service</h3>
+
+      <p>
+        In Render:
+      </p>
+
+      <ol>
+        <li>Click <strong>New +</strong></li>
+        <li>Select <strong>Web Service</strong></li>
+        <li>Connect GitHub if prompted</li>
+      </ol>
+
+    </div>
+
+    <div class="guide-step">
+
+      <h3>Step 4: Select Your Repository</h3>
+
+      <p>
+        Choose the repository created during deployment.
+      </p>
+
+      <% if (githubRepoUrl) { %>
+
+        <div class="code-box">
+          <%= githubRepoUrl %>
+        </div>
+
+        <div class="guide-actions">
+
+          <a
+            href="<%= githubRepoUrl %>"
+            target="_blank"
+            class="btn"
+          >
+            View Repository
+          </a>
+
+        </div>
+
+      <% } %>
+
+    </div>
+
+    <div class="guide-step">
+
+      <h3>Step 5: Configure Build Settings</h3>
+
+      <p>
+        Render will usually detect Node.js automatically.
+      </p>
+
+      <p>
+        If Render asks for commands, use:
+      </p>
+
+      <div class="code-box">
+        Build Command:<br>
+        npm install && npm run build
+      </div>
+
+      <div class="code-box">
+        Start Command:<br>
+        npm start
+      </div>
+
+    </div>
+
+    <div class="guide-step">
+
+      <h3>Step 6: Deploy</h3>
+
+      <p>
+        Click <strong>Create Web Service</strong>.
+      </p>
+
+      <p>
+        Render will build and deploy your application.
+        This can take a few minutes.
+      </p>
+
+    </div>
+
+    <div class="guide-step">
+
+      <h3>🎉 Step 7: Go Live</h3>
+
+      <p>
+        After deployment completes,
+        Render will provide a public URL.
+      </p>
+
+      <div class="code-box">
+        https://your-app.onrender.com
+      </div>
+
+      <p>
+        Your application is now live.
+      </p>
+
+    </div>
+
+  </div>
+
+</section>
+
+<%- include("partials/footer") %>

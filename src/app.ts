@@ -22,6 +22,7 @@ import downloadRoute from "./routes/downloadRoute";
 import dashboardRoutes from "./routes/dashboardRoute";
 import deployRoute from "./routes/deployRoute";
 import githubRoute from "./routes/githubRoute";
+import deployGuideRoute from "./routes/deployGuideRoute";
 
 
 import Product from "./models/ProductModel";
@@ -77,6 +78,7 @@ app.use("/downloads", downloadRoute);
 app.use("/dashboard", dashboardRoutes);
 app.use("/deploy", deployRoute);
 app.use(githubRoute);
+app.use(deployGuideRoute);
 app.get("/reset-password/:token", (req, res) => {
     const token = req.params.token;
 

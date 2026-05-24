@@ -4,7 +4,8 @@ import {
   githubLogin,
   githubCallback,
   createRepo,
-  deployToRepo
+  deployToRepo,
+  deployToRender
 } from "../controllers/githubController";
 
 const router = Router();
@@ -18,5 +19,8 @@ router.get("/auth/github/callback", githubCallback);
 router.post("/auth/github/create-repo", createRepo);
 
 router.post("/auth/github/deploy", deployToRepo);
+
+//router.post("/render/deploy", deployToRender); // Deactivated route, no more used.
+
 
 export default router;

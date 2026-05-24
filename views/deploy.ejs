@@ -1,37 +1,135 @@
 <%- include("partials/header") %>
 
+<style>
+.deploy-page {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 20px;
+}
+
+.progress-box,
+.success-box,
+.step {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.progress-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.progress-item {
+  font-size: 16px;
+}
+
+.repo-link {
+  display: inline-block;
+  margin: 10px 0;
+  word-break: break-all;
+}
+
+.deploy-actions {
+  margin-top: 20px;
+}
+
+.deploy-actions .btn {
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
+
+input[name="repoName"] {
+  width: 100%;
+  max-width: 400px;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+}
+
+hr {
+  margin: 20px 0;
+  border: none;
+  border-top: 1px solid #e5e7eb;
+}
+</style>
+
 <section class="deploy-page">
 
   <h1>Deploy <%= product.name %></h1>
 
+  <!-- Progress -->
+  <div class="progress-box">
+
+    <h3>Deployment Progress</h3>
+
+    <div class="progress-list">
+
+      <div class="progress-item">
+        <%= github ? "✅" : "⬜" %>
+        GitHub Connected
+      </div>
+
+      <div class="progress-item">
+        <%= githubRepoUrl ? "✅" : "⬜" %>
+        Repository Created
+      </div>
+
+      <div class="progress-item">
+        <%= sourceCodePushed ? "✅" : "⬜" %>
+        Source Code Uploaded
+      </div>
+
+      <div class="progress-item">
+        <%= sourceCodePushed ? "➡️" : "⬜" %>
+        Deployment Guide
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- STEP 1 -->
   <% if (!github) { %>
 
     <div class="step">
+
       <h3>Step 1: Connect GitHub</h3>
 
-      <p>You need a GitHub account before deployment.</p>
+      <p>
+        Connect your GitHub account so we can create
+        a repository and upload your purchased template.
+      </p>
 
-      <a
-        href="https://github.com/signup"
-        target="_blank"
-        class="btn"
-      >
-        Create GitHub Account
-      </a>
+      <div class="deploy-actions">
 
-      <br><br>
+        <a
+          href="https://github.com/signup"
+          target="_blank"
+          class="btn"
+        >
+          Create GitHub Account
+        </a>
 
-      <a
-        href="/auth/github?productId=<%= product._id %>"
-        class="btn primary"
-      >
-        Connect GitHub
-      </a>
+        <a
+          href="/auth/github?productId=<%= product._id %>"
+          class="btn primary"
+        >
+          Connect GitHub
+        </a>
+
+      </div>
+
     </div>
 
+  <!-- STEP 2 -->
   <% } else if (!githubRepoUrl) { %>
 
-    <div class="step success-box">
+    <div class="success-box">
 
       <h3>✅ GitHub Connected</h3>
 
@@ -48,7 +146,15 @@
 
       <h3>Step 2: Create Repository</h3>
 
-      <form action="/auth/github/create-repo" method="POST">
+      <p>
+        Create a private GitHub repository that
+        will contain your template source code.
+      </p>
+
+      <form
+        action="/auth/github/create-repo"
+        method="POST"
+      >
 
         <input
           type="text"
@@ -56,6 +162,8 @@
           value="<%= product.name.toLowerCase() %>"
           required
         >
+
+        <br>
 
         <button
           type="submit"
@@ -68,30 +176,95 @@
 
     </div>
 
-  <% } else { %>
+  <!-- STEP 3 -->
+  <% } else if (!sourceCodePushed) { %>
 
     <div class="success-box">
 
       <h3>✅ Repository Created</h3>
 
       <p>
-        Repository URL:
+        Repository Owner:
+        <strong><%= github.username %></strong>
       </p>
 
       <a
         href="<%= githubRepoUrl %>"
         target="_blank"
+        class="repo-link"
       >
         <%= githubRepoUrl %>
       </a>
 
-      <br><br>
+      <hr>
 
-      <form action="/auth/github/deploy" method="POST">
-        <button class="btn primary">
-          Continue to Render →
+      <h3>Step 3: Upload Source Code</h3>
+
+      <p>
+        Copy the purchased template source code
+        into your repository.
+      </p>
+
+      <form
+        action="/auth/github/deploy"
+        method="POST"
+      >
+
+        <button
+          class="btn primary"
+        >
+          Upload Source Code
         </button>
+
       </form>
+
+    </div>
+
+  <!-- STEP 4 -->
+  <% } else { %>
+
+    <div class="success-box">
+
+      <h3>✅ Source Code Uploaded</h3>
+
+      <p>
+        Your repository is ready for deployment.
+      </p>
+
+      <p>
+        Repository Owner:
+        <strong><%= github.username %></strong>
+      </p>
+
+      <a
+        href="<%= githubRepoUrl %>"
+        target="_blank"
+        class="repo-link"
+      >
+        View Repository
+      </a>
+
+      <hr>
+
+      <h3>Step 4: Deployment Guide</h3>
+
+      <p>
+        Follow our deployment guide to connect
+        your GitHub repository to Render and
+        launch your application online.
+      </p>
+
+      <div class="deploy-actions">
+
+        <a
+          href="/deploy-guide/<%= product._id %>"
+          class="btn primary"
+          target="_blank"
+        >
+          Continue to Deployment Guide →
+        </a>
+
+      </div>
 
     </div>
 

@@ -1,9 +1,7 @@
-// src/controllers/deployController.ts
 import { Request, Response } from "express";
 import Product from "../models/ProductModel";
-import { title } from "process";
 
-export const showDeployPage = async (
+export const showDeployGuide = async (
   req: Request,
   res: Response
 ) => {
@@ -16,16 +14,17 @@ export const showDeployPage = async (
       return res.status(404).render("404");
     }
 
-    res.render("deploy", {
-      title: `Deploy ${product.name}`,
+    res.render("deploy-guide", {
+      title: `${product.name} Deployment Guide`,
       product,
-      github: req.session.github,
-      githubRepoUrl: req.session.githubRepoUrl,
-      sourceCodePushed: req.session.sourceCodePushed
+      githubRepoUrl: req.session.githubRepoUrl
     });
 
   } catch (error) {
     console.error(error);
-    res.status(500).send("Server Error");
+
+    res.status(500).send(
+      "Server Error"
+    );
   }
 };
