@@ -59,7 +59,7 @@ const authenticateToken = (
         message: "Invalid Token",
       });
     } else {
-      return res.redirect("/login");
+      return res.redirect("/register");
     }
   }
 };
