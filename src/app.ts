@@ -23,7 +23,7 @@ import dashboardRoutes from "./routes/dashboardRoute";
 import deployRoute from "./routes/deployRoute";
 import githubRoute from "./routes/githubRoute";
 import deployGuideRoute from "./routes/deployGuideRoute";
-
+import chatRoutes from "./routes/chat.routes";
 
 import Product from "./models/ProductModel";
 import path from "path";
@@ -79,6 +79,9 @@ app.use("/dashboard", dashboardRoutes);
 app.use("/deploy", deployRoute);
 app.use(githubRoute);
 app.use(deployGuideRoute);
+app.use("/chat",chatRoutes);
+
+
 app.get("/reset-password/:token", (req, res) => {
     const token = req.params.token;
 

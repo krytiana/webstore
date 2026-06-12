@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chat</title>
+
+    <link rel="stylesheet" href="/css/chat.css">
+</head>
+<body>
+
+<div class="chat-container">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="logo">
+            <h2>AI Chat</h2>
+        </div>
+
+        <button class="new-chat-btn">
+            + New Chat
+        </button>
+
+        <div class="chat-history">
+            <div class="history-item active">
+                Build Ecommerce App
+            </div>
+
+            <div class="history-item">
+                React Questions
+            </div>
+
+            <div class="history-item">
+                JavaScript Help
+            </div>
+        </div>
+    </aside>
+    
+    <button id="menuBtn" class="menu-btn">
+        ☰
+    </button>
+
+    <!-- Main Chat -->
+    <main class="chat-main">
+
+        <div id="messages" class="messages"></div>
+
+        <!-- Input Area -->
+        <form id="chatForm" class="chat-input">
+            <textarea
+                id="prompt"
+                placeholder="Message AI..."
+                rows="1"
+            ></textarea>
+
+            <button type="submit">
+                Send
+            </button>
+        </form>
+
+    </main>
+
+</div>
+
+<script src="/js/chat.js"></script>
+</body>
+</html>
