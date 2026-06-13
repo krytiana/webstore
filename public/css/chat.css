@@ -66,6 +66,7 @@ body {
     display: flex;
     flex-direction: column;
     margin-top: 50px;
+    margin-bottom: 50px;
 }
 
 .messages {

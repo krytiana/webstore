@@ -1,8 +1,10 @@
+//src/controllers/chat.controller.ts
 import { Request, Response } from "express";
 import crypto from "crypto";
 
 import Chat from "../models/Chat.model";
 import { AIService } from "../services/ai.service";
+import { LeadService } from "../services/lead.service";
 
 export class ChatController {
 
@@ -10,7 +12,6 @@ export class ChatController {
         req: Request,
         res: Response
     ): void {
-
         res.render("chat");
     }
 
@@ -18,7 +19,6 @@ export class ChatController {
         req: Request,
         res: Response
     ) {
-
         try {
 
             const welcomeMessage = `
@@ -45,11 +45,8 @@ Tell me about your business and what you'd like to build.
             return res.status(201).json({
 
                 success: true,
-
                 chatId: chat._id,
-
                 sessionId: chat.sessionId,
-
                 messages: chat.messages
 
             });
@@ -61,11 +58,9 @@ Tell me about your business and what you'd like to build.
             return res.status(500).json({
 
                 success: false,
-
                 message: "Failed to create chat"
 
             });
-
         }
     }
 
@@ -73,7 +68,6 @@ Tell me about your business and what you'd like to build.
         req: Request,
         res: Response
     ) {
-
         try {
 
             const { chatId, message } = req.body;
@@ -81,23 +75,15 @@ Tell me about your business and what you'd like to build.
             const chat = await Chat.findById(chatId);
 
             if (!chat) {
-
                 return res.status(404).json({
-
                     success: false,
-
                     message: "Chat not found"
-
                 });
-
             }
 
             chat.messages.push({
-
                 role: "user",
-
                 content: message
-
             });
 
             const aiResponse =
@@ -105,22 +91,62 @@ Tell me about your business and what you'd like to build.
                     chat.messages
                 );
 
+            // ✅ CLEAN RESPONSE (always available)
+            const cleanedResponse =
+                aiResponse.replace(
+                    /\[LEAD_DATA\][\s\S]*?\[\/LEAD_DATA\]/,
+                    ""
+                ).trim();
+
+            // ✅ DETECT LEAD DATA
+            const leadMatch =
+                aiResponse.match(
+                    /\[LEAD_DATA\]([\s\S]*?)\[\/LEAD_DATA\]/
+                );
+
+            if (leadMatch) {
+
+                const leadText = leadMatch[1];
+
+                const name =
+                    leadText.match(/Name:\s*(.*)/)?.[1]?.trim();
+
+                const email =
+                    leadText.match(/Email:\s*(.*)/)?.[1]?.trim();
+
+                const phone =
+                    leadText.match(/Phone:\s*(.*)/)?.[1]?.trim();
+
+                const projectType =
+                    leadText.match(/ProjectType:\s*(.*)/)?.[1]?.trim();
+
+                const businessType =
+                    leadText.match(/BusinessType:\s*(.*)/)?.[1]?.trim();
+
+                // ✅ SAVE LEAD (clean summary only)
+                await LeadService.createLead({
+
+                    name,
+                    email,
+                    phone,
+                    projectType,
+                    businessType,
+                    summary: cleanedResponse
+
+                });
+            }
+
+            // ✅ SAVE CHAT MESSAGE (clean only)
             chat.messages.push({
-
                 role: "assistant",
-
-                content: aiResponse
-
+                content: cleanedResponse
             });
 
             await chat.save();
 
             return res.json({
-
                 success: true,
-
-                message: aiResponse
-
+                message: cleanedResponse
             });
 
         } catch (error) {
@@ -128,13 +154,9 @@ Tell me about your business and what you'd like to build.
             console.error("SEND_MESSAGE_ERROR:", error);
 
             return res.status(500).json({
-
                 success: false,
-
                 message: "Internal server error"
-
             });
-
         }
     }
 }
