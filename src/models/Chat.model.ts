@@ -1,14 +1,11 @@
+// src/models/Chat.model.ts
 import mongoose from "mongoose";
 
-const messageSchema =
-    new mongoose.Schema({
-
+const messageSchema = new mongoose.Schema(
+    {
         role: {
             type: String,
-            enum: [
-                "user",
-                "assistant"
-            ],
+            enum: ["user", "assistant"],
             required: true
         },
 
@@ -16,26 +13,28 @@ const messageSchema =
             type: String,
             required: true
         }
+    },
+    { _id: false }
+);
 
-    }, {
-        _id: false
-    });
-
-const chatSchema =
-    new mongoose.Schema({
-
+const chatSchema = new mongoose.Schema(
+    {
         sessionId: {
             type: String,
             required: true
         },
 
-        messages: [messageSchema]
+        messages: [messageSchema],
 
-    }, {
+        // ✅ IMPORTANT: global guard
+        leadCaptured: {
+            type: Boolean,
+            default: false
+        }
+    },
+    {
         timestamps: true
-    });
-
-export default mongoose.model(
-    "Chat",
-    chatSchema
+    }
 );
+
+export default mongoose.model("Chat", chatSchema);
