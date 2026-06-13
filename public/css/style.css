@@ -19,7 +19,11 @@ nav a {
   text-align: center;
 }
 
-
+.logo {
+  height: 30px;
+  
+  margin-bottom: -10px;
+}
 
 .chat-fab {
     position: fixed;
