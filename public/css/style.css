@@ -20,7 +20,33 @@ nav a {
 }
 
 .logo {
-  height: 50px;
+  height: 30px;
   
   margin-bottom: -15px;
 }
+
+.chat-fab {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 60px;
+    height: 60px;
+    background: #2563eb;
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    font-size: 28px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    z-index: 9999;
+    transition: all 0.3s ease;
+    border: 2px solid #fff;
+}
+
+.chat-fab:hover {
+    transform: scale(1.1);
+    background: #1d4ed8;
+}
+
