@@ -51,19 +51,11 @@ nav a {
 }
 
 @media (max-width: 600px) {
-    nav a {
-    margin-right: 0.6rem;
-    text-decoration: none;
-    font-size: 14px;
-  }
+   
+  
 
-  header {
-    padding: 0.5rem;
-  }
+  
 
-  .logo {
-    height: 35px;
-    margin-bottom: -10px;
-  }
+  
 }
 
