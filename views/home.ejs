@@ -1,167 +1,199 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title><%= title %></title>
-  <link rel="stylesheet" href="/css/home.css" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CodeCartHub</title>
+<link rel="stylesheet" href="/css/home.css" />
 </head>
 <body>
-  
   <%- include("partials/header") %>
+<!-- HERO -->
+<section class="hero">
+    <div class="hero-content">
+        <span class="badge">🚀 Production Ready Website Solutions</span>
 
-  <!-- HERO -->
-  <section class="hero">
-    <h1>Launch Your Business Website in Minutes</h1>
-    <p>No coding required. Buy ready-made websites with admin dashboards, payment integration, full source code and one-click deployment.</p>
+        <h1>Launch Your Business Faster</h1>
 
-    <div class="hero-btns">
-      <a href="/products" class="btn-hero">View Templates</a>
-      <a href="/products" class="btn-hero outline">Live Demo</a>
+        <p>
+            Professional website solutions with full source code,
+            admin dashboards, AI assistance, GitHub deployment,
+            and everything you need to go live.
+        </p>
+
+        <div class="hero-buttons">
+            <a href="/products" class="btn-primary">Browse Templates</a>
+            <a href="/products" class="btn-secondary">Explore Demos</a>
+        </div>
+
+        <div class="hero-highlights">
+            <span>✔ One-Time Payment</span>
+            <span>✔ Full Source Code Ownership</span>
+            <span>✔ One-Click Deployment</span>
+            <span>✔ 24/7 AI Support</span>
+        </div>
     </div>
+</section>
 
-    <p class="trust">
-      ✔ One-time payment &nbsp; ✔ Full ownership &nbsp; ✔ Easy deployment
-    </p>
-  </section>
+<!-- INTRO -->
+<section class="intro">
+    <div class="container">
+        <h2>Ready-to-Launch Website Solutions</h2>
 
-  <!-- WHAT YOU’RE SELLING -->
-  <section class="intro">
-    <h2>Ready-Made Websites for Any Business</h2>
-    <p>
-      Choose from professionally built websites designed for real businesses.
-      Customize everything easily using the built-in admin dashboard and launch fast.
-    </p>
-  </section>
+        <p>
+            Skip months of development and launch with professionally built
+            websites designed for real businesses.
+        </p>
 
-  <!-- WHAT YOU GET -->
-  <section class="features">
-    <h2>💡 What You Get After Purchase</h2>
-
-    <div class="feature-grid">
-
-      <div class="feature-card">
-        <span class="icon">💻</span>
-        <h3>Full Source Code</h3>
-        <p>Frontend and backend code ready to deploy and customize.</p>
-      </div>
-
-      <div class="feature-card">
-        <span class="icon">⚙️</span>
-        <h3>Admin Dashboard</h3>
-        <p>Manage products, text, images, and content without coding.</p>
-      </div>
-
-      <div class="feature-card">
-        <span class="icon">🗄️</span>
-        <h3>Database Setup</h3>
-        <p>Works with MongoDB and ready for real business data.</p>
-      </div>
-
-      <div class="feature-card">
-        <span class="icon">💳</span>
-        <h3>Payment Integration</h3>
-        <p>Supports Paystack and Stripe for online payments.</p>
-      </div>
-
-      <div class="feature-card">
-        <span class="icon">🖼️</span>
-        <h3>Image Upload</h3>
-        <p>Connect ImageKit or Cloudinary for product images.</p>
-      </div>
-
-      <div class="feature-card">
-        <span class="icon">📘</span>
-        <h3>Step-by-Step Guide</h3>
-        <p>Easy tutorial to help you deploy on Render and go live.</p>
-      </div>
-
+        <p>
+            Every template includes a complete frontend, backend,
+            admin dashboard, deployment resources, and long-term
+            flexibility to grow with your business.
+        </p>
     </div>
+</section>
 
-    <div class="center">
-      <a href="/products" class="btn-hero">Browse Templates →</a>
-    </div>
-  </section>
+<!-- FEATURES -->
+<section class="features">
+    <div class="container">
 
-  <!-- HOW IT WORKS -->
-  <section class="how-it-works">
-    <h2>🚀 How It Works</h2>
+        <h2>Why Businesses Choose CodeCartHub</h2>
 
-    <div class="steps">
-      <div class="step">
-        <h3>1. Choose a Template</h3>
-        <p>Select a website that fits your business.</p>
-      </div>
+        <div class="feature-grid">
 
-      <div class="step">
-        <h3>2. Purchase & Download</h3>
-        <p>Get full access to the source code instantly.</p>
-      </div>
+            <div class="feature-card">
+                <h3>🚀 One-Click Deployment</h3>
+                <p>
+                    Deploy faster with our guided GitHub workflow.
+                    Create a repository, upload your template,
+                    configure services, and launch.
+                </p>
+            </div>
 
-      <div class="step">
-        <h3>3. Follow Setup Guide</h3>
-        <p>Connect database, payment, and deploy easily.</p>
-      </div>
+            <div class="feature-card">
+                <h3>⚙️ Powerful Admin Settings</h3>
+                <p>
+                    Manage branding, logos, colors, hero images,
+                    contact details, and content without coding.
+                </p>
+            </div>
 
-      <div class="step">
-        <h3>4. Launch Your Website</h3>
-        <p>Go live and start your business immediately.</p>
-      </div>
-    </div>
-  </section>
+            <div class="feature-card">
+                <h3>🔄 One-Click GitHub Clone</h3>
+                <p>
+                    Create a private repository and securely transfer
+                    purchased templates directly to GitHub.
+                </p>
+            </div>
 
-  <!-- WHO IT’S FOR -->
-  <section class="audience">
-    <h2>🎯 Who Is This For?</h2>
+            <div class="feature-card">
+                <h3>🤖 24/7 AI Website Consultant</h3>
+                <p>
+                    Compare templates, receive deployment guidance,
+                    and discuss custom website requirements.
+                </p>
+            </div>
 
-    <ul>
-      <li>✔ Small business owners</li>
-      <li>✔ Startups</li>
-      <li>✔ Freelancers</li>
-      <li>✔ Agencies</li>
-    </ul>
-  </section>
+            <div class="feature-card">
+                <h3>🌐 Scalable & Business Ready</h3>
+                <p>
+                    Responsive design, secure authentication,
+                    SEO-friendly architecture, and scalable backend.
+                </p>
+            </div>
 
-  <!-- WHY CHOOSE YOU -->
-  <section class="comparison">
-    <h2>🔥 Why Choose Our Templates?</h2>
+            <div class="feature-card">
+                <h3>💸 No Expensive Subscriptions</h3>
+                <p>
+                    Launch with minimal operating costs using services
+                    that provide generous free plans.
+                </p>
+            </div>
 
-    <div class="comparison-grid">
-
-      <div class="problem">
-        <h3>😩 Without This</h3>
-        <ul>
-          <li>Hire expensive developers</li>
-          <li>Spend weeks building a website</li>
-          <li>Struggle with technical setup</li>
-        </ul>
-      </div>
-
-      <div class="solution">
-        <h3>🚀 With Our Templates</h3>
-        <ul>
-          <li>Ready-made professional website</li>
-          <li>Launch in minutes</li>
-          <li>No coding or stress</li>
-        </ul>
-      </div>
+        </div>
 
     </div>
+</section>
 
-    <div class="center">
-      <a href="/products" class="btn-hero ">Start Your Business Today →</a>
+<!-- HOW IT WORKS -->
+<section class="process">
+    <div class="container">
+
+        <h2>How It Works</h2>
+
+        <div class="steps">
+
+            <div class="step">
+                <span>1</span>
+                <h3>Choose a Website Solution</h3>
+                <p>Browse professionally built templates.</p>
+            </div>
+
+            <div class="step">
+                <span>2</span>
+                <h3>Purchase & Connect GitHub</h3>
+                <p>Secure your purchase and connect GitHub.</p>
+            </div>
+
+            <div class="step">
+                <span>3</span>
+                <h3>Create Repository</h3>
+                <p>Transfer source code to your private repository.</p>
+            </div>
+
+            <div class="step">
+                <span>4</span>
+                <h3>Follow Deployment Guide</h3>
+                <p>Configure services and database.</p>
+            </div>
+
+            <div class="step">
+                <span>5</span>
+                <h3>Launch Your Business</h3>
+                <p>Connect your domain and go live.</p>
+            </div>
+
+        </div>
+
     </div>
-  </section>
+</section>
 
-  <!-- FINAL CTA -->
-  <section class="final-cta">
-    <h2>Start Your Online Business Today</h2>
-    <p>Choose a template, customize it, and launch your website in minutes.</p>
+<!-- BUILT FOR -->
+<section class="built-for">
+    <div class="container">
 
-    <a href="/products" class="btn-hero">View Templates</a>
-  </section>
+        <h2>Built For</h2>
 
+        <div class="audience">
+            <span>✔ Entrepreneurs</span>
+            <span>✔ Small Businesses</span>
+            <span>✔ Startups</span>
+            <span>✔ Agencies</span>
+            <span>✔ Freelancers</span>
+            <span>✔ Growing Online Brands</span>
+        </div>
 
+    </div>
+</section>
 
-  <%- include("partials/footer") %>
+<!-- CTA -->
+<section class="cta">
+    <div class="container">
 
+        <h2>Start Building Today</h2>
+
+        <p>
+            Launch faster with production-ready website solutions
+            built for growth.
+        </p>
+
+        <a href="/products" class="btn-primary">
+            View Templates
+        </a>
+
+    </div>
+</section>
+
+<%- include("partials/footer") %>
 </body>
 </html>

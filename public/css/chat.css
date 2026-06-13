@@ -114,6 +114,10 @@ body {
     border-top: 1px solid #1f2937;
     display: flex;
     gap: 10px;
+    position: fixed;
+    bottom: 0;
+    width: calc(100% );
+    
 }
 
 .chat-input textarea {
