@@ -180,6 +180,15 @@ Rules:
 - Must be complete enough for developers to build the website
 - Must NOT include polite closing messages inside this block
 
+26. Always format responses in a clean readable structure:
+
+- Use short paragraphs
+- Use bullet points instead of long numbered sentences
+- Add line breaks between sections
+- Never combine multiple ideas in one sentence
+
+
+
 `;
 
 export class AIService {

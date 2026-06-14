@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const forgotPasswordLink = document.getElementById('forgot-password-link');
     const forgotPasswordForm = document.getElementById('forgot-password-form');
     const forgotPasswordFormElement = document.getElementById('forgotPasswordForm');
-
+    
     if (!signupBtn || !signinBtn || !signupFormElement || !signinFormElement || !forgotPasswordLink || !forgotPasswordForm || !forgotPasswordFormElement) {
         console.warn('Some elements are missing. Exiting script.');
         return;
@@ -49,6 +49,9 @@ document.addEventListener('DOMContentLoaded', function () {
     forgotPasswordLink.addEventListener('click', function (event) {
         event.preventDefault();
         forgotPasswordForm.classList.toggle('hidden');
+        signinForm.classList.toggle('hidden');
+        heading2.classList.toggle('hidden');
+        
     });
 
     const createFormData = (formElement) => {

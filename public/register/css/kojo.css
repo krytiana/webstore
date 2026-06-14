@@ -1,10 +1,13 @@
 body {
-  font-family: Arial, sans-serif;
-  background-color: rgba(87, 127, 0, 0.24);
+    font-family:Arial, sans-serif;
+    background: radial-gradient(circle at top, #0f1020, #05050b);
+    color:#ffffff;
+    line-height:1.7;
+  
   display: block;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  
   margin: 0;
   padding: 20px;
   box-sizing: border-box;
@@ -19,21 +22,28 @@ body {
 }
 
 .switcher button {
+    background:rgba(255,255,255,0.05);
+  border:1px solid rgba(142,162,255,.3);
   padding: 10px 20px;
-  border: none;
-  background-color: transparent;
+  border-radius: 5px 5px 0 0;
+  color: #cfd3ff;
   cursor: pointer;
   font-size: 16px;
 }
 
 .switcher button.active {
-  background-color: rgb(104, 148, 0);
-  color: #fff;
+    background:linear-gradient(
+        90deg,
+        #1e3cff,
+        #c2185b
+    );
+    color:white;
   border-radius: 5px 5px 0 0;
 }
 
 .form-container {
-  background-color: #fff;
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(142,162,255,.3);
   padding: 20px;
   border-radius: 5px;
   box-shadow: 0 0 10px rgb(0, 0, 0);
@@ -57,6 +67,8 @@ body {
   border: 1px solid #ccc;
   border-radius: 3px;
   box-sizing: border-box;
+  background-color: rgba(255,255,255,0.05);
+  color: #cfd3ff;
 }
 
 .form-container .terms {
@@ -70,15 +82,23 @@ body {
 }
 
 .form-container button {
-  background-color: rgb(104, 148, 0);
-  color: #fff;
+    background:linear-gradient(
+        90deg,
+        #1e3cff,
+        #c2185b
+    );
+    color:white;
   border: none;
   border-radius: 3px;
   cursor: pointer;
 }
 
 .form-container button:hover {
-  background-color: rgb(87, 127, 0);
+  background:linear-gradient(
+    90deg,
+    #c2185b,
+    #1e3cff
+  );
 }
 
 .hidden {
@@ -138,8 +158,8 @@ body {
     
     font-size: 14px;
     padding: 10px 20px;
-    border: none;
-    background-color: transparent;
+   
+    
     cursor: pointer;
     
   }
