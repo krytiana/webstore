@@ -30,6 +30,12 @@ const chatSchema = new mongoose.Schema(
         leadCaptured: {
             type: Boolean,
             default: false
+        }, 
+         
+        currentStage: {
+            type: String,
+            enum: ["menu", "browsing", "consulting", "leadCapture"],
+            default: "menu"
         }
     },
     {

@@ -1,10 +1,10 @@
-// src/controllers/chat.controller.ts
 import { Request, Response } from "express";
 import crypto from "crypto";
 
 import Chat from "../models/Chat.model";
 import { AIService } from "../services/ai.service";
 import { LeadService } from "../services/lead.service";
+import { ChatMenuService } from "../services/chat-menu.service";
 
 export class ChatController {
 
@@ -16,12 +16,19 @@ export class ChatController {
         try {
 
             const welcomeMessage = `
-Hello 👋
+👋 Welcome to CodeCartHub!
 
-Welcome! I'm your project consultant.
+I'm your project consultant.
 
-Tell me about your business and what you'd like to build.
-`;
+How can I help you today?
+
+1. 🛒 Browse website templates
+2. 🎨 Customize a template
+3. 💻 Build a custom website
+4. 💰 Pricing & packages
+5. 🛠 Technical support
+6. 💬 Talk to a consultant
+            `.trim();
 
             const chat = await Chat.create({
                 sessionId: crypto.randomUUID(),
@@ -31,7 +38,8 @@ Tell me about your business and what you'd like to build.
                         content: welcomeMessage
                     }
                 ],
-                leadCaptured: false
+                leadCaptured: false,
+                currentStage: "menu" // ⭐ PHASE 2 READY
             });
 
             return res.status(201).json({
@@ -42,7 +50,6 @@ Tell me about your business and what you'd like to build.
             });
 
         } catch (error) {
-
             console.error("NEW_CHAT_ERROR:", error);
 
             return res.status(500).json({
@@ -66,26 +73,44 @@ Tell me about your business and what you'd like to build.
                 });
             }
 
-            // add user message
+            // 1. Save user message (ONLY ONCE)
             chat.messages.push({
                 role: "user",
                 content: message
             });
 
-            const aiResponse =
-                await AIService.generateResponse(chat.messages);
+            // 2. MENU FLOW (NO AI COST)
+            const menuResponse = ChatMenuService.handle(message);
 
-            // clean response
-            const cleanedResponse =
-                aiResponse
-                    .replace(/\[LEAD_DATA\][\s\S]*?\[\/LEAD_DATA\]/, "")
-                    .trim();
+            if (menuResponse) {
 
-            // detect lead data
-            const leadMatch =
-                aiResponse.match(/\[LEAD_DATA\]([\s\S]*?)\[\/LEAD_DATA\]/);
+                chat.messages.push({
+                    role: "assistant",
+                    content: menuResponse
+                });
 
-            // ✅ ONLY ONE LEAD PER CHAT
+                // optional: keep stage in sync
+                chat.currentStage = "menu";
+
+                await chat.save();
+
+                return res.json({
+                    success: true,
+                    message: menuResponse
+                });
+            }
+
+            // 3. PHASE 2 HOOK → SMART CONTEXT (we will improve next step)
+            const aiResponse = await AIService.generateResponse(chat.messages, message);
+
+            // 4. clean response
+            const cleanedResponse = aiResponse
+                .replace(/\[LEAD_DATA\][\s\S]*?\[\/LEAD_DATA\]/, "")
+                .trim();
+
+            // 5. lead extraction
+            const leadMatch = aiResponse.match(/\[LEAD_DATA\]([\s\S]*?)\[\/LEAD_DATA\]/);
+
             if (leadMatch && !chat.leadCaptured) {
 
                 const leadText = leadMatch[1];
@@ -98,9 +123,7 @@ Tell me about your business and what you'd like to build.
 
                 if (name && email && phone) {
 
-                    // ✅ mark FIRST (prevents double trigger)
                     chat.leadCaptured = true;
-                    await chat.save();
 
                     await LeadService.createLead({
                         name,
@@ -114,7 +137,7 @@ Business Type: ${businessType || "N/A"}
                 }
             }
 
-            // save assistant response
+            // 6. save assistant response
             chat.messages.push({
                 role: "assistant",
                 content: cleanedResponse

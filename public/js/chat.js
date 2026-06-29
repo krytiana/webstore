@@ -1,3 +1,4 @@
+// js/chat.js
 const form = document.getElementById("chatForm");
 const promptInput = document.getElementById("prompt");
 const messages = document.getElementById("messages");
@@ -167,7 +168,7 @@ function addAIMessage(text) {
         `
         <div class="message ai">
             <div class="avatar">AI</div>
-            <div class="bubble">${escapeHtml(text)}</div>
+            <div class="bubble ai-content">${formatAI(text)}</div>
         </div>
         `
     );
@@ -194,6 +195,51 @@ function escapeHtml(text) {
     return div.innerHTML;
 }
 
+
+function formatAI(text) {
+
+    const lines = text.split("\n");
+
+    let html = "";
+
+    for (let line of lines) {
+
+        const trimmed = line.trim();
+
+        if (!trimmed) continue;
+
+        // MENU OPTIONS (clickable)
+        if (/^\d+\.\s/.test(trimmed)) {
+
+            const value = trimmed.replace(/^\d+\.\s/, "");
+
+            html += `
+                <button class="menu-option" onclick="selectOption('${value}')">
+                    ${value}
+                </button>
+            `;
+            continue;
+        }
+
+        // bullet points
+        if (/^[-•]\s/.test(trimmed)) {
+            html += `<div class="bullet">• ${trimmed.replace(/^[-•]\s/, "")}</div>`;
+            continue;
+        }
+
+        // normal text
+        html += `<div>${trimmed}</div>`;
+    }
+
+    return html;
+}
+
+window.selectOption = function(option) {
+
+    promptInput.value = option;
+
+    form.dispatchEvent(new Event("submit"));
+};
 /*
 |--------------------------------------------------------------------------
 | Mobile Menu
