@@ -1,10 +1,11 @@
+//src/controllers/chat.controller.ts
 import { Request, Response } from "express";
 import crypto from "crypto";
 
 import Chat from "../models/Chat.model";
 import { AIService } from "../services/ai.service";
 import { LeadService } from "../services/lead.service";
-import { ChatMenuService } from "../services/chat-menu.service";
+import { NodeService } from "../services/NodeService";
 
 export class ChatController {
 
@@ -15,40 +16,29 @@ export class ChatController {
     static async newChat(req: Request, res: Response) {
         try {
 
-            const welcomeMessage = `
-👋 Welcome to CodeCartHub!
+            const node = NodeService.getNode("main-menu");
 
-I'm your project consultant.
-
-How can I help you today?
-
-1. 🛒 Browse website templates
-2. 🎨 Customize a template
-3. 💻 Build a custom website
-4. 💰 Pricing & packages
-5. 🛠 Technical support
-6. 💬 Talk to a consultant
-            `.trim();
+            if (!node) {
+                return res.status(500).json({
+                    success: false,
+                    message: "Main menu not found."
+                });
+            }
+        
 
             const chat = await Chat.create({
                 sessionId: crypto.randomUUID(),
-                messages: [
-                    {
-                        role: "assistant",
-                        content: welcomeMessage
-                    }
-                ],
+                messages: [],
                 leadCaptured: false,
-                currentStage: "menu" // ⭐ PHASE 2 READY
+                currentNode: "main-menu"
             });
 
             return res.status(201).json({
                 success: true,
                 chatId: chat._id,
                 sessionId: chat.sessionId,
-                messages: chat.messages
+                node
             });
-
         } catch (error) {
             console.error("NEW_CHAT_ERROR:", error);
 
@@ -79,26 +69,7 @@ How can I help you today?
                 content: message
             });
 
-            // 2. MENU FLOW (NO AI COST)
-            const menuResponse = ChatMenuService.handle(message);
-
-            if (menuResponse) {
-
-                chat.messages.push({
-                    role: "assistant",
-                    content: menuResponse
-                });
-
-                // optional: keep stage in sync
-                chat.currentStage = "menu";
-
-                await chat.save();
-
-                return res.json({
-                    success: true,
-                    message: menuResponse
-                });
-            }
+            
 
             // 3. PHASE 2 HOOK → SMART CONTEXT (we will improve next step)
             const aiResponse = await AIService.generateResponse(chat.messages, message);
@@ -160,4 +131,86 @@ Business Type: ${businessType || "N/A"}
             });
         }
     }
+
+    static async node(req: Request, res: Response) {
+
+        try {
+
+            const { chatId, optionId } = req.body;
+
+            const chat = await Chat.findById(chatId);
+
+            if (!chat) {
+                return res.status(404).json({
+                    success: false,
+                    message: "Chat not found"
+                });
+            }
+
+            const currentNode = chat.currentNode || "main-menu";
+
+            const node = NodeService.getNode(currentNode);
+
+            if (!node) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Node not found"
+                });
+            }
+
+            const option = node.options.find(
+                (o: any) => o.id === optionId
+            );
+
+            if (!option) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Invalid option"
+                });
+            }
+
+            const nextNodeId = option.next;
+
+            if (!nextNodeId) {
+                return res.json({
+                    success: true,
+                    node: {
+                        id: currentNode,
+                        title: "End",
+                        message: "No further steps.",
+                        options: []
+                    }
+                });
+            }
+
+            const nextNode = NodeService.getNode(nextNodeId);
+
+            if (!nextNode) {
+                return res.status(400).json({
+                    success: false,
+                    message: `Node '${nextNodeId}' not found`
+                });
+            }
+
+            chat.currentNode = nextNode.id;
+            await chat.save();
+
+            return res.json({
+                success: true,
+                node: nextNode
+            });
+
+        } catch (error) {
+
+            console.error("MENU_ERROR:", error);
+
+            return res.status(500).json({
+                success: false,
+                message: "Internal server error"
+            });
+        }
+    }
 }
+
+
+

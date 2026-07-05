@@ -1,3 +1,4 @@
+//src/services/chat-menu.service.ts
 export class ChatMenuService {
 
     static handle(message: string): string | null {

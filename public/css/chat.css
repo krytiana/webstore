@@ -168,6 +168,16 @@ body {
     padding: 2px 0;
     color: #d1d5db;
 }
+
+.node-option:disabled{
+    opacity:.6;
+    cursor:not-allowed;
+}
+
+.node-option.selected{
+    opacity:1;
+    font-weight:600;
+}
 /* ==========================
    TABLETS
 ========================== */

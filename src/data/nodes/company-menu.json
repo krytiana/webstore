@@ -1,0 +1,33 @@
+{
+    "id":"company",
+
+    "title":"About CodeCartHub",
+
+    "options":[
+
+        {
+            "text":"Company Information",
+            "knowledge":"company"
+        },
+
+        {
+            "text":"Pricing Policy",
+            "knowledge":"pricing"
+        },
+
+        {
+            "text":"Support Policy",
+            "knowledge":"support"
+        },
+
+        {
+            "text":"Deployment Documentation",
+            "knowledge":"deployment"
+        },
+
+        {
+            "text":"Frequently Asked Questions",
+            "knowledge":"faq"
+        }
+    ]
+}

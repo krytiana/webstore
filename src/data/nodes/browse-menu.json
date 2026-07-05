@@ -1,0 +1,20 @@
+{
+    "id":"browse",
+
+    "title":"Browse Website Templates",
+
+    "options":[
+
+        {
+            "id":"help_choose",
+            "text":"Help me choose a website",
+            "next":"business-selector"
+        },
+
+        {
+            "id":"know_template",
+            "text":"Learn about a specific template",
+            "next":"template-search"
+        }
+    ]
+}

@@ -1,0 +1,31 @@
+
+{
+    "id": "main",
+
+    "title": "Welcome to CodeCartHub",
+
+    "message": "How can I help you today?",
+
+    "options": [
+        {
+            "id": "browse",
+            "label": "📌 Browse Ready-Made Websites",
+            "next": "browse-menu"
+        },
+        {
+            "id": "custom",
+            "label": "📌 Build a Custom Website",
+            "next": "custom-menu"
+        },
+        {
+            "id": "company",
+            "label": "📌 Ask About CodeCartHub",
+            "next": "company-menu"
+        },
+        {
+            "id": "support",
+            "label": "📌 Need Guidelines",
+            "next": "support-menu"
+        }
+    ]
+}

@@ -32,18 +32,8 @@ window.addEventListener("DOMContentLoaded", async () => {
 
         messages.innerHTML = "";
 
-        if (data.messages?.length) {
-
-            data.messages.forEach(message => {
-
-                if (message.role === "assistant") {
-                    addAIMessage(message.content);
-                } else {
-                    addUserMessage(message.content);
-                }
-
-            });
-
+        if (data.node) {
+            addNode(data.node);
         }
 
     } catch (error) {
@@ -161,12 +151,13 @@ function addUserMessage(text) {
     scrollBottom();
 }
 
+
 function addAIMessage(text) {
 
     messages.insertAdjacentHTML(
         "beforeend",
         `
-        <div class="message ai">
+        <div class="message ai node-message" id="node-${node.id}">
             <div class="avatar">AI</div>
             <div class="bubble ai-content">${formatAI(text)}</div>
         </div>
@@ -176,6 +167,74 @@ function addAIMessage(text) {
     scrollBottom();
 
     return messages.lastElementChild;
+}
+
+
+function addNode(node) {
+
+    let html = `
+        <div class="message ai node-message" id="node-${node.id}">
+            <div class="avatar">AI</div>
+            <div class="bubble ai-content">
+    `;
+
+    if (node.title) {
+        html += `<h3>${node.title}</h3>`;
+    }
+
+    if (node.message) {
+        html += `<p>${node.message}</p>`;
+    }
+
+    if (node.options?.length) {
+
+        node.options.forEach(option => {
+
+            html += `
+            <button
+                class="menu-option node-option"
+                data-option-id="${option.id}"
+                onclick="selectNodeOption('${node.id}','${option.id}','${option.label || option.text}')">
+                ${option.label || option.text}
+            </button>
+            `;
+
+        });
+
+    }
+
+    html += `
+            </div>
+        </div>
+    `;
+
+    messages.insertAdjacentHTML("beforeend", html);
+
+    scrollBottom();
+}
+
+function lockNode(nodeId, selectedOptionId) {
+
+    const node = document.getElementById(`node-${nodeId}`);
+
+    if (!node) return;
+
+    const buttons = node.querySelectorAll(".node-option");
+
+    buttons.forEach(button => {
+
+        button.disabled = true;
+
+        button.title =
+            "You already chose an option. Start a new chat to explore another path.";
+
+        if (button.dataset.optionId === selectedOptionId) {
+            button.classList.add("selected");
+            button.innerHTML = "✓ " + button.innerHTML;
+        }
+
+    });
+
 }
 
 function scrollBottom() {
@@ -214,7 +273,7 @@ function formatAI(text) {
             const value = trimmed.replace(/^\d+\.\s/, "");
 
             html += `
-                <button class="menu-option" onclick="selectOption('${value}')">
+                <button class="menu-option node-option" onclick="selectOption('${value}')">
                     ${value}
                 </button>
             `;
@@ -234,17 +293,47 @@ function formatAI(text) {
     return html;
 }
 
+
 window.selectOption = function(option) {
 
     promptInput.value = option;
 
     form.dispatchEvent(new Event("submit"));
 };
-/*
-|--------------------------------------------------------------------------
-| Mobile Menu
-|--------------------------------------------------------------------------
-*/
+
+window.selectNodeOption = async function(nodeId, optionId, label) {
+    // 1. Show user message immediately
+    addUserMessage(label || optionId);
+    lockNode(nodeId, optionId);
+
+    try {
+
+        const response = await fetch("/chat/menu", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                chatId,
+                optionId
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || "Menu error");
+        }
+
+        addNode(data.node);
+
+    } catch (error) {
+
+        console.error("MENU_CLICK_ERROR:", error);
+
+        addAIMessage("Something went wrong loading the menu.");
+    }
+};
 
 if (menuBtn && sidebar) {
 

@@ -18,4 +18,9 @@ router.post(
     ChatController.sendMessage
 );
 
+router.post(
+    "/menu",
+    ChatController.node
+);
+
 export default router;

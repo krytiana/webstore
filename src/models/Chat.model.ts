@@ -32,10 +32,9 @@ const chatSchema = new mongoose.Schema(
             default: false
         }, 
          
-        currentStage: {
+        currentNode: {
             type: String,
-            enum: ["menu", "browsing", "consulting", "leadCapture"],
-            default: "menu"
+            default: "main-menu"
         }
     },
     {
