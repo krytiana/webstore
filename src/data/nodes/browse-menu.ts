@@ -60,5 +60,5 @@ export const ecommerceResultsNode: Node = {
     id: "ecommerce-results",
     type: "action",
     action: "findTemplates",
-    category: "ecommerce"
+    category: "E-commerce",
 };

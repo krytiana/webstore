@@ -4,7 +4,7 @@ import { Node } from "../../types/nodesTypes";
 
 
 import { mainNode } from "./main-menu";
-import { browseNode, helpChoose } from "./browse-menu";
+import { browseNode, helpChoose, ecommerceResultsNode } from "./browse-menu";
 import { customNode } from "./custom-menu";
 import { companyNode } from "./company-menu";
 import { supportNode } from "./support-menu";
@@ -14,6 +14,7 @@ export const nodes: Record<string, Node> = {
     "main-menu": mainNode,
     "browse-menu": browseNode,
     "business-selector": helpChoose,
+    "ecommerce-results": ecommerceResultsNode,
     "custom-menu": customNode,
     "company-menu": companyNode,
     "support-menu": supportNode

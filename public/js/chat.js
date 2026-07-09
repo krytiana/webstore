@@ -157,7 +157,7 @@ function addAIMessage(text) {
     messages.insertAdjacentHTML(
         "beforeend",
         `
-        <div class="message ai node-message" id="node-${node.id}">
+        <div class="message ai">
             <div class="avatar">AI</div>
             <div class="bubble ai-content">${formatAI(text)}</div>
         </div>
@@ -293,6 +293,42 @@ function formatAI(text) {
     return html;
 }
 
+function addDemoLinks(data) {
+
+    let html = `
+        <div class="message ai">
+            <div class="avatar">AI</div>
+            <div class="bubble ai-content">
+                <p>${data.message}</p>
+    `;
+
+    data.demos.forEach(demo => {
+
+        html += `
+            <div class="demo-item">
+                <strong>${demo.name}</strong><br>
+
+                <a
+                    href="${demo.demoUrl}"
+                    target="_blank"
+                    rel="noopener noreferrer">
+                    View Live Demo
+                </a>
+            </div>
+            <br>
+        `;
+
+    });
+
+    html += `
+            </div>
+        </div>
+    `;
+
+    messages.insertAdjacentHTML("beforeend", html);
+
+    scrollBottom();
+}
 
 window.selectOption = function(option) {
 
@@ -320,6 +356,21 @@ window.selectNodeOption = async function(nodeId, optionId, label) {
         });
 
         const data = await response.json();
+
+        if (data.node) {
+            addNode(data.node);
+            return;
+        }
+
+        if (data.action === "demo-links") {
+            addDemoLinks(data);
+            return;
+        }
+
+        if (data.action === "ai") {
+            addAIMessage(data.message);
+            return;
+        }
 
         if (!response.ok) {
             throw new Error(data.message || "Menu error");

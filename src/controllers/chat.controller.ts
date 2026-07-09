@@ -6,6 +6,7 @@ import Chat from "../models/Chat.model";
 import { AIService } from "../services/ai.service";
 import { LeadService } from "../services/lead.service";
 import { NodeService } from "../services/NodeService";
+import { NodeActionController } from "./nodeAction.controller";
 
 export class ChatController {
 
@@ -144,7 +145,7 @@ Business Type: ${businessType || "N/A"}
                 });
             }
 
-            const currentNode = chat.currentNode || "main";
+            const currentNode = chat.currentNode || "main-menu";
 
             const result = NodeService.handleOption(currentNode, optionId);
 
@@ -175,16 +176,39 @@ Business Type: ${businessType || "N/A"}
 
             await chat.save();
 
-            const nextNode = next ? NodeService.getNode(next) : null;
+            // 4. LOAD NEXT NODE
+            const nextNode = next
+                ? NodeService.getNode(next)
+                : null;
 
+            if (!nextNode) {
+                return res.json({
+                    success: true,
+                    node: {
+                        id: currentNode,
+                        type: "end",
+                        title: "End",
+                        message: "No further steps.",
+                        options: []
+                    }
+                });
+            }
+
+            // 5. EXECUTE ACTION NODE
+            if (nextNode.type === "action") {
+
+                return await NodeActionController.execute(
+                    nextNode,
+                    chat,
+                    res
+                );
+
+            }
+
+            // 6. RETURN NORMAL MENU NODE
             return res.json({
                 success: true,
-                node: nextNode || {
-                    id: currentNode,
-                    title: "End",
-                    message: "No further steps.",
-                    options: []
-                }
+                node: nextNode
             });
 
         } catch (error) {

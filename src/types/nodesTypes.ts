@@ -20,7 +20,7 @@ export type Node = {
 
     action?: "findTemplates";
     category?: 
-    "ecommerce"
+    "E-commerce"
     | "portfolio"
     | "blog"
     | "management-system"

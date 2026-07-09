@@ -2,6 +2,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    text-decoration: none;
 }
 
 body {
@@ -177,6 +178,43 @@ body {
 .node-option.selected{
     opacity:1;
     font-weight:600;
+}
+
+.demo-item {
+    margin-top: 12px;
+    padding: 12px 14px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px;
+}
+
+.demo-item strong {
+    display: block;
+    margin-bottom: 8px;
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.demo-item a {
+    display: inline-block;
+    padding: 8px 14px;
+    background: #1e3cff;
+    color: #ffffff;
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.demo-item a:hover {
+    background: #3555ff;
+    transform: translateY(-1px);
+}
+
+.demo-item a:active {
+    transform: translateY(0);
 }
 /* ==========================
    TABLETS
