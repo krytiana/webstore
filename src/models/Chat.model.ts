@@ -34,7 +34,23 @@ const chatSchema = new mongoose.Schema(
          
         currentNode: {
             type: String,
-            default: "main-menu"
+            default: "main"
+        },
+
+        activeOption: {
+            type: String,
+            default: null
+        },
+
+        lockedNodes: {
+            type: [String],
+            default: []
+        },
+
+        flow: {
+            type: String,
+            enum: ["menu", "browse", "custom", "support", "company", "lead"],
+            default: "menu"
         }
     },
     {

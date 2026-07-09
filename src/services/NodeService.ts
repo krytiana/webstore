@@ -1,57 +1,31 @@
-import fs from "fs";
-import path from "path";
+//src/services/NodeService.ts
+import { NodeRegistry } from "../data/nodes";
 
 export class NodeService {
 
-    private static nodePath = path.join(
-        process.cwd(),
-        "src",
-        "data",
-        "nodes"
-    );
-
-    static getNode(nodeName: string) {
-
-        const file = path.join(
-            this.nodePath,
-            `${nodeName}.json`
-        );
-
-        if (!fs.existsSync(file)) {
-            return null;
-        }
-
-        return JSON.parse(
-            fs.readFileSync(file, "utf8")
-        );
+    static getNode(nodeId: string) {
+        return NodeRegistry.getNode(nodeId);
     }
 
-    static getNextNode(
-        nodeName: string,
-        optionId: string
-    ) {
+    static handleOption(nodeId: string, optionId: string) {
 
-        const node = this.getNode(nodeName);
+        const node = this.getNode(nodeId);
 
         if (!node) return null;
 
-        const option = node.options.find(
-            (item: any) => item.id === optionId
+        const options = node.options ?? [];
+        const option = options.find(
+            o => o.id === optionId
         );
 
         if (!option) return null;
 
-        if (!option.next) {
-
-            return {
-                id: nodeName,
-                type: "end",
-                message: "No further steps."
-            };
-
-        }
-
-        return this.getNode(option.next);
+        return {
+            option,
+            next: option.next || null,
+            lockNode: option.lockNode || false,
+            tag: option.tag || null
+        };
 
     }
 

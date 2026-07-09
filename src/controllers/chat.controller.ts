@@ -133,13 +133,10 @@ Business Type: ${businessType || "N/A"}
     }
 
     static async node(req: Request, res: Response) {
-
         try {
-
             const { chatId, optionId } = req.body;
 
             const chat = await Chat.findById(chatId);
-
             if (!chat) {
                 return res.status(404).json({
                     success: false,
@@ -147,62 +144,51 @@ Business Type: ${businessType || "N/A"}
                 });
             }
 
-            const currentNode = chat.currentNode || "main-menu";
+            const currentNode = chat.currentNode || "main";
 
-            const node = NodeService.getNode(currentNode);
+            const result = NodeService.handleOption(currentNode, optionId);
 
-            if (!node) {
-                return res.status(400).json({
-                    success: false,
-                    message: "Node not found"
-                });
-            }
-
-            const option = node.options.find(
-                (o: any) => o.id === optionId
-            );
-
-            if (!option) {
+            if (!result) {
                 return res.status(400).json({
                     success: false,
                     message: "Invalid option"
                 });
             }
 
-            const nextNodeId = option.next;
+            const { option, next, lockNode, tag } = result;
 
-            if (!nextNodeId) {
-                return res.json({
-                    success: true,
-                    node: {
-                        id: currentNode,
-                        title: "End",
-                        message: "No further steps.",
-                        options: []
-                    }
-                });
+            // 1. LOCK NODE (prevents reuse)
+            if (lockNode && !chat.lockedNodes?.includes(currentNode)) {
+                chat.lockedNodes = chat.lockedNodes || [];
+                chat.lockedNodes.push(currentNode);
             }
 
-            const nextNode = NodeService.getNode(nextNodeId);
-
-            if (!nextNode) {
-                return res.status(400).json({
-                    success: false,
-                    message: `Node '${nextNodeId}' not found`
-                });
+            // 2. LEAD TAGGING (Phase 3 ready hook)
+            if (tag === "lead_required") {
+                chat.flow = "custom";
             }
 
-            chat.currentNode = nextNode.id;
+            // 3. MOVE NODE
+            if (next) {
+                chat.currentNode = next;
+            }
+
             await chat.save();
+
+            const nextNode = next ? NodeService.getNode(next) : null;
 
             return res.json({
                 success: true,
-                node: nextNode
+                node: nextNode || {
+                    id: currentNode,
+                    title: "End",
+                    message: "No further steps.",
+                    options: []
+                }
             });
 
         } catch (error) {
-
-            console.error("MENU_ERROR:", error);
+            console.error("NODE_ERROR:", error);
 
             return res.status(500).json({
                 success: false,
@@ -210,6 +196,7 @@ Business Type: ${businessType || "N/A"}
             });
         }
     }
+    
 }
 
 
