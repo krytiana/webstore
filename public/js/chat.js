@@ -14,6 +14,7 @@ const actionRenderers = {
     "features": renderFeatures,
     "pricing": renderPricing,
     "tech-stack": renderTechStack,
+    "overview": renderOverview,
     "ai": ({ message }) => renderAIMessage(message)
 };
 
@@ -372,21 +373,54 @@ function renderDemoLink(data) {
 }
 
 function renderFeatures(data) {
+    console.log("Rendering features:", data);
+
+    const { name, features } = data;
 
     let html = `
         <div class="message ai">
             <div class="avatar">AI</div>
             <div class="bubble ai-content">
-                <h3>✨ Features</h3>
-                <ul>
+                <h3>✨ ${name} Features</h3>
     `;
 
-    data.features.forEach(feature => {
-        html += `<li>${feature}</li>`;
-    });
+    if (features.frontend?.length) {
+
+        html += `
+            <h4>Frontend</h4>
+            <ul>
+        `;
+
+        features.frontend.forEach(feature => {
+            html += `<li>${feature}</li>`;
+        });
+
+        html += `</ul>`;
+    }
+
+    if (features.backend?.length) {
+
+        html += `
+            <h4>Backend</h4>
+            <ul>
+        `;
+
+        features.backend.forEach(feature => {
+            html += `<li>${feature}</li>`;
+        });
+
+        html += `</ul>`;
+    }
+
+    if (features.techStack) {
+
+        html += `
+            <h4>Tech Stack</h4>
+            <p>${features.techStack}</p>
+        `;
+    }
 
     html += `
-                </ul>
             </div>
         </div>
     `;
@@ -394,7 +428,6 @@ function renderFeatures(data) {
     messages.insertAdjacentHTML("beforeend", html);
 
     scrollBottom();
-
 }
 
 function renderTechStack(data) {
@@ -431,6 +464,74 @@ function renderPricing(data) {
 
     scrollBottom();
 
+}
+
+function renderOverview(data) {
+
+    const lines = data.description
+        .replace(/\r/g, "")
+        .split("\n")
+        .map(line => line.trim())
+        .filter(Boolean);
+
+    let html = `
+        <div class="message ai">
+            <div class="avatar">AI</div>
+            <div class="bubble ai-content">
+                <h3>🌟 About ${data.name}</h3>
+    `;
+
+    let inList = false;
+    let skippedTitle = false;
+
+    for (const line of lines) {
+
+        // Skip "Product Overview" because we already have our own title
+        if (!skippedTitle && line.toLowerCase() === "product overview") {
+            skippedTitle = true;
+            continue;
+        }
+
+        // Bullet item
+        if (line.startsWith("- ")) {
+
+            if (!inList) {
+                html += "<ul>";
+                inList = true;
+            }
+
+            html += `<li>${line.substring(2)}</li>`;
+            continue;
+        }
+
+        // Close list before starting a new section
+        if (inList) {
+            html += "</ul>";
+            inList = false;
+        }
+
+        // Emoji headings
+        if (/^[^\w\s]/.test(line)) {
+            html += `<h4>${line}</h4>`;
+            continue;
+        }
+
+        // Normal paragraph
+        html += `<p>${line}</p>`;
+    }
+
+    if (inList) {
+        html += "</ul>";
+    }
+
+    html += `
+            </div>
+        </div>
+    `;
+
+    messages.insertAdjacentHTML("beforeend", html);
+
+    scrollBottom();
 }
 
 window.selectOption = function(option) {

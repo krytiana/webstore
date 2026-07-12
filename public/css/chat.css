@@ -216,6 +216,105 @@ body {
 .demo-item a:active {
     transform: translateY(0);
 }
+
+/* AI Message Container */
+.message.ai {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    margin: 20px 0;
+    animation: fadeIn 0.3s ease;
+}
+
+/* AI Avatar */
+.message.ai .avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #1e3cff, #c2185b);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    flex-shrink: 0;
+    box-shadow: 0 5px 15px rgba(30, 60, 255, 0.3);
+}
+
+
+/* AI Bubble */
+.ai-content {
+    max-width: 750px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 22px;
+    border-radius: 18px;
+    color: #ffffff;
+    backdrop-filter: blur(12px);
+    line-height: 1.7;
+}
+
+
+/* Main Title */
+.ai-content h3 {
+    margin: 0 0 18px;
+    font-size: 22px;
+    font-weight: 700;
+    background: linear-gradient(
+        90deg,
+        #ffffff,
+        #b8bcff
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+
+/* Section Headings */
+.ai-content h4 {
+    margin: 22px 0 10px;
+    font-size: 16px;
+    color: #8ea2ff;
+    font-weight: 600;
+}
+
+
+/* Paragraphs */
+.ai-content p {
+    margin: 10px 0;
+    color: #cfd3ff;
+    font-size: 15px;
+}
+
+
+/* Feature List */
+.ai-content ul {
+    margin: 14px 0;
+    padding-left: 20px;
+}
+
+
+.ai-content li {
+    margin: 8px 0;
+    color: #ffffff;
+    position: relative;
+}
+
+
+/* Custom bullet */
+.ai-content li::marker {
+    color: #8ea2ff;
+}
+
+
+/* Hover effect */
+.ai-content:hover {
+    border-color: rgba(142, 162, 255, 0.4);
+    transform: translateY(-2px);
+    transition: 0.25s ease;
+}
+
 /* ==========================
    TABLETS
 ========================== */

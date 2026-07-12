@@ -125,6 +125,26 @@ export class TemplateAction {
 
     }
 
+    static async overview(chat: any) {
+
+    const template = await this.getSelectedTemplate(chat);
+
+    if (!template) {
+        return {
+            success: false,
+            message: "Template not found."
+        };
+    }
+
+    return {
+        success: true,
+        action: "overview",
+        name: template.name,
+        description: template.description
+    };
+
+}
+
     static async liveDemo(chat: any) {
 
         const template = await this.getSelectedTemplate(chat);
@@ -159,6 +179,7 @@ export class TemplateAction {
         return {
             success: true,
             action: "features",
+            name: template.name,
             features: template.features
         };
 
@@ -178,6 +199,7 @@ export class TemplateAction {
         return {
             success: true,
             action: "tech-stack",
+            name: template.name,
             techStack: template.features.techStack
         };
 
@@ -197,6 +219,7 @@ export class TemplateAction {
         return {
             success: true,
             action: "pricing",
+            name: template.name,
             pricing: template.pricing
         };
 

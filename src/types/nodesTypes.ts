@@ -24,7 +24,8 @@ export type Node = {
     | "templateLiveDemo"
     | "templateFeatures"
     | "templateTechStack"
-    | "templatePricing";
+    | "templatePricing"
+    | "templateOverview";
 
     category?: 
     "E-commerce"

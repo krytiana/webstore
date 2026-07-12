@@ -1,3 +1,4 @@
+//src/data/nodes/browse-menu.ts
 import { Node } from "../../types/nodesTypes";
 
 export const browseNode: Node = {
@@ -100,44 +101,30 @@ export const templateOptionsNode: Node = {
     message: "What would you like to know?",
     options: [
         {
+            id: "overview",
+            label: "🌟 Product Overview",
+            next: "template-overview"
+        },
+        {
             id: "live-demo",
             label: "🌐 Live Demo",
             next: "template-live-demo"
         },
         {
             id: "features",
-            label: "✨ Features",
+            label: "📦 What is Included",
             next: "template-features"
         },
         {
             id: "tech-stack",
-            label: "🛠 Tech Stack",
+            label: "🛠 Tech Stack & Best For",
             next: "template-tech-stack"
         },
+
         {
-            id: "pricing",
-            label: "💰 Pricing",
-            next: "template-pricing"
-        },
-        {
-            id: "customization",
-            label: "🎨 Customization Options",
-            next: "template-customization"
-        },
-        {
-            id: "admin-dashboard",
-            label: "⚙ Admin Dashboard",
-            next: "template-admin-dashboard"
-        },
-        {
-            id: "deployment",
-            label: "🚀 Deployment Guide",
-            next: "template-deployment"
-        },
-        {
-            id: "compare",
-            label: "🔄 Compare with Another Template",
-            next: "template-compare"
+            id: "ask-ai",
+            label: "❓ Ask About This Template",
+            next: "template-ai"
         }
     ]
 };
@@ -153,7 +140,11 @@ export const templateSearchNode: Node = { //for input node to search for a speci
 
     action: "findTemplateByName"
 };
-
+export const templateOverview: Node = {
+    id: "template-overview",
+    type: "action",
+    action: "templateOverview"
+};
 export const templateLiveDemo: Node = {
     id: "template-live-demo",
     type: "action",

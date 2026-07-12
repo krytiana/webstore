@@ -30,6 +30,9 @@ export class ActionService {
 
             case "templatePricing":
                 return await TemplateAction.pricing(chat);
+            
+            case "templateOverview":
+                return await TemplateAction.overview(chat);
 
             default:
 

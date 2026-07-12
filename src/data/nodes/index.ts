@@ -16,7 +16,8 @@ import { browseNode,
         templateFeatures,
         templateTechStack,
         templatePricing,
-        templateOptionsNode
+        templateOptionsNode,
+        templateOverview
     } from "./browse-menu";
 import { customNode } from "./custom-menu";
 import { companyNode } from "./company-menu";
@@ -41,6 +42,7 @@ export const nodes: Record<string, Node> = {
     "template-tech-stack": templateTechStack,
     "template-pricing": templatePricing,
     "template-options": templateOptionsNode,
+    "template-overview": templateOverview,
     //custom menu
     "custom-menu": customNode,
 
