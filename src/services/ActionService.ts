@@ -1,6 +1,7 @@
+//services/ActionService.ts
 import { Node } from "../types/nodesTypes";
 
-import { TemplateAction } from "../actions/template.action";
+import { TemplateAction, } from "../actions/template.action";
 
 export class ActionService {
 
@@ -18,6 +19,18 @@ export class ActionService {
                     chat
                 );
 
+            case "templateLiveDemo":
+                return await TemplateAction.liveDemo(chat);
+
+            case "templateFeatures":
+                return await TemplateAction.features(chat);
+
+            case "templateTechStack":
+                return await TemplateAction.techStack(chat);
+
+            case "templatePricing":
+                return await TemplateAction.pricing(chat);
+
             default:
 
                 return {
@@ -29,4 +42,31 @@ export class ActionService {
 
     }
 
+    static async executeInput(
+        action: string,
+        value: string,
+        chat: any
+    ) {
+
+        switch (action) {
+
+            case "findTemplateByName":
+
+                return await TemplateAction.findTemplateByName(
+                    value,
+                    chat
+                );
+
+            default:
+
+                return {
+                    success: false,
+                    message: `Unknown input action '${action}'.`
+                };
+
+        }
+
+    }
+
 }
+

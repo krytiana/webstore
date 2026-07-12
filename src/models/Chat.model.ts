@@ -51,7 +51,16 @@ const chatSchema = new mongoose.Schema(
             type: String,
             enum: ["menu", "browse", "custom", "support", "company", "lead"],
             default: "menu"
-        }
+        },
+        pendingAction: {
+            type: String,
+            default: null
+        },
+        selectedTemplate: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Product",
+            default: null
+        },
     },
     {
         timestamps: true

@@ -11,18 +11,25 @@ export type NodeOption = {
 
 export type Node = {
     id: string;
-    type: "menu" | "action" | "info" | "end";
+    type: "menu" | "action" | "info" | "end" | "input";
 
     title?: string;
     message?: string;
 
     options?: NodeOption[];
 
-    action?: "findTemplates";
+    action?: 
+    "findTemplates" 
+    | "findTemplateByName" 
+    | "templateLiveDemo"
+    | "templateFeatures"
+    | "templateTechStack"
+    | "templatePricing";
+
     category?: 
     "E-commerce"
-    | "portfolio"
-    | "blog"
-    | "management-system"
-    | "service";
+    | "Portfolio"
+    | "Blog"
+    | "Management System"
+    | "Service";
 };

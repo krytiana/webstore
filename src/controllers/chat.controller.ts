@@ -64,24 +64,49 @@ export class ChatController {
                 });
             }
 
-            // 1. Save user message (ONLY ONCE)
+            // Save user message
             chat.messages.push({
                 role: "user",
                 content: message
             });
 
-            
+            /*
+            |--------------------------------------------------------------------------
+            | INPUT ACTIONS (No AI)
+            |--------------------------------------------------------------------------
+            */
 
-            // 3. PHASE 2 HOOK → SMART CONTEXT (we will improve next step)
-            const aiResponse = await AIService.generateResponse(chat.messages, message);
+            if (chat.pendingAction) {
 
-            // 4. clean response
+                await chat.save();
+
+                return await NodeActionController.executeInput(
+                    chat.pendingAction,
+                    message,
+                    chat,
+                    res
+                );
+
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | AI FALLBACK
+            |--------------------------------------------------------------------------
+            */
+
+            const aiResponse = await AIService.generateResponse(
+                chat.messages,
+                message
+            );
+
             const cleanedResponse = aiResponse
                 .replace(/\[LEAD_DATA\][\s\S]*?\[\/LEAD_DATA\]/, "")
                 .trim();
 
-            // 5. lead extraction
-            const leadMatch = aiResponse.match(/\[LEAD_DATA\]([\s\S]*?)\[\/LEAD_DATA\]/);
+            const leadMatch = aiResponse.match(
+                /\[LEAD_DATA\]([\s\S]*?)\[\/LEAD_DATA\]/
+            );
 
             if (leadMatch && !chat.leadCaptured) {
 
@@ -102,14 +127,15 @@ export class ChatController {
                         email,
                         phone,
                         summary: `
-Project Type: ${projectType || "N/A"}
-Business Type: ${businessType || "N/A"}
+    Project Type: ${projectType || "N/A"}
+    Business Type: ${businessType || "N/A"}
                         `.trim()
                     });
+
                 }
+
             }
 
-            // 6. save assistant response
             chat.messages.push({
                 role: "assistant",
                 content: cleanedResponse
@@ -130,14 +156,18 @@ Business Type: ${businessType || "N/A"}
                 success: false,
                 message: "Internal server error"
             });
+
         }
     }
 
     static async node(req: Request, res: Response) {
         try {
+
             const { chatId, optionId } = req.body;
 
             const chat = await Chat.findById(chatId);
+
+
             if (!chat) {
                 return res.status(404).json({
                     success: false,
@@ -147,7 +177,12 @@ Business Type: ${businessType || "N/A"}
 
             const currentNode = chat.currentNode || "main-menu";
 
-            const result = NodeService.handleOption(currentNode, optionId);
+            const result = NodeService.handleOption(
+                currentNode,
+                optionId
+            );
+
+
 
             if (!result) {
                 return res.status(400).json({
@@ -156,25 +191,26 @@ Business Type: ${businessType || "N/A"}
                 });
             }
 
-            const { option, next, lockNode, tag } = result;
+            const { next, lockNode, tag } = result;
 
-            // 1. LOCK NODE (prevents reuse)
+            // 1. LOCK NODE
             if (lockNode && !chat.lockedNodes?.includes(currentNode)) {
                 chat.lockedNodes = chat.lockedNodes || [];
                 chat.lockedNodes.push(currentNode);
             }
 
-            // 2. LEAD TAGGING (Phase 3 ready hook)
+            // 2. FLOW TAG
             if (tag === "lead_required") {
                 chat.flow = "custom";
             }
 
-            // 3. MOVE NODE
+            // 3. MOVE TO NEXT NODE
             if (next) {
                 chat.currentNode = next;
             }
 
-            await chat.save();
+            // Clear any previous pending action
+            chat.pendingAction = null;
 
             // 4. LOAD NEXT NODE
             const nextNode = next
@@ -182,6 +218,9 @@ Business Type: ${businessType || "N/A"}
                 : null;
 
             if (!nextNode) {
+
+                await chat.save();
+
                 return res.json({
                     success: true,
                     node: {
@@ -192,9 +231,26 @@ Business Type: ${businessType || "N/A"}
                         options: []
                     }
                 });
+
             }
 
-            // 5. EXECUTE ACTION NODE
+            // 5. INPUT NODE (wait for user text)
+            if (nextNode.type === "input") {
+
+                chat.pendingAction = nextNode.action;
+                await chat.save();
+
+                return res.json({
+                    success: true,
+                    node: nextNode
+                });
+
+            }
+
+            // 6. SAVE CHAT BEFORE CONTINUING
+            await chat.save();
+
+            // 7. ACTION NODE
             if (nextNode.type === "action") {
 
                 return await NodeActionController.execute(
@@ -205,19 +261,21 @@ Business Type: ${businessType || "N/A"}
 
             }
 
-            // 6. RETURN NORMAL MENU NODE
+            // 8. NORMAL MENU NODE
             return res.json({
                 success: true,
                 node: nextNode
             });
 
         } catch (error) {
+
             console.error("NODE_ERROR:", error);
 
             return res.status(500).json({
                 success: false,
                 message: "Internal server error"
             });
+
         }
     }
     

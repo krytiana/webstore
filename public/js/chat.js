@@ -8,11 +8,15 @@ const sidebar = document.querySelector(".sidebar");
 
 let chatId = null;
 
-/*
-|--------------------------------------------------------------------------
-| Create Chat On Page Load
-|--------------------------------------------------------------------------
-*/
+const actionRenderers = {
+    "demo-link": renderDemoLink,
+    "demo-links": renderDemoLinks,
+    "features": renderFeatures,
+    "pricing": renderPricing,
+    "tech-stack": renderTechStack,
+    "ai": ({ message }) => renderAIMessage(message)
+};
+
 
 window.addEventListener("DOMContentLoaded", async () => {
 
@@ -33,14 +37,14 @@ window.addEventListener("DOMContentLoaded", async () => {
         messages.innerHTML = "";
 
         if (data.node) {
-            addNode(data.node);
+            renderNode(data.node);
         }
 
     } catch (error) {
 
         console.error("CREATE_CHAT_ERROR:", error);
 
-        addAIMessage(
+        renderAIMessage(
             "Unable to start conversation. Please refresh the page."
         );
 
@@ -48,11 +52,6 @@ window.addEventListener("DOMContentLoaded", async () => {
 
 });
 
-/*
-|--------------------------------------------------------------------------
-| Send Message
-|--------------------------------------------------------------------------
-*/
 
 form.addEventListener("submit", async (e) => {
 
@@ -64,19 +63,19 @@ form.addEventListener("submit", async (e) => {
 
     if (!chatId) {
 
-        addAIMessage(
+        renderAIMessage(
             "Chat session not ready. Please refresh the page."
         );
 
         return;
     }
 
-    addUserMessage(prompt);
+    renderUserMessage(prompt);
 
     promptInput.value = "";
 
-    const loadingMessage =
-        addAIMessage("Thinking...");
+    const thinkingMessage =
+        renderAIMessage("Thinking...");
 
     try {
 
@@ -108,12 +107,23 @@ form.addEventListener("submit", async (e) => {
 
         }
 
-        const data =
-            await response.json();
+        const data = await response.json();
 
-        loadingMessage.querySelector(
-            ".bubble"
-        ).textContent = data.message;
+        // Remove the "Thinking..." message
+        thinkingMessage.remove();
+
+        if (data.node) {
+            renderNode(data.node);
+            return;
+        }
+
+        if (data.action) {
+            renderAction(data);
+            return;
+        }
+
+        // Normal AI message
+        renderAIMessage(data.message);
 
     } catch (error) {
 
@@ -122,7 +132,7 @@ form.addEventListener("submit", async (e) => {
             error
         );
 
-        loadingMessage.querySelector(
+        thinkingMessage.querySelector(
             ".bubble"
         ).textContent =
             "Sorry, I couldn't process your request.";
@@ -131,13 +141,8 @@ form.addEventListener("submit", async (e) => {
 
 });
 
-/*
-|--------------------------------------------------------------------------
-| UI Helpers
-|--------------------------------------------------------------------------
-*/
 
-function addUserMessage(text) {
+function renderUserMessage(text) {
 
     messages.insertAdjacentHTML(
         "beforeend",
@@ -152,14 +157,14 @@ function addUserMessage(text) {
 }
 
 
-function addAIMessage(text) {
+function renderAIMessage(text) {
 
     messages.insertAdjacentHTML(
         "beforeend",
         `
         <div class="message ai">
             <div class="avatar">AI</div>
-            <div class="bubble ai-content">${formatAI(text)}</div>
+            <div class="bubble ai-content">${formatMessage(text)}</div>
         </div>
         `
     );
@@ -170,7 +175,7 @@ function addAIMessage(text) {
 }
 
 
-function addNode(node) {
+function renderNode(node) {
 
     let html = `
         <div class="message ai node-message" id="node-${node.id}">
@@ -255,7 +260,7 @@ function escapeHtml(text) {
 }
 
 
-function formatAI(text) {
+function formatMessage(text) {
 
     const lines = text.split("\n");
 
@@ -293,7 +298,7 @@ function formatAI(text) {
     return html;
 }
 
-function addDemoLinks(data) {
+function renderDemoLinks(data) {
 
     let html = `
         <div class="message ai">
@@ -330,6 +335,104 @@ function addDemoLinks(data) {
     scrollBottom();
 }
 
+function renderAction(data) {
+
+    const renderer = actionRenderers[data.action];
+
+    if (!renderer) {
+        console.warn("Unknown action:", data);
+        return renderAIMessage("Unknown response received.");
+    }
+
+    return renderer(data);
+
+}
+
+function renderDemoLink(data) {
+
+    const html = `
+        <div class="demo-item">
+            <div class="avatar">AI</div>
+            <div class="bubble ai-content">
+                <h3>${data.name}</h3>
+
+                <a href="${data.demoUrl}"
+                   target="_blank"
+                   rel="noopener noreferrer">
+                    🌐 View Live Demo
+                </a>
+            </div>
+        </div>
+    `;
+
+    messages.insertAdjacentHTML("beforeend", html);
+
+    scrollBottom();
+
+}
+
+function renderFeatures(data) {
+
+    let html = `
+        <div class="message ai">
+            <div class="avatar">AI</div>
+            <div class="bubble ai-content">
+                <h3>✨ Features</h3>
+                <ul>
+    `;
+
+    data.features.forEach(feature => {
+        html += `<li>${feature}</li>`;
+    });
+
+    html += `
+                </ul>
+            </div>
+        </div>
+    `;
+
+    messages.insertAdjacentHTML("beforeend", html);
+
+    scrollBottom();
+
+}
+
+function renderTechStack(data) {
+
+    let html = `
+        <div class="message ai">
+            <div class="avatar">AI</div>
+            <div class="bubble ai-content">
+                <h3>🛠 Tech Stack</h3>
+                <p>${data.techStack}</p>
+            </div>
+        </div>
+    `;
+
+    messages.insertAdjacentHTML("beforeend", html);
+
+    scrollBottom();
+
+}
+
+function renderPricing(data) {
+
+    let html = `
+        <div class="message ai">
+            <div class="avatar">AI</div>
+            <div class="bubble ai-content">
+                <h3>💰 Pricing</h3>
+                <p>${data.pricing}</p>
+            </div>
+        </div>
+    `;
+
+    messages.insertAdjacentHTML("beforeend", html);
+
+    scrollBottom();
+
+}
+
 window.selectOption = function(option) {
 
     promptInput.value = option;
@@ -339,7 +442,7 @@ window.selectOption = function(option) {
 
 window.selectNodeOption = async function(nodeId, optionId, label) {
     // 1. Show user message immediately
-    addUserMessage(label || optionId);
+    renderUserMessage (label || optionId);
     lockNode(nodeId, optionId);
 
     try {
@@ -353,36 +456,31 @@ window.selectNodeOption = async function(nodeId, optionId, label) {
                 chatId,
                 optionId
             })
+
+            
         });
 
         const data = await response.json();
-
-        if (data.node) {
-            addNode(data.node);
-            return;
-        }
-
-        if (data.action === "demo-links") {
-            addDemoLinks(data);
-            return;
-        }
-
-        if (data.action === "ai") {
-            addAIMessage(data.message);
-            return;
-        }
 
         if (!response.ok) {
             throw new Error(data.message || "Menu error");
         }
 
-        addNode(data.node);
+        if (data.node) {
+            return renderNode(data.node);
+        }
+
+        if (data.action) {
+            return renderAction(data);
+        }
+
+        renderAIMessage("Unknown response from server.");
 
     } catch (error) {
 
         console.error("MENU_CLICK_ERROR:", error);
 
-        addAIMessage("Something went wrong loading the menu.");
+        renderAIMessage ("Something went wrong loading the menu.");
     }
 };
 
