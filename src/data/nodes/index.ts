@@ -4,6 +4,7 @@ import { Node } from "../../types/nodesTypes";
 
 
 import { mainNode } from "./main-menu";
+
 import { browseNode, 
         helpChoose, 
         ecommerceResultsNode, 
@@ -19,9 +20,23 @@ import { browseNode,
         templateOptionsNode,
         templateOverview
     } from "./browse-menu";
-import { customNode } from "./custom-menu";
-import { companyNode } from "./company-menu";
-import { supportNode } from "./support-menu";
+
+
+import { 
+    customNode, 
+    customProjectNode 
+
+} from "./custom-menu";
+
+
+import { 
+    companyNode 
+} from "./company-menu";
+
+
+import { 
+    supportNode 
+} from "./support-menu";
 
 
 export const nodes: Record<string, Node> = {
@@ -43,8 +58,11 @@ export const nodes: Record<string, Node> = {
     "template-pricing": templatePricing,
     "template-options": templateOptionsNode,
     "template-overview": templateOverview,
+
+
     //custom menu
     "custom-menu": customNode,
+    "custom-project": customProjectNode,
 
     // Company Menu
     "company-menu": companyNode,

@@ -6,7 +6,7 @@ export const customNode: Node = {
 
     title: "Custom Website",
 
-    message: "Tell us what you'd like to build.",
+    message: "I'm glad to help you build your website. How would you like to proceed?",
 
     options: [
         {
@@ -19,5 +19,16 @@ export const customNode: Node = {
             label: "Renovate an existing website",
             next: "website-renovation"
         }
+    ]
+};
+
+//nodes for the "Start a new custom website" option
+export const customProjectNode: Node = {
+    id: "custom-project",
+    type: "menu",
+    title: "Start a New Custom Website",
+    message: "Let's get started with your new custom website. Give details about your project, and I'll assist you in creating a tailored solution.",
+    options: [
+        
     ]
 };

@@ -6,7 +6,7 @@ export const mainNode: Node = {
     type: "menu",
 
     title: "Welcome to CodeCartHub",
-    message: "How can I help you today?",
+    message: "How can I help you today? Choose one of the options below to get started.",
 
     options: [
         {

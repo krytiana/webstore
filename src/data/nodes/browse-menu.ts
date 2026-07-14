@@ -7,7 +7,7 @@ export const browseNode: Node = {
 
     title: "Browse Website Templates",
 
-    message: "Choose one option below.",
+    message: "How would you like to browse our ready-made website templates? Choose one of the options below to get started.",
 
     options: [
         {
@@ -28,7 +28,7 @@ export const helpChoose: Node = {
     id: "business-selector",
     type: "menu",
     title: "Help Me Choose",
-    message: "What kind of website are you looking to build?",
+    message: "I'm glad to help you choose a website template. Please select the type of website you want to create from the options below.",
     options: [
         {
             id: "ecommerce",
@@ -98,7 +98,7 @@ export const templateOptionsNode: Node = {
     id: "template-options",
     type: "menu",
     title: "",
-    message: "What would you like to know?",
+    message: "What would you like to know about this template?",
     options: [
         {
             id: "overview",
@@ -136,15 +136,17 @@ export const templateSearchNode: Node = { //for input node to search for a speci
     title: "Find a Template",
 
     message:
-        "Enter the template name you're looking for.",
+        "Please enter the name of the template you want to learn about. Type it same as it appears on the product page.",
 
     action: "findTemplateByName"
 };
+
 export const templateOverview: Node = {
     id: "template-overview",
     type: "action",
     action: "templateOverview"
 };
+
 export const templateLiveDemo: Node = {
     id: "template-live-demo",
     type: "action",
