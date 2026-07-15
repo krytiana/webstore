@@ -188,8 +188,8 @@ function renderNode(node) {
         html += `<h3>${node.title}</h3>`;
     }
 
-    if (node.message) {
-        html += `<p>${node.message}</p>`;
+   if (node.message) {
+        html += formatNodeMessage(node.message);
     }
 
     if (node.options?.length) {
@@ -294,6 +294,31 @@ function formatMessage(text) {
 
         // normal text
         html += `<div>${trimmed}</div>`;
+    }
+
+    return html;
+}
+
+function formatNodeMessage(message) {
+
+    const parts = message
+        .split("|")
+        .map(part => part.trim())
+        .filter(Boolean);
+
+    if (parts.length === 0) return "";
+
+    let html = `<p>${parts[0]}</p>`;
+
+    if (parts.length > 1) {
+
+        html += "<ul>";
+
+        for (const item of parts.slice(1)) {
+            html += `<li>${item}</li>`;
+        }
+
+        html += "</ul>";
     }
 
     return html;
