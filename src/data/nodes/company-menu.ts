@@ -33,17 +33,8 @@ export const companyNode: Node = {
             id: "deployment",
             label: "Deployment workflow",
             next: "deployment-menu"
-        },
-        {
-            id: "faq",
-            label: "Frequently Asked Questions",
-            next: "faq-menu"
-        },
-        {
-            id: "contact",
-            label: "Contact Information",
-            next: "contact-node"
         }
+        
     ]
 };
 
@@ -712,3 +703,4 @@ export const deployNode: Node = {
         }
     ]
 };
+

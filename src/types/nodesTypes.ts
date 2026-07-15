@@ -25,7 +25,15 @@ export type Node = {
     | "templateFeatures"
     | "templateTechStack"
     | "templatePricing"
-    | "templateOverview";
+    | "templateOverview"
+    | "renderAccountCreation"
+    | "newWebServiceCreation"
+    | "selectingGithubRepository"
+    | "configuringBuildSettings"
+    | "mongodbAccountSetup"
+    | "renderEnvironmentVariables"
+
+    ;
 
     category?: 
     "E-commerce"

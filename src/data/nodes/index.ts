@@ -63,7 +63,11 @@ import {
 
 
 import { 
-    supportNode,
+    guidelinesNode,
+    deploymentMenuNode,
+    gitHubConnectionNode,
+    repositoryCreationNode,
+    sourceCodeUploadingNode
 
 } from "./support-menu";
 
@@ -121,13 +125,14 @@ export const nodes: Record<string, Node> = {
     "demo-not-included-node": demoNotIncludedNode,
     "purchase-included-node": purchaseIncludedNode,
     "demo-note-node": demoNoteNode,
-    "deployment-menu": deployNode
+    "deployment-menu": deployNode,
 
     // Support Menu
-   
-    
-
-
+    "guidelines-menu": guidelinesNode,
+    "deployment-step-menu": deploymentMenuNode,
+    "github-connection-guide": gitHubConnectionNode,
+    "repository-creation-guide": repositoryCreationNode,
+    "source-code-uploading-guide": sourceCodeUploadingNode
 
 };
 

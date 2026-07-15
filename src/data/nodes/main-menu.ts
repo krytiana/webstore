@@ -32,7 +32,7 @@ export const mainNode: Node = {
         {
             id: "support",
             label: "📌 Need Guidelines",
-            next: "support-menu",
+            next: "guidelines-menu",
             tag: "support"
         }
     ]
