@@ -62,12 +62,19 @@ import {
 } from "./company-menu";
 
 
-import { 
+import {
     guidelinesNode,
     deploymentMenuNode,
     gitHubConnectionNode,
     repositoryCreationNode,
-    sourceCodeUploadingNode
+    sourceCodeUploadingNode,
+
+    renderAccountCreationNode,
+    newWebServiceCreationNode,
+    selectingGithubRepositoryNode,
+    configuringBuildSettingsNode,
+    mongodbAccountSetupNode,
+    renderEnvironmentVariablesNode
 
 } from "./support-menu";
 
@@ -132,7 +139,14 @@ export const nodes: Record<string, Node> = {
     "deployment-step-menu": deploymentMenuNode,
     "github-connection-guide": gitHubConnectionNode,
     "repository-creation-guide": repositoryCreationNode,
-    "source-code-uploading-guide": sourceCodeUploadingNode
+    "source-code-uploading-guide": sourceCodeUploadingNode,
+
+    "render-account-creation": renderAccountCreationNode,
+    "new-web-service-creation": newWebServiceCreationNode,
+    "selecting-github-repository": selectingGithubRepositoryNode,
+    "configuring-build-settings": configuringBuildSettingsNode,
+    "mongodb-account-setup": mongodbAccountSetupNode,
+    "render-environment-variables": renderEnvironmentVariablesNode,
 
 };
 

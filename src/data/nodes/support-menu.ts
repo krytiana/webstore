@@ -1,3 +1,4 @@
+//src/data/nodes/support-menu.ts
 import { Node } from "../../types/nodesTypes";
 
 export const guidelinesNode: Node = {

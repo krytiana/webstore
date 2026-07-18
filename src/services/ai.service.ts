@@ -155,12 +155,16 @@ STRICT RULES
 24. Always format responses with spacing and bullet points
 `;
 
-
+interface AIOptions {
+    systemPrompt?: string;
+    includeProducts?: boolean;
+}
 export class AIService {
 
     static async generateResponse(
         messages: Message[],
-        latestMessage: string
+        latestMessage: string,
+        options: AIOptions = {}
     ): Promise<string> {
 
         try {
@@ -198,26 +202,32 @@ Backend: ${p.features?.backend?.join(", ")}
                 max_tokens: 1000,
 
                 messages: [
+
                     {
                         role: "system",
-                        content: SYSTEM_PROMPT
+                        content: options.systemPrompt || SYSTEM_PROMPT
                     },
 
-                    // Only add product context if it exists
                     ...(productContext
                         ? [{
                             role: "system" as const,
                             content: `
-AVAILABLE PRODUCTS
+                AVAILABLE PRODUCTS
 
-Recommend ONLY from these products when relevant:
+                Recommend ONLY from these products when relevant:
 
-${productContext}
+                ${productContext}
                             `.trim()
                         }]
                         : []),
 
-                    ...messages
+                    ...messages,
+
+                    {
+                        role: "user",
+                        content: latestMessage
+                    }
+
                 ]
             });
 

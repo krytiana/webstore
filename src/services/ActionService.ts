@@ -2,6 +2,7 @@
 import { Node } from "../types/nodesTypes";
 
 import { TemplateAction, } from "../actions/template.action";
+import { DeploymentAction } from "../actions/deployment.action";
 
 export class ActionService {
 
@@ -11,6 +12,10 @@ export class ActionService {
     ) {
 
         switch (node.action) {
+
+            // =========================
+            // Template Actions
+            // =========================
 
             case "findTemplates":
 
@@ -30,9 +35,27 @@ export class ActionService {
 
             case "templatePricing":
                 return await TemplateAction.pricing(chat);
-            
+
             case "templateOverview":
                 return await TemplateAction.overview(chat);
+
+
+            // =========================
+            // Deployment AI Actions
+            // =========================
+
+            case "renderAccountCreation":
+            case "newWebServiceCreation":
+            case "selectingGithubRepository":
+            case "configuringBuildSettings":
+            case "mongodbAccountSetup":
+            case "renderEnvironmentVariables":
+
+                return await DeploymentAction.start(
+                    node.action,
+                    chat
+                );
+
 
             default:
 
@@ -72,4 +95,8 @@ export class ActionService {
     }
 
 }
+
+
+
+
 

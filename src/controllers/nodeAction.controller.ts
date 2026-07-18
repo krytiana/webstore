@@ -18,7 +18,7 @@ export class NodeActionController {
                 node,
                 chat
             );
-
+            console.log("ACTION RESULT:", result);
             return res.json(result);
 
         } catch (error) {
