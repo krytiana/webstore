@@ -22,7 +22,7 @@ export class DeploymentAction {
                 includeProducts: false
             }
         );
-        console.log("DEPLOYMENT AI REPLY:", reply);
+        
         return {
             success: true,
             action: "ai",

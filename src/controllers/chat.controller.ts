@@ -182,7 +182,7 @@ export class ChatController {
                 optionId
             );
 
-            console.log("HANDLE OPTION RESULT:", result);
+
 
             if (!result) {
                 return res.status(400).json({
@@ -250,11 +250,8 @@ export class ChatController {
             // 6. SAVE CHAT BEFORE CONTINUING
             await chat.save();
 
-            console.log("NEXT NODE:", nextNode);
-
             // 7. ACTION NODE
             if (nextNode.type === "action") {
-                console.log("ACTION NODE DETECTED");
 
                 return await NodeActionController.execute(
                     nextNode,
@@ -263,7 +260,6 @@ export class ChatController {
                 );
 
             }
-            
 
             // 8. NORMAL MENU NODE
             return res.json({
