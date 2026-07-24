@@ -18,6 +18,11 @@ const actionRenderers = {
     "ai": ({ message }) => renderAIMessage(message)
 };
 
+const aiState = {
+    mode: null,
+    action: null
+};
+
 
 window.addEventListener("DOMContentLoaded", async () => {
 
@@ -93,7 +98,10 @@ form.addEventListener("submit", async (e) => {
 
                     chatId,
 
-                    message: prompt
+                    message: prompt,
+
+                    aiMode: aiState.mode,
+                    aiAction:aiState.action
 
                 })
 
@@ -116,6 +124,13 @@ form.addEventListener("submit", async (e) => {
         if (data.node) {
             renderNode(data.node);
             return;
+        }
+
+        if (data.ai) {
+
+            aiState.mode = data.ai.mode;
+            aiState.action = data.ai.action;
+
         }
 
         if (data.action) {
@@ -594,6 +609,12 @@ window.selectNodeOption = async function(nodeId, optionId, label) {
 
         if (data.node) {
             return renderNode(data.node);
+        }
+        if (data.ai) {
+
+            aiState.mode = data.ai.mode;
+            aiState.action = data.ai.action;
+
         }
 
         if (data.action) {

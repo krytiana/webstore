@@ -26,7 +26,12 @@ export class DeploymentAction {
         return {
             success: true,
             action: "ai",
-            message: reply
+            message: reply,
+
+            ai: {
+                mode: "deployment", 
+                action
+            }
         };
 
     }

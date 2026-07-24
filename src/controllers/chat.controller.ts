@@ -53,7 +53,10 @@ export class ChatController {
     static async sendMessage(req: Request, res: Response) {
         try {
 
-            const { chatId, message } = req.body;
+            const { chatId, message, aiMode, aiAction } = req.body;
+
+            console.log({aiMode, aiAction});
+
 
             const chat = await Chat.findById(chatId);
 
@@ -95,10 +98,33 @@ export class ChatController {
             |--------------------------------------------------------------------------
             */
 
-            const aiResponse = await AIService.generateResponse(
-                chat.messages,
-                message
-            );
+            let aiResponse: string;
+
+            if (aiMode === "deployment") {
+
+                const { DeploymentPromptService } =
+                    await import("../prompts/deployment.prompt");
+
+                const prompt =
+                    DeploymentPromptService.build(aiAction);
+
+                aiResponse = await AIService.generateResponse(
+                    chat.messages,
+                    message,
+                    {
+                        systemPrompt: prompt,
+                        includeProducts: false
+                    }
+                );
+
+            } else {
+
+                aiResponse = await AIService.generateResponse(
+                    chat.messages,
+                    message
+                );
+
+            }
 
             const cleanedResponse = aiResponse
                 .replace(/\[LEAD_DATA\][\s\S]*?\[\/LEAD_DATA\]/, "")
