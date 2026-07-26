@@ -9,14 +9,16 @@ export class NodeActionController {
     static async execute(
         node: Node,
         chat: any,
-        res: Response
+        res: Response,
+        data?: any
     ) {
 
         try {
 
             const result = await ActionService.execute(
                 node,
-                chat
+                chat,
+                data
             );
             
             return res.json(result);

@@ -3,6 +3,7 @@ export type NodeOption = {
     id: string;
     label: string;
     next?: string;
+    data?: Record<string, any>;
 
     // Phase 2+ behavior hooks
     lockNode?: boolean;
@@ -32,6 +33,7 @@ export type Node = {
     | "configuringBuildSettings"
     | "mongodbAccountSetup"
     | "renderEnvironmentVariables"
+    | "customConsultation"
 
     ;
 
@@ -41,4 +43,6 @@ export type Node = {
     | "Blog"
     | "Management System"
     | "Service";
+
+  
 };

@@ -7,6 +7,7 @@ import { AIService } from "../services/ai.service";
 import { LeadService } from "../services/lead.service";
 import { NodeService } from "../services/NodeService";
 import { NodeActionController } from "./nodeAction.controller";
+import { AIPromptService } from "../services/AIPromptService";
 
 export class ChatController {
 
@@ -98,33 +99,19 @@ export class ChatController {
             |--------------------------------------------------------------------------
             */
 
-            let aiResponse: string;
+            const systemPrompt = await AIPromptService.build(
+                aiMode,
+                aiAction
+            );
 
-            if (aiMode === "deployment") {
-
-                const { DeploymentPromptService } =
-                    await import("../prompts/deployment.prompt");
-
-                const prompt =
-                    DeploymentPromptService.build(aiAction);
-
-                aiResponse = await AIService.generateResponse(
-                    chat.messages,
-                    message,
-                    {
-                        systemPrompt: prompt,
-                        includeProducts: false
-                    }
-                );
-
-            } else {
-
-                aiResponse = await AIService.generateResponse(
-                    chat.messages,
-                    message
-                );
-
-            }
+            const aiResponse = await AIService.generateResponse(
+                chat.messages,
+                message,
+                {
+                    systemPrompt,
+                    includeProducts: !systemPrompt
+                }
+            );
 
             const cleanedResponse = aiResponse
                 .replace(/\[LEAD_DATA\][\s\S]*?\[\/LEAD_DATA\]/, "")
@@ -217,7 +204,7 @@ export class ChatController {
                 });
             }
 
-            const { next, lockNode, tag } = result;
+            const { next, lockNode, tag, data } = result;
 
             // 1. LOCK NODE
             if (lockNode && !chat.lockedNodes?.includes(currentNode)) {
@@ -282,7 +269,8 @@ export class ChatController {
                 return await NodeActionController.execute(
                     nextNode,
                     chat,
-                    res
+                    res,
+                    data
                 );
 
             }

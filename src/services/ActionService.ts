@@ -3,12 +3,13 @@ import { Node } from "../types/nodesTypes";
 
 import { TemplateAction, } from "../actions/template.action";
 import { DeploymentAction } from "../actions/deployment.action";
-
+import {CustomConsultationAction} from "../actions/customConsultation.action"
 export class ActionService {
 
     static async execute(
         node: Node,
-        chat: any
+        chat: any,
+        data?: any
     ) {
 
         switch (node.action) {
@@ -21,7 +22,8 @@ export class ActionService {
 
                 return await TemplateAction.findTemplates(
                     node,
-                    chat
+                    chat,
+                  
                 );
 
             case "templateLiveDemo":
@@ -39,7 +41,8 @@ export class ActionService {
             case "templateOverview":
                 return await TemplateAction.overview(chat);
 
-
+            case "customConsultation":
+                return await CustomConsultationAction.start(chat, data);
             // =========================
             // Deployment AI Actions
             // =========================

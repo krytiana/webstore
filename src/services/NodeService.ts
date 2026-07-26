@@ -24,7 +24,8 @@ export class NodeService {
             option,
             next: option.next || null,
             lockNode: option.lockNode || false,
-            tag: option.tag || null
+            tag: option.tag || null,
+            data: option.data
         };
 
     }
