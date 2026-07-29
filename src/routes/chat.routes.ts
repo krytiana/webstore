@@ -19,7 +19,7 @@ router.post(
 );
 
 router.post(
-    "/menu",
+    "/node",
     ChatController.node
 );
 

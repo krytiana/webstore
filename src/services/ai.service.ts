@@ -171,6 +171,7 @@ export class AIService {
 
             // 1. Decide if we need product search
             const needsProducts =
+            options.includeProducts === true &&
                 /(template|website|shop|store|ecommerce|restaurant|portfolio|product|build|design)/i.test(latestMessage);
 
             let productContext = "";
@@ -193,6 +194,13 @@ Backend: ${p.features?.backend?.join(", ")}
             }
 
             // 3. Call AI
+            const prompt = options.systemPrompt || SYSTEM_PROMPT;
+
+console.log("================================");
+console.log("Using custom prompt:", !!options.systemPrompt);
+console.log("Prompt preview:");
+console.log(prompt.substring(0, 200));
+console.log("================================");
             const completion = await groq.chat.completions.create({
                 model:
                     process.env.AI_MODEL ||

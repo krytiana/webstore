@@ -24,7 +24,7 @@ import { browseNode,
 
 import { 
     customNode, 
-    customProjectNode,
+   
     customConsultationNode
 
 } from "./custom-menu";
@@ -103,7 +103,7 @@ export const nodes: Record<string, Node> = {
 
     //custom menu
     "custom-menu": customNode,
-    "custom-project": customProjectNode,
+    
     "custom-consultation": customConsultationNode,
 
     // Company Menu

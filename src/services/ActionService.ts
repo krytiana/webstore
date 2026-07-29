@@ -1,15 +1,17 @@
 //services/ActionService.ts
+import { Request } from "express";
 import { Node } from "../types/nodesTypes";
 
 import { TemplateAction, } from "../actions/template.action";
-import { DeploymentAction } from "../actions/deployment.action";
-import {CustomConsultationAction} from "../actions/customConsultation.action"
+import { DeploymentAIService } from "./ai/deployment-ai.service";
+import { ConsultationAIService } from "./ai/consultation-ai.service";
 export class ActionService {
 
     static async execute(
+        req: Request,
         node: Node,
-        chat: any,
-        data?: any
+       
+        
     ) {
 
         switch (node.action) {
@@ -21,28 +23,28 @@ export class ActionService {
             case "findTemplates":
 
                 return await TemplateAction.findTemplates(
-                    node,
-                    chat,
+                    node
+                    
                   
                 );
 
             case "templateLiveDemo":
-                return await TemplateAction.liveDemo(chat);
+                return await TemplateAction.liveDemo(req);
 
             case "templateFeatures":
-                return await TemplateAction.features(chat);
+                return await TemplateAction.features(req);
 
             case "templateTechStack":
-                return await TemplateAction.techStack(chat);
+                return await TemplateAction.techStack(req);
 
             case "templatePricing":
-                return await TemplateAction.pricing(chat);
+                return await TemplateAction.pricing(req);
 
             case "templateOverview":
-                return await TemplateAction.overview(chat);
+                return await TemplateAction.overview(req);
 
             case "customConsultation":
-                return await CustomConsultationAction.start(chat, data);
+                return await ConsultationAIService.start(req);
             // =========================
             // Deployment AI Actions
             // =========================
@@ -54,10 +56,10 @@ export class ActionService {
             case "mongodbAccountSetup":
             case "renderEnvironmentVariables":
 
-                return await DeploymentAction.start(
-                    node.action,
-                    chat
-                );
+            return await DeploymentAIService.start(
+                req,
+                node.action
+            );
 
 
             default:
@@ -72,9 +74,9 @@ export class ActionService {
     }
 
     static async executeInput(
+        req: Request,
         action: string,
-        value: string,
-        chat: any
+        value: string
     ) {
 
         switch (action) {
@@ -82,9 +84,9 @@ export class ActionService {
             case "findTemplateByName":
 
                 return await TemplateAction.findTemplateByName(
-                    value,
-                    chat
-                );
+                req,
+                value
+            );
 
             default:
 

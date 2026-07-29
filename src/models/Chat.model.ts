@@ -1,22 +1,6 @@
 // src/models/Chat.model.ts
 import mongoose from "mongoose";
 
-const messageSchema = new mongoose.Schema(
-    {
-        role: {
-            type: String,
-            enum: ["user", "assistant"],
-            required: true
-        },
-
-        content: {
-            type: String,
-            required: true
-        }
-    },
-    { _id: false }
-);
-
 const chatSchema = new mongoose.Schema(
     {
         sessionId: {
@@ -24,17 +8,9 @@ const chatSchema = new mongoose.Schema(
             required: true
         },
 
-        messages: [messageSchema],
-
-        // ✅ IMPORTANT: global guard
-        leadCaptured: {
-            type: Boolean,
-            default: false
-        }, 
-         
         currentNode: {
             type: String,
-            default: "main"
+            default: "main-menu"
         },
 
         activeOption: {
@@ -52,15 +28,17 @@ const chatSchema = new mongoose.Schema(
             enum: ["menu", "browse", "custom", "support", "company", "lead"],
             default: "menu"
         },
+
         pendingAction: {
             type: String,
             default: null
         },
+
         selectedTemplate: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Product",
             default: null
-        },
+        }
     },
     {
         timestamps: true

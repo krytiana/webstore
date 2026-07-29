@@ -1,13 +1,15 @@
 //src/actions/template.action.ts
+import { Request } from "express";
+
 import Product from "../models/ProductModel";
 import { Node } from "../types/nodesTypes";
 import { NodeService } from "../services/NodeService";
+import { ConversationService } from "../services/conversation.service";
 
 export class TemplateAction {
 
     static async findTemplates(
-        node: Node,
-        chat: any
+        node: Node
     ) {
 
         const templates = await Product.find({
@@ -58,8 +60,8 @@ export class TemplateAction {
     }
 
     static async findTemplateByName(
-        name: string,
-        chat: any
+        req: Request,
+        name: string
     ) {
 
         const template = await Product.findOne({
@@ -95,9 +97,15 @@ export class TemplateAction {
         }
 
         // Remember selected template
-        chat.selectedTemplate = template._id;
-        chat.currentNode = "template-options";
-        await chat.save();
+        ConversationService.setSelectedTemplate(
+            req,
+            template._id
+        );
+
+        ConversationService.setCurrentNode(
+            req,
+            "template-options"
+        );
 
         const node = structuredClone(
             NodeService.getNode("template-options")
@@ -119,15 +127,22 @@ export class TemplateAction {
 
     }
 
-    private static async getSelectedTemplate(chat: any) {
+    private static async getSelectedTemplate(req: Request) {
 
-        return await Product.findById(chat.selectedTemplate);
+        const templateId =
+            ConversationService.getSelectedTemplate(req);
+
+        if (!templateId) {
+            return null;
+        }
+
+        return await Product.findById(templateId);
 
     }
 
-    static async overview(chat: any) {
+    static async overview(req: Request) {
 
-    const template = await this.getSelectedTemplate(chat);
+      const template = await this.getSelectedTemplate(req);
 
     if (!template) {
         return {
@@ -145,9 +160,9 @@ export class TemplateAction {
 
 }
 
-    static async liveDemo(chat: any) {
+    static async liveDemo(req: Request) {
 
-        const template = await this.getSelectedTemplate(chat);
+        const template = await this.getSelectedTemplate(req);
 
         if (!template) {
             return {
@@ -165,9 +180,9 @@ export class TemplateAction {
 
     }
 
-    static async features(chat: any) {
+    static async features(req: Request) {
 
-        const template = await this.getSelectedTemplate(chat);
+        const template = await this.getSelectedTemplate(req);
 
         if (!template) {
             return {
@@ -185,9 +200,9 @@ export class TemplateAction {
 
     }
 
-    static async techStack(chat: any) {
+    static async techStack(req: Request) {
 
-        const template = await this.getSelectedTemplate(chat);
+        const template = await this.getSelectedTemplate(req);
 
         if (!template) {
             return {
@@ -205,9 +220,9 @@ export class TemplateAction {
 
     }
 
-    static async pricing(chat: any) {
+    static async pricing(req: Request) {
 
-        const template = await this.getSelectedTemplate(chat);
+        const template = await this.getSelectedTemplate(req);
 
         if (!template) {
             return {

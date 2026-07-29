@@ -17,12 +17,12 @@ export class AIPromptService {
 
             }
 
-            case "consultant": {
+            case "consultation": {
 
                 const { ConsultantPromptService } =
                     await import("../prompts/consultant.prompt");
 
-                return ConsultantPromptService.build(action!);
+                return ConsultantPromptService.build();
 
             }
 

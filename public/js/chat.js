@@ -38,7 +38,7 @@ window.addEventListener("DOMContentLoaded", async () => {
 
         const data = await response.json();
 
-        chatId = data.chatId;
+       
 
         messages.innerHTML = "";
 
@@ -67,14 +67,6 @@ form.addEventListener("submit", async (e) => {
 
     if (!prompt) return;
 
-    if (!chatId) {
-
-        renderAIMessage(
-            "Chat session not ready. Please refresh the page."
-        );
-
-        return;
-    }
 
     renderUserMessage(prompt);
 
@@ -96,14 +88,12 @@ form.addEventListener("submit", async (e) => {
 
                 body: JSON.stringify({
 
-                    chatId,
+                message: prompt,
 
-                    message: prompt,
+                aiMode: aiState.mode,
+                aiAction: aiState.action
 
-                    aiMode: aiState.mode,
-                    aiAction:aiState.action
-
-                })
+            })
 
             });
 
@@ -582,34 +572,52 @@ window.selectOption = function(option) {
 };
 
 window.selectNodeOption = async function(nodeId, optionId, label) {
-    // 1. Show user message immediately
-    renderUserMessage (label || optionId);
+
+    renderUserMessage(label || optionId);
+
     lockNode(nodeId, optionId);
 
     try {
 
-        const response = await fetch("/chat/menu", {
+        const response = await fetch("/chat/node", {
+
             method: "POST",
+
             headers: {
                 "Content-Type": "application/json"
             },
+
             body: JSON.stringify({
-                chatId,
                 optionId
             })
 
-            
         });
+
 
         const data = await response.json();
 
+
         if (!response.ok) {
-            throw new Error(data.message || "Menu error");
+            throw new Error(
+                data.message || "Node error"
+            );
         }
 
+
         if (data.node) {
+
             return renderNode(data.node);
+
         }
+
+
+        if (data.action) {
+
+            return renderAction(data);
+
+        }
+
+
         if (data.ai) {
 
             aiState.mode = data.ai.mode;
@@ -617,18 +625,26 @@ window.selectNodeOption = async function(nodeId, optionId, label) {
 
         }
 
-        if (data.action) {
-            return renderAction(data);
-        }
 
-        renderAIMessage("Unknown response from server.");
+        renderAIMessage(
+            data.message || "No response."
+        );
 
-    } catch (error) {
 
-        console.error("MENU_CLICK_ERROR:", error);
+    } catch(error) {
 
-        renderAIMessage ("Something went wrong loading the menu.");
+        console.error(
+            "NODE_CLICK_ERROR:",
+            error
+        );
+
+
+        renderAIMessage(
+            "Something went wrong loading the next step."
+        );
+
     }
+
 };
 
 if (menuBtn && sidebar) {
