@@ -29,7 +29,14 @@ export class DeploymentAIService {
 
         return {
             success: true,
+
+            ai: {
+                mode: "deployment",
+                action
+            },
+
             action: "ai",
+
             message: reply
         };
     }

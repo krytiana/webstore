@@ -107,13 +107,14 @@ export class ChatController {
                     message:"Please choose one of the available options."
                 });
 
-            } catch (error) {
+            } catch (error: any) {
 
+                console.error("SEND_MESSAGE_ERROR");
                 console.error(error);
 
                 return res.status(500).json({
-                    success:false,
-                    message:"Internal server error."
+                    success: false,
+                    message: error?.message || "Internal server error."
                 });
 
             }

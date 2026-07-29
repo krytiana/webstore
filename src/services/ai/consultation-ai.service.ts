@@ -24,10 +24,16 @@ export class ConsultationAIService {
 
         return {
             success: true,
+
+            ai: {
+                mode: "consultation",
+                action: null
+            },
+
             action: "ai",
+
             message: reply
         };
-
     }
 
     static async reply(

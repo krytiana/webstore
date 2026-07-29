@@ -611,24 +611,24 @@ window.selectNodeOption = async function(nodeId, optionId, label) {
         }
 
 
-        if (data.action) {
-
-            return renderAction(data);
-
-        }
-
-
         if (data.ai) {
 
-            aiState.mode = data.ai.mode;
-            aiState.action = data.ai.action;
+    aiState.mode = data.ai.mode;
+    aiState.action = data.ai.action;
 
-        }
+}
 
 
-        renderAIMessage(
-            data.message || "No response."
-        );
+    if (data.action) {
+
+        return renderAction(data);
+
+    }
+
+
+    renderAIMessage(
+        data.message || "No response."
+    );
 
 
     } catch(error) {
