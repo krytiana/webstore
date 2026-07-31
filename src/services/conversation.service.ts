@@ -8,18 +8,47 @@ interface Message {
 
 export class ConversationService {
 
+    static setWebsiteSummary(
+        req: Request,
+        summary: string
+    ) {
+        this.getSession(req).websiteSummary = summary;
+    }
+
+
+    static getWebsiteSummary(req: Request) {
+        return this.getSession(req).websiteSummary;
+    }
+
     static start(
         req: Request,
         mode: "consultation" | "deployment"
     ) {
 
         req.session.conversation = {
+
             mode,
+
             messages: [],
+
+
+            // old chat system
             currentNode: "main-menu",
+
             pendingAction: null,
+
             lockedNodes: [],
-            flow: "menu"
+
+            flow: "menu",
+
+
+            // consultation
+            consultationStep: 1,
+
+            websiteSummary: "",
+
+            leadCaptured: false
+
         };
 
     }

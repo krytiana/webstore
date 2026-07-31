@@ -1,55 +1,37 @@
-//src/models/Lead.model.ts
-import mongoose, {
-    Schema,
-    Document
-} from "mongoose";
+import mongoose from "mongoose";
 
-export interface ILead extends Document {
+const leadSchema = new mongoose.Schema({
 
-    name?: string;
-
-    email?: string;
-
-    phone?: string;
-
-    projectType?: string;
-
-    businessType?: string;
-
-    summary?: string;
-
-    status: string;
-
-    createdAt: Date;
-}
-
-const LeadSchema = new Schema<ILead>(
-
-    {
-        name: String,
-
-        email: String,
-
-        phone: String,
-
-        projectType: String,
-
-        businessType: String,
-
-        summary: String,
-
-        status: {
-            type: String,
-            default: "new"
-        }
+    name: {
+        type: String,
+        required: true
     },
 
-    {
-        timestamps: true
-    }
-);
+    email: {
+        type: String,
+        required: true
+    },
 
-export default mongoose.model<ILead>(
+    phone: {
+        type: String
+    },
+
+    summary: {
+        type: String,
+        required: true
+    },
+
+    status: {
+        type: String,
+        default: "new"
+    }
+
+}, {
+    timestamps: true
+});
+
+
+export const Lead = mongoose.model(
     "Lead",
-    LeadSchema
+    leadSchema
 );

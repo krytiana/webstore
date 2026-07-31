@@ -7,6 +7,7 @@ declare module "express-session" {
     interface SessionData {
 
         conversation?: {
+
             mode: "consultation" | "deployment";
 
             messages: {
@@ -14,6 +15,7 @@ declare module "express-session" {
                 content: string;
             }[];
 
+            // old menu system
             currentNode: string;
 
             pendingAction: string | null;
@@ -22,7 +24,18 @@ declare module "express-session" {
 
             flow: string;
 
+
+            // template selection
             selectedTemplate?: string;
+
+
+            // consultation system
+            consultationStep: number;
+
+            websiteSummary: string;
+
+            leadCaptured: boolean;
+
         };
 
     }
