@@ -33,7 +33,7 @@ Design Direction:
 Then collect:
 Name:
 Email:
-WhatsAPP or Phone:
+Phone:
 
         `.trim();
 

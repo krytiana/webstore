@@ -43,8 +43,26 @@ export class ConsultationAIService {
         message: string
     ) {
 
+        const session = ConversationService.getSession(req);
+
+
+        // 0. Stop AI after consultation is completed
+        if (session.leadCaptured) {
+
+            return `
+    The consultation has already ended.
+
+    If you need to add anything or have questions about your project, please contact our technical team:
+
+    WhatsApp: +233555952767
+            `.trim();
+
+        }
+
+
         // 1. Save user message
         ConversationService.addUser(req, message);
+
 
         // 2. Ask Groq
         const reply = await AIService.generateResponse(
@@ -56,30 +74,35 @@ export class ConsultationAIService {
             }
         );
 
-        // 3. Save only the website summary
+
+        // 3. Save only website summary
         const summaryMatch = reply.match(
-            /Website Type:[\s\S]*/
+            /Website Type:[\s\S]*?(?=\n\s*Now\b|$)/i
         );
 
+
         if (summaryMatch) {
+
             ConversationService.setWebsiteSummary(
                 req,
                 summaryMatch[0].trim()
             );
+
         }
 
-        // 4. Save assistant message
-        ConversationService.addAssistant(req, reply);
 
-        // 5. Detect contact details
+
+        // 4. Detect contact details
         let name = "";
         let email = "";
         let phone = "";
 
-        // Format 1: With labels
+
+        // Format 1: Flexible labeled format
         const labeledMatch = message.match(
-            /Name:\s*(.+)\nEmail:\s*(.+)\n(?:WhatsApp|Phone):\s*(.+)/i
+            /Name:\s*(.*?)\s+Email:\s*([^\s]+)\s+(?:WhatsApp\s*(?:or\s*)?Phone(?:\s*number)?|Phone(?:\s*number)?):\s*(.+)/i
         );
+
 
         if (labeledMatch) {
 
@@ -87,30 +110,43 @@ export class ConsultationAIService {
             email = labeledMatch[2].trim();
             phone = labeledMatch[3].trim();
 
-        } else {
+        } 
 
-            // Format 2: Three plain lines
+        else {
+
+            // Format 2: Three separate lines
             const lines = message
                 .split("\n")
                 .map(line => line.trim())
                 .filter(Boolean);
 
+
             if (
                 lines.length >= 3 &&
                 /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(lines[1])
             ) {
+
                 name = lines[0];
                 email = lines[1];
                 phone = lines[2];
+
             }
+
         }
 
-        // 6. Save lead once
+console.log({
+    name,
+    email,
+    phone
+});
+
+        // 5. Save lead and end consultation
         if (
             name &&
             email &&
-            !ConversationService.getSession(req).leadCaptured
+            !session.leadCaptured
         ) {
+
 
             await Lead.create({
 
@@ -120,12 +156,46 @@ export class ConsultationAIService {
 
                 phone,
 
-                summary: ConversationService.getWebsiteSummary(req)
+                summary:
+                    ConversationService.getWebsiteSummary(req)
 
             });
 
-            ConversationService.getSession(req).leadCaptured = true;
+
+            session.leadCaptured = true;
+
+
+            const closingMessage = `
+    Thank you ${name}, your website requirements have been received successfully.
+
+    Our team will review your project details and contact you soon.
+
+    The consultation has now ended.
+
+    If you need to add anything or have questions about your project, please contact our technical team:
+
+    WhatsApp: +233555952767
+            `.trim();
+
+
+            ConversationService.addAssistant(
+                req,
+                closingMessage
+            );
+
+
+            return closingMessage;
+
         }
+
+
+
+        // 6. Save normal AI response
+        ConversationService.addAssistant(
+            req,
+            reply
+        );
+
 
         return reply;
     }

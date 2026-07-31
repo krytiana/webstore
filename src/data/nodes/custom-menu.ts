@@ -18,7 +18,7 @@ export const customNode: Node = {
         {
             id: "renovate",
             label: "Renovate an existing website",
-            next: "website-renovation"
+            next: "template-search"
         }
     ]
 };
