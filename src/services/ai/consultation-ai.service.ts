@@ -134,11 +134,6 @@ export class ConsultationAIService {
 
         }
 
-console.log({
-    name,
-    email,
-    phone
-});
 
         // 5. Save lead and end consultation
         if (
