@@ -1,17 +1,484 @@
+
 <%- include("../partials/header") %>
 
 <section class="admin-form">
+
   <h1>Edit Product</h1>
-  <form action="/admin/edit-product/<%= product._id %>?password=1111" method="POST">
-    <input type="text" name="name" placeholder="Product Name" value="<%= product.name %>" required />
-    <input type="text" name="slug" placeholder="Slug (unique)" value="<%= product.slug %>" required />
-    <input type="text" name="category" placeholder="Category" value="<%= product.category %>" required />
-    <input type="number" name="price" placeholder="Price" value="<%= product.price %>" required />
-    <input type="text" name="demoUrl" placeholder="Demo URL" value="<%= product.demoUrl %>" required />
-    <textarea name="description" placeholder="Description"><%= product.description %></textarea>
-    <input type="text" name="features" placeholder="Features (comma separated)" value="<%= product.features.join(', ') %>" />
-    <button type="submit">Update Product</button>
+
+  <form
+    action="/admin/edit-product/<%= product._id %>?password=1111"
+    method="POST"
+  >
+
+    <!-- =====================================================
+         PRODUCT INFORMATION
+    ====================================================== -->
+
+    <h2>Product Information</h2>
+
+    <input
+      type="text"
+      name="name"
+      placeholder="Product Name"
+      value="<%= product.name || '' %>"
+      required
+      maxlength="100"
+    />
+
+    <input
+      type="text"
+      name="slug"
+      placeholder="Slug (unique)"
+      value="<%= product.slug || '' %>"
+      required
+    />
+
+    <input
+      type="text"
+      name="category"
+      placeholder="Category"
+      value="<%= product.category || '' %>"
+      required
+    />
+
+    <textarea
+      name="description"
+      placeholder="Description"
+      rows="10"
+    ><%= product.description || "" %></textarea>
+
+
+    <!-- =====================================================
+         FEATURES
+    ====================================================== -->
+
+    <h2>Features</h2>
+
+    <label>
+      Frontend Features
+    </label>
+
+    <input
+      type="text"
+      name="frontendFeatures"
+      placeholder="Responsive UI, Homepage, About page"
+      value="<%= (product.features?.frontend || []).join(', ') %>"
+    />
+
+    <small>
+      Separate features with commas.
+    </small>
+
+
+    <label>
+      Backend Features
+    </label>
+
+    <input
+      type="text"
+      name="backendFeatures"
+      placeholder="Admin dashboard, Database integration"
+      value="<%= (product.features?.backend || []).join(', ') %>"
+    />
+
+    <small>
+      Separate features with commas.
+    </small>
+
+
+    <label>
+      Tech Stack
+    </label>
+
+    <input
+      type="text"
+      name="techStack"
+      placeholder="HTML, CSS, JavaScript, Node.js"
+      value="<%= product.features?.techStack || '' %>"
+    />
+
+
+    <!-- =====================================================
+         PRICING
+    ====================================================== -->
+
+    <h2>Pricing</h2>
+
+    <label>
+      Pricing Card Type
+    </label>
+
+    <select name="pricingCardType" required>
+
+      <option
+        value="static"
+        <%= product.pricing?.cardType === "static" ? "selected" : "" %>
+      >
+        Static Website
+      </option>
+
+      <option
+        value="complex"
+        <%= product.pricing?.cardType === "complex" ? "selected" : "" %>
+      >
+        Complex Website
+      </option>
+
+    </select>
+
+
+    <label>
+      Source Code Price ($)
+    </label>
+
+    <input
+      type="number"
+      name="priceSource"
+      placeholder="Source Code Price"
+      value="<%= product.pricing?.sourceCode ?? '' %>"
+      min="0"
+      required
+    />
+
+
+    <label>
+      Assisted Setup Price ($)
+    </label>
+
+    <input
+      type="number"
+      name="priceAssisted"
+      placeholder="Assisted Setup Price"
+      value="<%= product.pricing?.assistedSetup ?? '' %>"
+      min="0"
+      required
+    />
+
+
+    <label>
+      Done For You Price ($)
+    </label>
+
+    <input
+      type="number"
+      name="priceDone"
+      placeholder="Done For You Price"
+      value="<%= product.pricing?.doneForYou ?? '' %>"
+      min="0"
+      required
+    />
+
+
+    <!-- =====================================================
+         MEDIA
+    ====================================================== -->
+
+    <h2>Media</h2>
+
+
+    <!-- Image Folder -->
+
+    <label>
+      Image Folder
+    </label>
+
+    <input
+      type="text"
+      name="imageFolder"
+      placeholder="images"
+      value="images"
+      readonly
+    />
+
+    <small>
+      Product images are stored inside
+      <code>public/images/</code>
+    </small>
+
+
+    <!-- Image Name -->
+
+    <label>
+      Image File Name
+    </label>
+
+    <input
+      type="text"
+      name="imageName"
+      placeholder="darkymall.jpg"
+      value="<%= product.media?.image
+        ? product.media.image.split('/').pop()
+        : '' %>"
+      required
+    />
+
+    <small>
+      Example:
+      <code>darkymall.jpg</code>
+    </small>
+
+
+    <!-- Demo File -->
+
+    <label>
+      Demo File Name
+    </label>
+
+    <input
+      type="text"
+      name="demoName"
+      placeholder="darkyMall.html"
+      value="<%= product.media?.demoUrl
+        ? product.media.demoUrl.split('/').pop()
+        : '' %>"
+    />
+
+    <small>
+      Demo files are stored inside
+      <code>public/demos/Fashionfamme/</code>
+    </small>
+
+
+    <!-- =====================================================
+         TEMPLATE SOURCE
+    ====================================================== -->
+
+    <h2>Template Source</h2>
+
+    <label>
+      Template Folder
+    </label>
+
+    <input
+      type="text"
+      name="templatePath"
+      placeholder="darkymall"
+      value="<%= product.templatePath || '' %>"
+      required
+    />
+
+    <small>
+      This must match a folder inside:
+      <code>storage/templates/</code>
+    </small>
+
+
+    <!-- =====================================================
+         PRODUCT STATUS
+    ====================================================== -->
+
+    <h2>Product Status</h2>
+
+    <label class="status-checkbox">
+
+      <input
+        type="checkbox"
+        name="isActive"
+        value="true"
+        <%= product.isActive !== false ? "checked" : "" %>
+      />
+
+      Active Product
+
+    </label>
+
+
+    <!-- =====================================================
+         SUBMIT
+    ====================================================== -->
+
+    <button type="submit">
+      Update Product
+    </button>
+
   </form>
+
 </section>
 
+
+<style>
+
+/* =========================================================
+   ADMIN PRODUCT EDIT FORM
+========================================================= */
+
+.admin-form {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 32px;
+  background: #ffffff;
+  border-radius: 14px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+}
+
+.admin-form h1 {
+  margin-bottom: 30px;
+  font-size: 32px;
+  color: #111827;
+}
+
+.admin-form h2 {
+  margin-top: 30px;
+  margin-bottom: 15px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 20px;
+  color: #111827;
+}
+
+
+/* =========================================================
+   LABELS
+========================================================= */
+
+.admin-form label {
+  display: block;
+  margin-bottom: 7px;
+  font-weight: 600;
+  color: #374151;
+}
+
+
+/* =========================================================
+   FORM FIELDS
+========================================================= */
+
+.admin-form input,
+.admin-form textarea,
+.admin-form select {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 16px;
+  padding: 12px 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #111827;
+  font-size: 15px;
+  font-family: inherit;
+  outline: none;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+}
+
+.admin-form textarea {
+  min-height: 150px;
+  resize: vertical;
+}
+
+.admin-form input:focus,
+.admin-form textarea:focus,
+.admin-form select:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
+}
+
+
+/* =========================================================
+   READONLY FIELD
+========================================================= */
+
+.admin-form input[readonly] {
+  background: #f3f4f6;
+  color: #6b7280;
+  cursor: not-allowed;
+}
+
+
+/* =========================================================
+   HELP TEXT
+========================================================= */
+
+.admin-form small {
+  display: block;
+  margin-top: -8px;
+  margin-bottom: 20px;
+  color: #6b7280;
+  line-height: 1.5;
+}
+
+.admin-form code {
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: #f3f4f6;
+  font-size: 13px;
+}
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+.status-checkbox {
+  display: flex !important;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px !important;
+  cursor: pointer;
+}
+
+.status-checkbox input {
+  width: auto;
+  margin: 0;
+}
+
+
+/* =========================================================
+   SUBMIT BUTTON
+========================================================= */
+
+.admin-form button[type="submit"] {
+  width: 100%;
+  margin-top: 15px;
+  padding: 14px 20px;
+  border: none;
+  border-radius: 8px;
+  background: #111827;
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    transform 0.15s,
+    opacity 0.15s;
+}
+
+.admin-form button[type="submit"]:hover {
+  opacity: 0.9;
+}
+
+.admin-form button[type="submit"]:active {
+  transform: translateY(1px);
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 600px) {
+
+  .admin-form {
+    margin: 20px 12px;
+    padding: 20px;
+  }
+
+  .admin-form h1 {
+    font-size: 26px;
+  }
+
+  .admin-form h2 {
+    font-size: 18px;
+  }
+
+}
+
+</style>
+
+
 <%- include("../partials/footer") %>
+
+
+

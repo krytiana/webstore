@@ -215,7 +215,7 @@ export class TemplateAction {
             success: true,
             action: "tech-stack",
             name: template.name,
-            techStack: template.features.techStack
+            techStack: template.features?.techStack
         };
 
     }

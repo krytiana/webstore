@@ -24,6 +24,9 @@ import deployRoute from "./routes/deployRoute";
 import githubRoute from "./routes/githubRoute";
 import deployGuideRoute from "./routes/deployGuideRoute";
 import chatRoutes from "./routes/chat.routes";
+import testTemplateRoute from "./routes/testTemplateRoute";
+import testZipRoute from "./routes/testZipRoute";
+
 
 import Product from "./models/ProductModel";
 import path from "path";
@@ -80,6 +83,9 @@ app.use("/deploy", deployRoute);
 app.use(githubRoute);
 app.use(deployGuideRoute);
 app.use("/chat",chatRoutes);
+app.use("/", testTemplateRoute);
+app.use("/test-zip", testZipRoute);
+
 
 
 app.get("/reset-password/:token", (req, res) => {

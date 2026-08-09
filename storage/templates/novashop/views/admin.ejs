@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard</title>
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  display: flex;
+  height: 100vh;
+  background: #f4f4f4;
+  
+}
+
+/* SIDEBAR */
+.sidebar {
+  width: 220px;
+  background: #111;
+  color: #fff;
+  padding: 20px;
+}
+
+.sidebar h2 {
+  margin-bottom: 20px;
+  font-size: 18px;
+}
+
+.sidebar ul {
+  list-style: none;
+}
+
+.sidebar ul li {
+  padding: 10px;
+  margin-bottom: 5px;
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+.sidebar ul li:hover {
+  background: #ff7a00;
+}
+
+/* MAIN */
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* HEADER */
+.header {
+  background: #fff;
+  padding: 15px;
+  border-bottom: 1px solid #ddd;
+}
+
+/* CONTENT */
+.content {
+  padding: 20px;
+  overflow-y: auto;
+}
+
+/* CARD */
+.card {
+  background: #fff;
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+/* FORM */
+input, textarea {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.payment-settings {
+  display: flex;
+  gap: 25px;
+  margin-bottom: 30px;
+}
+
+button {
+  padding: 8px 12px;
+  border: none;
+  background: #ff7a00;
+  color: #fff;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #e66a00;
+}
+
+/* PRODUCT LIST */
+.product-item {
+  border-bottom: 1px solid #eee;
+  padding: 10px 0;
+}
+
+.actions button {
+  margin-right: 5px;
+  background: #333;
+}
+
+.actions .delete {
+  background: red;
+}
+
+/* MOBILE RESPONSIVE */
+.menu-btn {
+  display: none;
+  font-size: 20px;
+  background: black;
+  border: none;
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+.order-card {
+  border-left: 5px solid #ff7a00;
+  padding: 12px;
+  margin-bottom: 10px;
+  background: #fff;
+  border-radius: 8px;
+}
+
+.order-card h4 {
+  margin-bottom: 5px;
+}
+
+.order-meta {
+  font-size: 13px;
+  color: #666;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  color: white;
+  margin-top: 5px;
+}
+.status-pending { background: gray; }
+.status-processing { background: orange; }
+.status-shipped { background: blue; }
+.status-delivered { background: green; }
+.status-confirmed { background: purple; }
+.status-out_for_delivery { background: teal; }
+.status-cancelled { background: red; }
+
+.order-actions {
+  margin-top: 10px;
+}
+
+.order-actions select,
+.order-actions button {
+  margin-right: 5px;
+}
+
+.upload-group{
+  margin-bottom:15px;
+}
+
+.upload-group img{
+  width:100px;
+  height:100px;
+  object-fit:cover;
+  border-radius:8px;
+  margin-top:8px;
+}
+/* Tablet & Mobile */
+@media (max-width: 768px) {
+
+  .sidebar {
+    position: fixed;
+    left: -220px;
+    top: 0;
+    height: 100%;
+    z-index: 1000;
+    transition: 0.3s;
+  }
+
+  .sidebar.active {
+    left: 0;
+  }
+
+  .menu-btn {
+    display: inline-block;
+  }
+
+  .header {
+    display: flex;
+    align-items: center;
+  }
+
+  .main {
+    width: 100%;
+  }
+
+  .content {
+    padding: 15px;
+  }
+
+  input, textarea, button {
+    font-size: 16px; /* better for mobile */
+  }
+
+}
+</style>
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <h2>Admin Dashboard</h2>
+  <ul>
+    <li onclick="showSection('dashboard')">Dashboard</li>
+    <li onclick="showSection('products')">Products</li>
+    <li onclick="showSection('addProduct')">Add Product</li>
+    <li onclick="showSection('siteSettings')">Site Settings</li>
+    <li onclick="showSection('orders')">Orders</li>
+  </ul>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+    <div class="header">
+        <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+        <h3 id="pageTitle">Admin Dashboard</h3>
+    </div>
+
+  <div class="content" id="contentArea">
+
+  <!-- DASHBOARD -->
+  <div id="dashboard" class="section">
+    <div class="card">
+      <h3>Dashboard Overview</h3>
+
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:15px; margin-top:15px;">
+        
+        <div class="card" style="background:#e7eee7;">
+          <h4>Total Products</h4>
+          <p id="totalProducts">0</p>
+        </div>
+
+        <div class="card" style="background:#e7eee7;">
+          <h4>Total Users</h4>
+          <p id="totalUsers">0</p>
+        </div>
+
+        <div class="card" style="background:#e7eee7;">
+          <h4>Total Stock Revenue</h4>
+          <p id="totalRevenue">$0</p>
+        </div>
+
+        <div class="card" style="background:#e7eee7;">
+          <h4>Total Orders</h4>
+          <p id="totalOrders">0</p>
+        </div>
+
+        <div class="card" style="background:#e7eee7;">
+          <h4>Total Orders Revenue</h4>
+          <p id="totalOrdersRevenue">$0</p>
+        </div>        
+
+
+      </div>
+    </div>
+  </div>
+
+    <!-- PRODUCT LIST -->
+    <div id="products" class="section" style="display:none;">
+      <div class="card">
+        <h3>All Products</h3>
+
+        <!-- SEARCH INPUT -->
+        <input 
+          type="text" 
+          id="productSearch" 
+          placeholder="Search products..." 
+          style="margin-bottom:10px;"
+        >
+
+        <div id="productList"></div>
+      </div>
+    </div>
+
+    <!-- ADD PRODUCT -->
+    <div id="addProduct" class="section" style="display:none;">
+        <div class="card">
+            <h3>Add / Edit Product</h3>
+
+            <form id="productForm">
+                <input type="hidden" id="productId">
+
+                <input id="name" placeholder="Product Name" required>
+                <input id="price" type="number" placeholder="Price" required>
+                <input id="category" placeholder="Category">
+
+                <textarea id="description" placeholder="Description"></textarea>
+
+                <!-- IMAGES -->
+                <h4>Images</h4>
+                <div id="imageContainer"></div>
+                <button type="button" onclick="addImageField()">+ Add Image</button>
+
+                <!-- SPECS -->
+                <h4>Specifications</h4>
+                <div id="specContainer"></div>
+                <button type="button" onclick="addSpecField()">+ Add Spec</button>
+
+                <!-- OPTIONS -->
+                <h4>Options (Sizes, Colors etc.)</h4>
+                <div id="optionContainer"></div>
+                <button type="button" onclick="addOptionField()">+ Add Option</button>
+
+                <button type="submit">Save Product</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div id="siteSettings" class="section" style="display:none;">
+
+      <h2>Site Settings</h2>
+
+      <form id="settingsForm">
+
+        <label>Business Name</label>
+        <input id="siteName" placeholder="Business Name">
+
+        <label>Logo</label>
+
+        <div class="upload-group">
+          <input type="file" id="logoFile">
+          <input type="text" id="logo" placeholder="Uploaded Logo URL">
+          <button type="button" onclick="uploadLogo(this)">
+            Upload Logo
+          </button>
+        </div>
+
+        <h4>Theme Colors</h4>
+
+        <label>Primary Color (Main buttons, links, active states)</label>
+        <input id="primaryColor" type="color">
+
+        <label>Secondary Color (Secondary buttons, highlights)</label>
+        <input id="secondaryColor" type="color">
+
+        <label>Background (Main page background)</label>
+        <input id="backgroundColor" type="color">
+
+        <label>Surface (Cards, navbar, sections)</label>
+        <input id="surfaceColor" type="color">
+
+        <label>Surface Alternative (Secondary cards, hover areas, alternate sections)</label>
+        <input id="surfaceAltColor" type="color">
+
+        <label>Heading Color (Main headings and important text)</label>
+        <input id="headingColor" type="color">
+
+        <label>Text Color (Main body text)</label>
+        <input id="textColor" type="color">
+
+        <label>Muted Text Color (Secondary text, descriptions and hints)</label>
+        <input id="mutedTextColor" type="color">
+
+        <label>Interaction Color (Icons, hover states and interactive elements)</label>
+        <input id="interactionColor" type="color">
+
+        <label>Border Color (Borders for cards, buttons, inputs and dividers)</label>
+        <input id="borderColor" type="color">
+
+        <h4>Payment Methods</h4>
+
+        <div class="payment-settings">
+
+          <label> 
+            <input type="checkbox" id="enableStripe">Enable Stripe
+          </label>
+
+          <label>
+            <input type="checkbox" id="enablePaystack">Enable Paystack
+          </label>
+
+        </div>
+
+
+        <label>Contact Email</label>
+        <input id="contactEmail" placeholder="Email">
+
+        <label>Contact Phone</label>
+        <input id="contactPhone" placeholder="Phone">
+
+        <label>Footer Text</label>
+        <textarea id="footerText" placeholder="Footer text"></textarea>
+
+        <label>Hero Images</label>
+        <h4>Hero Images</h4>
+        <div id="heroContainer"></div>
+        <button type="button" onclick="addHeroImage()">+ Add Hero Image</button>
+
+        <button type="submit">Save Settings</button>
+
+      </form>
+
+    </div>
+
+    <!-- ORDERS -->
+    <div id="orders" class="section" style="display:none;">
+      <div class="card">
+      <h3>Orders</h3>
+
+      <select id="orderFilter" onchange="filterOrders()">
+        <option value="all">All Orders</option>
+        <option value="pending">Pending</option>
+        <option value="confirmed">Confirmed</option>
+        <option value="processing">Processing</option>
+        <option value="shipped">Shipped</option>
+        <option value="out_for_delivery">Out for Delivery</option>
+        <option value="delivered">Delivered</option>
+        <option value="cancelled">Cancelled</option>
+      </select>
+
+      <div id="ordersList"></div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+const API = "/api/products";
+let allProducts = [];
+let allOrders = [];
+/* ================= NAVIGATION ================= */
+
+function toggleSidebar() {
+  document.querySelector(".sidebar").classList.toggle("active");
+}
+
+function showSection(sectionId) {
+  document.querySelectorAll(".section").forEach(sec => {
+    sec.style.display = "none";
+  });
+
+  document.getElementById(sectionId).style.display = "block";
+  document.getElementById("pageTitle").innerText = sectionId;
+
+    // Close sidebar on mobile after selection
+    if (window.innerWidth <= 768) {
+        toggleSidebar();
+    }
+}
+function addImageField(value = "") {
+  const container = document.getElementById("imageContainer");
+
+  const wrapper = document.createElement("div");
+
+  wrapper.innerHTML = `
+    <input type="file" class="image-file">
+    <input type="text" class="image-url" placeholder="Uploaded URL" value="${value}">
+    <button type="button" onclick="uploadImage(this)">Upload</button>
+  `;
+
+  container.appendChild(wrapper);
+}
+
+async function uploadImage(btn) {
+  const wrapper = btn.parentElement;
+  const fileInput = wrapper.querySelector(".image-file");
+  const urlInput = wrapper.querySelector(".image-url");
+
+  const file = fileInput.files[0];
+  if (!file) return alert("Select image first");
+
+  const formData = new FormData();
+  formData.append("image", file);
+
+  btn.textContent = "Uploading...";
+
+  const res = await fetch("/api/upload", {
+    method: "POST",
+    body: formData
+  });
+
+  const data = await res.json();
+
+  if (data.success) {
+    urlInput.value = data.url;
+    btn.textContent = "Uploaded ✅";
+  } else {
+    btn.textContent = "Upload";
+    alert("Upload failed");
+  }
+}
+
+function addSpecField(key = "", value = "") {
+  const container = document.getElementById("specContainer");
+
+  const wrapper = document.createElement("div");
+
+  wrapper.innerHTML = `
+    <input placeholder="Key (e.g material)" value="${key}">
+    <input placeholder="Value (e.g cotton)" value="${value}">
+  `;
+
+  container.appendChild(wrapper);
+}
+
+function addOptionField(name = "", values = []) {
+  const container = document.getElementById("optionContainer");
+
+  const wrapper = document.createElement("div");
+
+  wrapper.innerHTML = `
+    <input placeholder="Option name (e.g sizes)" value="${name}">
+    <input placeholder="Values (comma separated)" value="${values.join(",")}">
+  `;
+
+  container.appendChild(wrapper);
+}
+
+// Load users for dashboard
+async function loadUsers() {
+  try {
+   
+
+    const res = await fetch("/api/users", {
+      headers: {
+        "Content-Type": "application/json"
+      },
+      credentials: "include"
+
+    });
+
+    const data = await res.json();
+
+    if (!data.success) return;
+
+    const users = data.users;
+
+    // Update dashboard
+    document.getElementById("totalUsers").innerText = users.length;
+
+  } catch (err) {
+    console.error("Error loading users:", err);
+  }
+}
+
+/* ================= LOAD PRODUCTS ================= */
+async function loadProducts() {
+  const res = await fetch(API);
+  const products = await res.json();
+
+  allProducts = products; // store globally
+  renderProductList(products);
+}
+//update render function to calculate total revenue and products count for dashboard
+function renderProductList(products) {
+  const container = document.getElementById("productList");
+  container.innerHTML = "";
+  let totalRevenue = 0;
+  let totalProducts = 0;
+
+
+  if (!products.length) {
+    container.innerHTML = "<p>No products found</p>";
+    return;
+  }
+
+  products.forEach(p => {
+    totalRevenue += p.price * (p.stock || 1); // Assuming each product has a stock count
+    totalProducts++;
+    container.innerHTML += `
+      <div class="product-item">
+        <strong>${p.name}</strong> - $${p.price}
+
+        <div class="actions">
+          <button onclick="editProduct('${p._id}')">Edit</button>
+          <button class="delete" onclick="deleteProduct('${p._id}')">Delete</button>
+        </div>
+      </div>
+    `;
+  });
+  // Update dashboard metrics
+  document.getElementById("totalProducts").innerText = totalProducts;
+  document.getElementById("totalRevenue").innerText = `$${totalRevenue.toFixed(2)}`;
+}
+
+document.getElementById("productSearch").addEventListener("input", function () {
+  const term = this.value.toLowerCase().trim();
+
+  const filtered = allProducts.filter(p =>
+    (p.name || "").toLowerCase().includes(term) ||
+    (p.category || "").toLowerCase().includes(term)
+  );
+
+  renderProductList(filtered);
+});
+/* ================= SAVE ================= */
+document.getElementById("productForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const id = document.getElementById("productId").value;
+
+  // IMAGES
+  const images = Array.from(document.querySelectorAll("#imageContainer .image-url"))
+    .map(i => i.value)
+    .filter(Boolean);
+
+  // SPECS → convert to string format (your current system)
+  const specsArr = Array.from(document.querySelectorAll("#specContainer div"))
+    .map(div => {
+      const inputs = div.querySelectorAll("input");
+      return `${inputs[0].value}:${inputs[1].value}`;
+    })
+    .filter(Boolean);
+
+  const specs = specsArr.join(" | ");
+
+  // OPTIONS → convert to object
+  const options = {};
+  document.querySelectorAll("#optionContainer div").forEach(div => {
+    const inputs = div.querySelectorAll("input");
+    const key = inputs[0].value;
+    const values = inputs[1].value.split(",").map(v => v.trim());
+
+    if (key) options[key] = values;
+  });
+
+  const data = {
+    name: document.getElementById("name").value,
+    price: Number(document.getElementById("price").value),
+    category: document.getElementById("category").value,
+    description: document.getElementById("description").value,
+    images,
+    specs,
+    options
+  };
+
+  if (id) {
+    await fetch(`/api/products/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data)
+    });
+  } else {
+    await fetch("/api/products", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data)
+    });
+  }
+
+  document.getElementById("productForm").reset();
+  loadProducts();
+});
+/* ================= EDIT ================= */
+async function editProduct(id) {
+  const res = await fetch(`/api/products/${id}`);
+  const p = await res.json();
+
+  showSection("addProduct");
+
+  document.getElementById("productId").value = p._id;
+  document.getElementById("name").value = p.name;
+  document.getElementById("price").value = p.price;
+  document.getElementById("category").value = p.category;
+  document.getElementById("description").value = p.description || "";
+
+  // CLEAR
+  document.getElementById("imageContainer").innerHTML = "";
+  document.getElementById("specContainer").innerHTML = "";
+  document.getElementById("optionContainer").innerHTML = "";
+
+  // LOAD IMAGES
+  (p.images || []).forEach(img => addImageField(img));
+
+  // LOAD SPECS
+  if (p.specs) {
+    p.specs.split("|").forEach(s => {
+      const [key, value] = s.split(":");
+      addSpecField(key?.trim(), value?.trim());
+    });
+  }
+
+  // LOAD OPTIONS
+  if (p.options) {
+    Object.entries(p.options).forEach(([key, values]) => {
+      addOptionField(key, values);
+    });
+  }
+}
+/* ================= DELETE ================= */
+async function deleteProduct(id) {
+  if (!confirm("Delete this product?")) return;
+
+  await fetch(`/api/products/${id}`, { method: "DELETE" });
+  loadProducts();
+}
+
+function addHeroImage(value = "") {
+
+  const container =
+    document.getElementById("heroContainer");
+
+  const wrapper =
+    document.createElement("div");
+
+  wrapper.className = "upload-group";
+
+  wrapper.innerHTML = `
+  
+    <input type="file" class="hero-file">
+
+    <input 
+      type="text" 
+      class="hero-url" 
+      placeholder="Uploaded Hero Image URL"
+      value="${value}"
+    >
+
+    <button 
+      type="button" 
+      onclick="uploadHeroImage(this)"
+    >
+      Upload
+    </button>
+
+  `;
+
+  container.appendChild(wrapper);
+}
+
+async function uploadLogo(btn) {
+
+  const fileInput =
+    document.getElementById("logoFile");
+
+  const urlInput =
+    document.getElementById("logo");
+
+  const file = fileInput.files[0];
+
+  if (!file) {
+    return alert("Select logo first");
+  }
+
+  const formData = new FormData();
+
+  formData.append("image", file);
+
+  btn.textContent = "Uploading...";
+
+  const res = await fetch("/api/upload", {
+    method: "POST",
+    body: formData
+  });
+
+  const data = await res.json();
+
+  if (data.success) {
+
+    urlInput.value = data.url;
+
+    btn.textContent = "Uploaded ✅";
+
+  } else {
+
+    btn.textContent = "Upload Logo";
+
+    alert("Upload failed");
+  }
+}
+
+async function uploadHeroImage(btn) {
+
+  const wrapper =
+    btn.parentElement;
+
+  const fileInput =
+    wrapper.querySelector(".hero-file");
+
+  const urlInput =
+    wrapper.querySelector(".hero-url");
+
+  const file = fileInput.files[0];
+
+  if (!file) {
+    return alert("Select image first");
+  }
+
+  const formData = new FormData();
+
+  formData.append("image", file);
+
+  btn.textContent = "Uploading...";
+
+  const res = await fetch("/api/upload", {
+    method: "POST",
+    body: formData
+  });
+
+  const data = await res.json();
+
+  if (data.success) {
+
+    urlInput.value = data.url;
+
+    btn.textContent = "Uploaded ✅";
+
+  } else {
+
+    btn.textContent = "Upload";
+
+    alert("Upload failed");
+  }
+}
+
+
+// LOAD SETTINGS
+async function loadSettings() {
+  const res = await fetch("/api/settings");
+  const s = await res.json();
+
+  document.getElementById("siteName").value = s.siteName || "";
+  document.getElementById("logo").value = s.logo || "";
+
+  document.getElementById("primaryColor").value = s.primaryColor || "";
+  document.getElementById("secondaryColor").value = s.secondaryColor || "";
+
+  document.getElementById("backgroundColor").value = s.backgroundColor || "";
+  document.getElementById("surfaceColor").value = s.surfaceColor || "";
+  document.getElementById("surfaceAltColor").value = s.surfaceAltColor || "";
+
+  document.getElementById("headingColor").value = s.headingColor || "";
+  document.getElementById("textColor").value = s.textColor || "";
+  document.getElementById("mutedTextColor").value = s.mutedTextColor || "";
+  document.getElementById("interactionColor").value = s.interactionColor || "";
+
+  document.getElementById("borderColor").value = s.borderColor || "";
+
+  document.getElementById("enableStripe").checked =
+  s.enableStripe || false;
+
+  document.getElementById("enablePaystack").checked =
+  s.enablePaystack || false;
+
+  document.getElementById("contactEmail").value = s.contactEmail || "";
+  document.getElementById("contactPhone").value = s.contactPhone || "";
+  document.getElementById("footerText").value = s.footerText || "";
+
+
+  const container = document.getElementById("heroContainer");
+  container.innerHTML = "";
+
+  (s.heroImages || []).forEach(img => addHeroImage(img));
+}
+
+// SAVE SETTINGS
+document.getElementById("settingsForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const heroImages = Array.from(
+    document.querySelectorAll("#heroContainer .hero-url")
+  ).map(i => i.value);
+
+  const data = {
+    siteName: document.getElementById("siteName").value,
+    logo: document.getElementById("logo").value,
+    primaryColor: document.getElementById("primaryColor").value,
+    secondaryColor: document.getElementById("secondaryColor").value,
+    backgroundColor: document.getElementById("backgroundColor").value,
+    surfaceColor: document.getElementById("surfaceColor").value,
+    surfaceAltColor: document.getElementById("surfaceAltColor").value,
+    headingColor: document.getElementById("headingColor").value,
+    textColor: document.getElementById("textColor").value,
+    mutedTextColor: document.getElementById("mutedTextColor").value,
+    interactionColor: document.getElementById("interactionColor").value,
+    borderColor: document.getElementById("borderColor").value,
+    enableStripe: document.getElementById("enableStripe").checked,
+    enablePaystack: document.getElementById("enablePaystack").checked,
+    contactEmail: document.getElementById("contactEmail").value,
+    contactPhone: document.getElementById("contactPhone").value,
+    footerText: document.getElementById("footerText").value,
+    heroImages
+  };
+
+  await fetch("/api/settings", {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data)
+  });
+
+  alert("Settings saved ✅");
+});
+
+async function loadOrdersAdmin() {
+
+  const res = await fetch("/api/orders/admin/all", {
+    credentials: "include"
+  });
+
+  const data = await res.json();
+
+  allOrders = data.orders || [];
+
+  // Dashboard total orders
+  document.getElementById("totalOrders").innerText =
+    allOrders.length;
+
+    // Calculate total sales amount
+  const totalSales = allOrders.reduce((sum, order) => {
+    return sum + (order.totalAmount || 0);
+  }, 0);
+
+  // Update dashboard revenue
+  document.getElementById("totalOrdersRevenue").innerText =
+    `$${totalSales.toFixed(2)}`;
+
+  renderOrders(allOrders);
+}
+
+
+function renderOrders(orders) {
+
+  const container = document.getElementById("ordersList");
+
+  container.innerHTML = "";
+
+  if (!orders.length) {
+    container.innerHTML = "<p>No orders found</p>";
+    return;
+  }
+
+  container.innerHTML = orders.map(order => `
+
+    <div class="order-card">
+
+      <h4>
+        Order #${order.orderNumber || order._id.slice(-6)}
+      </h4>
+
+      <div class="order-meta">
+        Total: $${order.totalAmount} <br>
+
+        Customer:
+        ${order.user?.email || "N/A"}
+      </div>
+
+      <span class="status-badge status-${order.orderStatus}">
+        ${order.orderStatus}
+      </span>
+
+      <div class="order-actions">
+
+        <select id="status-${order._id}">
+
+          <option value="pending"
+            ${order.orderStatus === "pending" ? "selected" : ""}>
+            Pending
+          </option>
+
+          <option value="confirmed"
+            ${order.orderStatus === "confirmed" ? "selected" : ""}>
+            Confirmed
+          </option>
+
+          <option value="processing"
+            ${order.orderStatus === "processing" ? "selected" : ""}>
+            Processing
+          </option>
+
+          <option value="shipped"
+            ${order.orderStatus === "shipped" ? "selected" : ""}>
+            Shipped
+          </option>
+
+          <option value="out_for_delivery"
+            ${order.orderStatus === "out_for_delivery" ? "selected" : ""}>
+            Out for Delivery
+          </option>
+
+          <option value="delivered"
+            ${order.orderStatus === "delivered" ? "selected" : ""}>
+            Delivered
+          </option>
+
+          <option value="cancelled"
+            ${order.orderStatus === "cancelled" ? "selected" : ""}>
+            Cancelled
+          </option>
+
+        </select>
+
+        <button onclick="updateOrderStatus('${order._id}')">
+          Update
+        </button>
+
+        <button onclick="viewOrder('${order._id}')">
+          View
+        </button>
+
+      </div>
+
+    </div>
+
+  `).join("");
+}
+
+function filterOrders() {
+
+  const value =
+    document.getElementById("orderFilter").value;
+
+  if (value === "all") {
+    renderOrders(allOrders);
+    return;
+  }
+
+  const filtered = allOrders.filter(order =>
+    order.orderStatus === value
+  );
+
+  renderOrders(filtered);
+}
+
+async function updateOrderStatus(orderId) {
+  const select = document.getElementById(`status-${orderId}`);
+  const status = select.value;
+
+  const res = await fetch(`/api/orders/${orderId}/status`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ status })
+  });
+
+  const data = await res.json();
+
+  if (data.success) {
+    alert("Order updated ✅");
+    loadOrdersAdmin();
+  } else {
+    alert("Failed to update");
+  }
+}
+
+function viewOrder(id) {
+  window.open(`/order.html?id=${id}`, "_blank");
+}
+
+loadSettings();
+/* ================= INIT ================= */
+loadProducts();
+loadUsers();
+loadOrdersAdmin();
+</script>
+
+</body>
+</html>

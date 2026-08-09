@@ -5,9 +5,8 @@ import "express-session";
 import path from "path";
 import simpleGit from "simple-git";
 import os from "os";
-import fs from "fs";
 import Product from "../models/ProductModel";
-import { fstat } from "fs";
+
 
 
 

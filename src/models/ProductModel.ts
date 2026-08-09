@@ -1,4 +1,4 @@
-//src/models/ProductModel.ts
+// src/models/ProductModel.ts
 
 import { Schema, model, Document } from "mongoose";
 
@@ -26,22 +26,30 @@ export interface IProduct extends Document {
     demoUrl?: string;
   };
 
-  templateRepoUrl: string;
+  // Folder name inside storage/templates/
+  // Example: "megamall" → storage/templates/megamall
+  templatePath: string;
 
   isActive: boolean;
-
-  zipFile: string;
 }
 
-const ProductSchema = new Schema<IProduct>(
+const ProductSchema = new Schema(
   {
     name: { type: String, required: true },
 
-    slug: { type: String,  unique: true },
+    slug: {
+      type: String,
+      unique: true,
+    },
 
-    category: { type: String, required: true },
+    category: {
+      type: String,
+      required: true,
+    },
 
-    description: { type: String },
+    description: {
+      type: String,
+    },
 
     features: {
       frontend: [{ type: String }],
@@ -55,21 +63,41 @@ const ProductSchema = new Schema<IProduct>(
         enum: ["static", "complex"],
         required: true,
       },
-      sourceCode: { type: Number, required: true },
-      assistedSetup: { type: Number, required: true },
-      doneForYou: { type: Number, required: true },
+      sourceCode: {
+        type: Number,
+        required: true,
+      },
+      assistedSetup: {
+        type: Number,
+        required: true,
+      },
+      doneForYou: {
+        type: Number,
+        required: true,
+      },
     },
 
     media: {
-      image: { type: String, required: true },
-      demoUrl: { type: String },
+      image: {
+        type: String,
+        required: true,
+      },
+      demoUrl: {
+        type: String,
+      },
     },
 
-    templateRepoUrl: { type: String, required: true },
+    // Points to a folder inside storage/templates/
+    // Example: "megamall"
+    templatePath: {
+      type: String,
+      required: true,
+    },
 
-    isActive: { type: Boolean, default: true },
-    
-    zipFile: { type: String, required: true },
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
   },
   { timestamps: true }
 );
@@ -86,5 +114,4 @@ ProductSchema.pre("validate", function () {
   }
 });
 
-
-export default model<IProduct>("Product", ProductSchema);
+export default model("Product", ProductSchema);

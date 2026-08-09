@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= settings?.siteName || "MyStore" %></title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/novaShop.css" />
+<style>
+:root {
+
+  /* Brand */
+  --primary: <%= settings.primaryColor %>;
+  --secondary: <%= settings.secondaryColor %>;
+
+  /* Backgrounds */
+  --background: <%= settings.backgroundColor %>;
+  --surface: <%= settings.surfaceColor %>;
+  --surfaceAlt: <%= settings.surfaceAltColor %>;
+
+  /* Text */
+  --heading: <%= settings.headingColor %>;
+  --text: <%= settings.textColor %>;
+  --muted: <%= settings.mutedTextColor %>;
+  --interaction: <%= settings.interactionColor %>;
+
+  /* Border */
+  --border: <%= settings.borderColor %>;
+
+}
+</style>
+
+</head>
+
+<body>
+
+<!-- Drawer -->
+<div id="drawerOverlay" class="drawer-overlay"></div>
+
+<aside id="drawer" class="drawer">
+  <div class="drawer-header">
+    <strong><%= settings?.siteName || "MyStore" %></strong>
+    <button id="closeDrawer">✕</button>
+  </div>
+
+  <nav class="drawer-links">
+    <p class="drawer-title">Categories</p>
+
+    <button data-cat="all">All Products</button>
+    <button data-cat="dress">Dresses</button>
+    <button data-cat="shoe">Shoes</button>
+    <button data-cat="accessories">Accessories</button>
+    <button data-cat="light">Lighting & Deco</button>
+    <button data-cat="kitchen">Cooking Equipments</button>
+
+    <hr />
+
+    <a href="/dashboard">Profile</a>
+    <a href="/cart">🛒 Cart</a>
+  </nav>
+</aside>
+
+<header>
+  <div class="nav">
+    <button id="menuBtn" class="menu-btn">☰</button>
+
+    <div class="logo"><%= settings?.siteName || "MyStore" %></div>
+
+    <div class="nav-right">
+      <input id="search" type="text" placeholder="Search products…" />
+
+      <a href="/dashboard" class="cart-icon">
+        <button class="outline cart-btn">
+          profile
+          <span id="cartCount" class="cart-badge" style="display:none">0</span>
+        </button>
+      </a>
+    </div>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="container hero" id="heroSection">
+  <div>
+    <h1>Modern essentials for everyday life</h1>
+    <p>Discover clean design, quality products, and fast delivery.</p>
+    <br />
+    
+  </div>
+    <div class="slides">
+    <% if (settings.heroImages && settings.heroImages.length) { %>
+      
+      <% settings.heroImages.forEach((img, index) => { %>
+          <img
+              src="<%= img %>"
+              class="slide <%= index === 0 ? 'active' : '' %>"
+              alt="Hero"
+          >
+      <% }) %>
+
+    <% } else { %>
+
+      <!-- fallback (important) -->
+      <img src="https://images.unsplash.com/photo-1512436991641-6745cdb1723f?q=80&w=1000" />
+
+    <% } %>
+  </div>
+</section>
+
+<!-- PRODUCTS -->
+<section class="container">
+  <div class="section-title">Products</div>
+
+  
+
+  <div id="productGrid" class="grid"></div>
+</section>
+
+<!-- Floating Cart -->
+<a href="/cart" class="floating-cart">
+  🛒
+  <span id="floatingCartCount" class="floating-cart-count">0</span>
+</a>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-container">
+
+    <!-- BRAND -->
+    <div class="footer-section">
+      <h3><%= settings?.siteName || "MyStore" %></h3>
+      <p><%= settings?.footerText || "Your one-stop shop for everything." %></p>
+    </div>
+
+    <!-- CONTACT -->
+    <div class="footer-section">
+      <h4>Contact</h4>
+      <p>Email: <%= settings?.contactEmail || "support@email.com" %></p>
+      <p>Phone: <%= settings?.contactPhone || "+233..." %></p>
+    </div>
+
+    <!-- LINKS -->
+    <div class="footer-section">
+      <h4>Quick Links</h4>
+      <a href="/">Home</a>
+      <a href="/cart">Cart</a>
+      <a href="/dashboard">Account</a>
+    </div>
+
+  </div>
+
+  <div class="footer-bottom">
+    © <%= new Date().getFullYear() %> 
+    <%= settings?.siteName || "MyStore" %> — All rights reserved.
+  </div>
+</footer>
+
+<!-- SCRIPTS -->
+<script src="/js/cartUtils.js"></script>
+<script src="/js/cartBadge.js"></script>
+<script src="/js/login.js"></script>
+
+<script>
+
+/* ================= BACKEND DATA ================= */
+const products = <%- JSON.stringify(products || []) %>;
+
+const grid = document.getElementById('productGrid');
+const searchInput = document.getElementById('search');
+
+let currentCategory = 'all';
+
+/* ================= RENDER ================= */
+function render(list) {
+  grid.innerHTML = '';
+
+  list.forEach(p => {
+    const card = document.createElement('div');
+    card.className = 'card';
+
+    card.innerHTML = `
+      <a href="/product/${p._id}" class="product-link">
+        <img src="${p.images?.[0] || '/images/placeholder.jpg'}" />
+
+        <div class="card-body">
+          <strong>${p.name}</strong>
+          <div class="price">$${Number(p.price || 0)}</div>
+          <div class="rating">⭐ ${p.rating || 0} (${p.reviews || 0})</div>
+
+          <button class="add-to-cart">View Details</button>
+        </div>
+      </a>
+    `;
+
+    const btn = card.querySelector(".add-to-cart");
+
+    btn.addEventListener("click", (e) => {
+      
+    });
+
+    grid.appendChild(card);
+  });
+}
+
+/* ================= FILTER ================= */
+const heroSection = document.getElementById("heroSection");
+
+function applyFilters(){
+  const q = searchInput.value.toLowerCase().trim();
+
+  // 👉 HIDE HERO WHEN TYPING
+  if(q.length > 0){
+    heroSection.style.display = "none";
+  } else {
+    heroSection.style.display = "block";
+  }
+
+  let list = products.filter(p =>
+    (p.name || "").toLowerCase().includes(q)
+  );
+
+  if(currentCategory !== 'all'){
+    list = list.filter(p => p.category === currentCategory);
+  }
+
+  render(list);
+}
+
+/* ================= CART ================= */
+function addToCart(product) {
+  const cart = getCart();
+
+  const existing = cart.find(item => item.id === product._id);
+
+  if (existing) {
+    existing.quantity++;
+  } else {
+    cart.push({
+      id: product._id,
+      name: product.name,
+      price: product.price,
+      image: product.images?.[0],
+      quantity: 1
+    });
+  }
+
+  saveCart(cart);
+}
+
+/* ================= INIT ================= */
+render(products);
+
+/* ================= SLIDE SHOW ================= */
+const slides = document.querySelectorAll(".slide");
+
+if (slides.length > 1) {
+  let current = 0;
+
+  setInterval(() => {
+    slides[current].classList.remove("active");
+
+    current = (current + 1) % slides.length;
+
+    slides[current].classList.add("active");
+  }, 7000); // Change every 7 seconds
+}
+searchInput.addEventListener('input', applyFilters);
+
+
+/* ================= FILTERS ================= */
+document.querySelectorAll('.filters button').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.filters button').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+
+    currentCategory = btn.dataset.cat;
+    applyFilters();
+  });
+});
+
+/* ================= DRAWER ================= */
+const drawer = document.getElementById("drawer");
+const overlay = document.getElementById("drawerOverlay");
+
+document.getElementById("menuBtn").onclick = () => {
+  drawer.classList.add("open");
+  overlay.classList.add("show");
+};
+
+document.getElementById("closeDrawer").onclick = closeDrawer;
+overlay.onclick = closeDrawer;
+
+function closeDrawer() {
+  drawer.classList.remove("open");
+  overlay.classList.remove("show");
+}
+
+document.querySelectorAll(".drawer-links button[data-cat]").forEach(btn => {
+  btn.addEventListener("click", () => {
+    currentCategory = btn.dataset.cat;
+    applyFilters();
+    closeDrawer();
+  });
+});
+
+</script>
+
+</body>
+</html>

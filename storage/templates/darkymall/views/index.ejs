@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><%= settings.siteName || "MyStore" %></title>
+<link rel="stylesheet" href="/css/index.css">
+<style>
+:root {
+
+  /* Brand */
+  --primary: <%= settings.primaryColor %>;
+  --secondary: <%= settings.secondaryColor %>;
+
+  /* Backgrounds */
+  --background: <%= settings.backgroundColor %>;
+  --surface: <%= settings.surfaceColor %>;
+  --surfaceAlt: <%= settings.surfaceAltColor %>;
+
+  /* Text */
+  --heading: <%= settings.headingColor %>;
+  --text: <%= settings.textColor %>;
+  --muted: <%= settings.mutedTextColor %>;
+  --interaction: <%= settings.interactionColor %>;
+
+  /* Border */
+  --border: <%= settings.borderColor %>;
+
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo">
+    
+      <a href="/"><%= settings.siteName || "MyStore" %></a>
+    
+  </div>
+
+  <div class="search-box">
+    <input type="text" id="searchInput" placeholder="Search for products...">
+  </div>
+
+  <div class="icons">
+    
+    <span onclick="location.href='/dashboard'">👤 Profile</span>
+    <a <span   href="/cart" class="floating-cart">
+        🛒cart 
+        <span id="floatingCartCount" class="floating-cart-count" style="color: white;">0</span>
+      
+    </a></span>
+    
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero" id="heroSection">
+  <div class="slides">
+    <% if (settings.heroImages && settings.heroImages.length) { %>
+      
+      <% settings.heroImages.forEach((img, index) => { %>
+        <img src="<%= img %>" class="<%= index === 0 ? 'active' : '' %>">
+      <% }) %>
+
+    <% } else { %>
+
+      <!-- fallback (important) -->
+      <img src="/images/hero1.png" class="active">
+
+
+    <% } %>
+  </div>
+  <button class="arrow left" onclick="prevSlide()">‹</button>
+  <button class="arrow right" onclick="nextSlide()">›</button>
+</section>
+
+<!-- POPULAR -->
+<section class="popular-near-you" id="popularSection">
+  <h2>Popular Near You</h2>
+  <div class="scroll-cards" id="popularGrid"></div>
+</section>
+
+<!-- CATEGORY -->
+<section class="category-carousel" id="categorySection">
+  <h3>Browse by Categories</h3>
+  <div class="category-cards" id="categoryGrid"></div>
+</section>
+
+<!-- PRODUCTS -->
+<section class="products">
+  <div class="product-grid" id="productGrid"></div>
+</section>
+
+<!-- BUDGET -->
+<section class="budget-section" id="budgetSection">
+  <h2>Under $100</h2>
+  <div class="scroll-cards" id="budgetGrid"></div>
+</section>
+
+<!-- CART LOGIC -->
+<script src="/js/cartUtils.js"></script>
+<script src="/js/cartBadge.js"></script>
+
+<script>
+/* ================= DATA FROM BACKEND ================= */
+const products = <%- JSON.stringify(products || []) %>;
+
+/* ================= ELEMENTS ================= */
+const heroSection = document.getElementById("heroSection");
+const popularSection = document.getElementById("popularSection");
+const categorySection = document.getElementById("categorySection");
+const budgetSection = document.getElementById("budgetSection");
+const searchInput = document.getElementById("searchInput");
+
+/* ================= SEARCH ================= */
+searchInput.addEventListener("input", function () {
+  const term = this.value.toLowerCase().trim();
+
+  if (term.length > 0) {
+    heroSection.style.display = "none";
+    popularSection.style.display = "none";
+    categorySection.style.display = "none";
+    budgetSection.style.display = "none";
+  } else {
+    heroSection.style.display = "block";
+    popularSection.style.display = "block";
+    categorySection.style.display = "block";
+    budgetSection.style.display = "block";
+  }
+
+  const filtered = products.filter(p =>
+    (p.name || "").toLowerCase().includes(term) ||
+    (p.category || "").toLowerCase().includes(term)
+  );
+
+  renderProducts(filtered);
+});
+
+/* ================= HERO ================= */
+let currentSlide = 0;
+let slides;
+
+window.addEventListener("DOMContentLoaded", () => {
+  slides = document.querySelectorAll('.slides img');
+});
+
+function showSlide(index){
+  slides.forEach((s,i)=>s.classList.toggle('active', i===index));
+}
+function nextSlide(){
+  currentSlide = (currentSlide+1)%slides.length;
+  showSlide(currentSlide);
+}
+function prevSlide(){
+  currentSlide = (currentSlide-1+slides.length)%slides.length;
+  showSlide(currentSlide);
+}
+setInterval(nextSlide,5000);
+
+/* ================= ADD TO CART ================= */
+function addToCart(product){
+  const cart = getCart();
+  const existing = cart.find(i => i.id === product._id);
+
+  if(existing){
+    existing.quantity++;
+  } else {
+    cart.push({
+      id: product._id,
+      name: product.name,
+      price: product.price,
+      image: product.images?.[0],
+      quantity: 1
+    });
+  }
+
+  saveCart(cart);
+}
+
+/* ================= POPULAR ================= */
+function renderPopular(list){
+  const grid = document.getElementById('popularGrid');
+  grid.innerHTML = '';
+
+  list.slice(0,6).forEach(p=>{
+    grid.innerHTML += `
+      <div class="scroll-card">
+        <img src="${p.images?.[0] || '/images/placeholder.jpg'}"
+             onclick="location.href='/product/${p._id}'">
+
+        <div class="info">
+          <h4>${p.name}</h4>
+          <div class="rating">⭐ ${p.rating||0}</div>
+          <div class="category">${p.category}</div>
+        </div>
+
+        <button class="add-to-cart-btn"
+          onclick="location.href='/product/${p._id}'">
+          View Details
+        </button>
+      </div>
+    `;
+  });
+}
+
+/* ================= PRODUCTS ================= */
+function renderProducts(list){
+  const grid = document.getElementById('productGrid');
+  grid.innerHTML = '';
+
+  list.forEach(p=>{
+    grid.innerHTML += `
+      <div class="product-card">
+        <img src="${p.images?.[0] || '/images/placeholder.jpg'}"
+             onclick="location.href='/product/${p._id}'">
+
+        <div class="product-info">
+          <h3>${p.name}</h3>
+          <div class="price">$${Number(p.price || 0).toFixed(2)}</div>
+          <div class="rating">⭐ ${p.rating||0}</div>
+        </div>
+
+        <button class="add-to-cart-btn"
+          onclick="location.href='/product/${p._id}'">
+          View Details
+        </button>
+      </div>
+    `;
+  });
+}
+
+/* ================= CATEGORIES ================= */
+const categoryGrid=document.getElementById('categoryGrid');  
+const categories=[...new Set(products.map(p=>p.category))];  
+let selectedCategory='all';  
+
+function renderCategories(){  
+  categoryGrid.innerHTML='';  
+
+  // ALL
+  const allCard=document.createElement('div'); 
+  allCard.className='category-card';  
+  allCard.innerHTML = `
+    <img src="/images/light1.jpg">
+    <span>All</span>
+  `;
+  allCard.onclick=()=>{ 
+    selectedCategory='all'; 
+    renderProducts(products); 
+  };
+  categoryGrid.appendChild(allCard);  
+
+  categories.forEach(cat=>{  
+    const card=document.createElement('div'); 
+    card.className='category-card';  
+
+    const catProduct = products.find(p => p.category === cat);
+
+    const image = catProduct?.images?.[0] 
+      ? catProduct.images[0] 
+      : "/images/placeholder.jpg";
+
+    card.innerHTML = `
+      <img src="${image}">
+      <span>${cat}</span>
+    `;
+
+    card.onclick=()=>{  
+      selectedCategory=cat;  
+      renderProducts(products.filter(p=>p.category===cat));  
+    };  
+
+    categoryGrid.appendChild(card);  
+  });  
+}  
+
+
+/* ================= BUDGET ================= */
+function renderBudget(list){
+  const grid = document.getElementById('budgetGrid');
+  grid.innerHTML = '';
+
+  list.filter(p=>p.price < 100).slice(0,6).forEach(p=>{
+    grid.innerHTML += `
+      <div class="scroll-card">
+        <img src="${p.images?.[0] || '/images/placeholder.jpg'}"
+             onclick="location.href='/product/${p._id}'">
+
+        <div class="info">
+          <h4>${p.name}</h4>
+          <div class="price">$${Number(p.price).toFixed(2)}</div>
+        </div>
+      </div>
+    `;
+  });
+}
+
+/* ================= INIT ================= */
+renderPopular(products);
+renderProducts(products);
+renderCategories();
+renderBudget(products);
+
+</script>
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-container">
+
+    <!-- BRAND -->
+    <div class="footer-section">
+      <h3><%= settings?.siteName || "MyStore" %></h3>
+      <p><%= settings?.footerText || "Your one-stop shop for everything." %></p>
+    </div>
+
+    <!-- CONTACT -->
+    <div class="footer-section">
+      <h4>Contact</h4>
+      <p>Email: <%= settings?.contactEmail || "support@email.com" %></p>
+      <p>Phone: <%= settings?.contactPhone || "+233..." %></p>
+    </div>
+
+    <!-- LINKS -->
+    <div class="footer-section">
+      <h4>Quick Links</h4>
+      <a href="/">Home</a>
+      <a href="/cart">Cart</a>
+      <a href="/dashboard">Account</a>
+    </div>
+
+  </div>
+
+  <div class="footer-bottom">
+    © <%= new Date().getFullYear() %> 
+    <%= settings?.siteName || "MyStore" %> — All rights reserved.
+  </div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Payment Success | FashionFemme</title>
+
+  <link rel="stylesheet" href="/css/cart.css">
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 50px;
+    }
+
+    h1 {
+      color: green;
+    }
+
+    .error {
+      color: red;
+    }
+
+    .loading {
+      color: #555;
+    }
+
+    a {
+      display: inline-block;
+      margin-top: 20px;
+      text-decoration: none;
+      color: #fff;
+      background: #ff4081;
+      padding: 10px 20px;
+      border-radius: 5px;
+    }
+  </style>
+
+</head>
+
+<body>
+
+  <h1 id="title">Processing Payment...</h1>
+
+  <p id="message" class="loading">
+    Please wait while we verify your payment.
+  </p>
+
+  <p id="reference"></p>
+
+  <a href="/" id="homeLink">
+    Return to Home
+  </a>
+
+  <script>
+
+    async function verifyPayment() {
+
+      const params =
+        new URLSearchParams(window.location.search);
+
+      const payment =
+        params.get("payment");
+
+      const status =
+        params.get("status");
+
+      const reference =
+        params.get("reference");
+
+      const sessionId =
+        params.get("session_id");
+
+
+      const title =
+        document.getElementById("title");
+
+      const message =
+        document.getElementById("message");
+
+      const referenceText =
+        document.getElementById("reference");
+
+
+      // =====================================================
+      // PAYSTACK
+      // =====================================================
+
+      if (payment === "paystack") {
+
+        // Paystack callback has already verified
+        // the payment on the server before redirecting here.
+
+        if (
+          status !== "success" ||
+          !reference
+        ) {
+
+          title.textContent =
+            "❌ Payment Failed";
+
+          message.textContent =
+            "Your Paystack payment could not be verified.";
+
+          message.className =
+            "error";
+
+          return;
+        }
+
+
+        // Payment is already verified
+        title.textContent =
+          "✅ Payment Successful!";
+
+        message.textContent =
+          "Your Paystack payment has been verified and your order has been created.";
+
+        message.className = "";
+
+
+        referenceText.textContent =
+          `Payment Reference: ${reference}`;
+
+
+        // Redirect only AFTER successful verification
+        setTimeout(() => {
+
+          window.location.href =
+            "/dashboard";
+
+        }, 2000);
+
+
+        return;
+      }
+
+
+      // =====================================================
+      // STRIPE
+      // =====================================================
+
+      if (sessionId) {
+
+        title.textContent =
+          "Payment Successful!";
+
+        message.textContent =
+          "Verifying your Stripe payment...";
+
+        message.className =
+          "loading";
+
+
+        try {
+
+          const res =
+            await fetch(
+              "/api/stripe/verify-success",
+              {
+                method: "POST",
+
+                headers: {
+                  "Content-Type":
+                    "application/json"
+                },
+
+                credentials: "include",
+
+                body: JSON.stringify({
+                  session_id:
+                    sessionId
+                })
+              }
+            );
+
+
+          const data =
+            await res.json();
+
+
+          if (!res.ok || !data.success) {
+
+            title.textContent =
+              "❌ Payment Verification Failed";
+
+            message.textContent =
+              data.message ||
+              "Your Stripe payment could not be verified.";
+
+            message.className =
+              "error";
+
+            return;
+          }
+
+
+          // Stripe successfully verified
+          title.textContent =
+            "✅ Payment Successful!";
+
+          message.textContent =
+            "Your Stripe payment has been verified and your order has been created.";
+
+          message.className = "";
+
+
+          referenceText.textContent =
+            `Stripe Session: ${sessionId}`;
+
+
+          // Redirect only after successful verification
+          setTimeout(() => {
+
+            window.location.href =
+              "/dashboard";
+
+          }, 2000);
+
+
+        } catch (error) {
+
+          console.error(
+            "Stripe verification error:",
+            error
+          );
+
+
+          title.textContent =
+            "❌ Verification Error";
+
+          message.textContent =
+            "Something went wrong while verifying your payment.";
+
+          message.className =
+            "error";
+        }
+
+
+        return;
+      }
+
+
+      // =====================================================
+      // UNKNOWN / INVALID PAYMENT
+      // =====================================================
+
+      title.textContent =
+        "❌ Invalid Payment";
+
+      message.textContent =
+        "No valid payment information was provided.";
+
+      message.className =
+        "error";
+
+    }
+
+
+    verifyPayment();
+
+  </script>
+
+</body>
+</html>

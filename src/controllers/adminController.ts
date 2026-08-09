@@ -1,176 +1,368 @@
-//src/controllers/adminController.ts
+// src/controllers/adminController.ts
+
 import { Request, Response } from "express";
 import Product from "../models/ProductModel";
 
-// Admin dashboard
-export const getAdminDashboard = async (req: Request, res: Response) => {
+// ============================================================
+// ADMIN DASHBOARD
+// ============================================================
+
+export const getAdminDashboard = async (
+  req: Request,
+  res: Response
+) => {
   try {
     const products = await Product.find().sort({ createdAt: -1 });
-    res.render("admin/dashboard", { title: "Admin Dashboard", products });
+
+    res.render("admin/dashboard", {
+      title: "Admin Dashboard",
+      products,
+    });
   } catch (error) {
-    console.error(error);
+    console.error("❌ Error loading dashboard:", error);
     res.status(500).send("Error loading dashboard");
   }
 };
 
-// Add product form
-export const getAddProduct = (req: Request, res: Response) => {
-  res.render("admin/addProduct", { title: "Add Product" });
+
+// ============================================================
+// ADD PRODUCT FORM
+// ============================================================
+
+export const getAddProduct = (
+  req: Request,
+  res: Response
+) => {
+  res.render("admin/addProduct", {
+    title: "Add Product",
+  });
 };
 
-// Handle add product
-export const postAddProduct = async (req: Request, res: Response) => {
+
+// ============================================================
+// ADD PRODUCT
+// ============================================================
+
+export const postAddProduct = async (
+  req: Request,
+  res: Response
+) => {
   try {
     const {
       name,
       slug,
       category,
       description,
+
       frontendFeatures,
       backendFeatures,
       techStack,
+
       pricingCardType,
       priceSource,
       priceAssisted,
       priceDone,
+
       imageFolder,
       imageName,
+
       demoName,
+
+      templatePath,
     } = req.body;
 
-    // Handle category if "Other" is selected
+
+    // --------------------------------------------------------
+    // CATEGORY
+    // --------------------------------------------------------
+
     const finalCategory =
       category === "Other" && req.body.customCategory
         ? req.body.customCategory
         : category;
 
-    // Construct media URLs
-    const image = `/${imageFolder}/${imageName}`;
-    const demoUrl = demoName ? `/demos/Fashionfamme/${demoName}` : "";
 
-    // Create product
+    // --------------------------------------------------------
+    // FEATURES
+    // --------------------------------------------------------
+
+    const frontend = Array.isArray(frontendFeatures)
+      ? frontendFeatures
+      : frontendFeatures
+      ? frontendFeatures
+          .split(",")
+          .map((item: string) => item.trim())
+          .filter(Boolean)
+      : [];
+
+
+    const backend = Array.isArray(backendFeatures)
+      ? backendFeatures
+      : backendFeatures
+      ? backendFeatures
+          .split(",")
+          .map((item: string) => item.trim())
+          .filter(Boolean)
+      : [];
+
+
+
+    const image = imageName
+      ? `/images/${imageName}`
+      : "";
+
+
+   
+    const demoUrl = demoName
+      ? `/demos/Fashionfamme/${demoName}`
+      : "";
+
+
+    // --------------------------------------------------------
+    // CREATE PRODUCT
+    // --------------------------------------------------------
+
     await Product.create({
       name,
-      slug, // optional: will auto-generate if empty in schema
+      slug,
+
       category: finalCategory,
+
       description,
+
       features: {
-        frontend: Array.isArray(frontendFeatures)
-          ? frontendFeatures
-          : frontendFeatures
-          ? [frontendFeatures]
-          : [],
-        backend: Array.isArray(backendFeatures)
-          ? backendFeatures
-          : backendFeatures
-          ? [backendFeatures]
-          : [],
-        techStack,
+        frontend,
+        backend,
+        techStack: techStack || "",
       },
+
       pricing: {
         cardType: pricingCardType,
         sourceCode: Number(priceSource),
         assistedSetup: Number(priceAssisted),
         doneForYou: Number(priceDone),
       },
+
       media: {
         image,
         demoUrl,
       },
+
+      templatePath,
+
       isActive: true,
     });
 
+
+    console.log("✅ Product added:", name);
+
     res.redirect("/admin");
+
   } catch (error) {
-    console.error(error);
+    console.error("❌ Error adding product:", error);
     res.status(500).send("Error adding product");
   }
 };
 
-// Edit product form
-export const getEditProduct = async (req: Request, res: Response) => {
+
+// ============================================================
+// EDIT PRODUCT FORM
+// ============================================================
+
+export const getEditProduct = async (
+  req: Request,
+  res: Response
+) => {
   try {
     const product = await Product.findById(req.params.id);
-    if (!product) return res.status(404).send("Product not found");
-    res.render("admin/editProduct", { title: "Edit Product", product });
+
+    if (!product) {
+      return res.status(404).send("Product not found");
+    }
+
+    res.render("admin/editProduct", {
+      title: "Edit Product",
+      product,
+    });
+
   } catch (error) {
-    console.error(error);
+    console.error("❌ Error loading product:", error);
     res.status(500).send("Error loading product");
   }
 };
 
-// Handle edit product
-export const postEditProduct = async (req: Request, res: Response) => {
+
+// ============================================================
+// EDIT PRODUCT
+// ============================================================
+
+export const postEditProduct = async (
+  req: Request,
+  res: Response
+) => {
   try {
+
     const {
       name,
       slug,
       category,
       description,
+
       frontendFeatures,
       backendFeatures,
       techStack,
+
       pricingCardType,
       priceSource,
       priceAssisted,
       priceDone,
-      imageFolder,
+
       imageName,
-      demoFolder,
+
+      demoName,
+
+      templatePath,
     } = req.body;
+
+
+    // --------------------------------------------------------
+    // CATEGORY
+    // --------------------------------------------------------
 
     const finalCategory =
       category === "Other" && req.body.customCategory
         ? req.body.customCategory
         : category;
 
-    const image = `/images/${imageFolder}/${imageName}`;
-    const demoUrl = demoFolder ? `/demos/${demoFolder}/index.html` : "";
 
-    await Product.findByIdAndUpdate(req.params.id, {
-      name,
-      slug, // optional
-      category: finalCategory,
-      description,
-      features: {
-        frontend: Array.isArray(frontendFeatures)
-          ? frontendFeatures
-          : frontendFeatures
-          ? [frontendFeatures]
-          : [],
-        backend: Array.isArray(backendFeatures)
-          ? backendFeatures
-          : backendFeatures
-          ? [backendFeatures]
-          : [],
-        techStack,
+    // --------------------------------------------------------
+    // FEATURES
+    // --------------------------------------------------------
+
+    const frontend = Array.isArray(frontendFeatures)
+      ? frontendFeatures
+      : frontendFeatures
+      ? frontendFeatures
+          .split(",")
+          .map((item: string) => item.trim())
+          .filter(Boolean)
+      : [];
+
+
+    const backend = Array.isArray(backendFeatures)
+      ? backendFeatures
+      : backendFeatures
+      ? backendFeatures
+          .split(",")
+          .map((item: string) => item.trim())
+          .filter(Boolean)
+      : [];
+
+
+    // --------------------------------------------------------
+    // GET EXISTING PRODUCT
+    // --------------------------------------------------------
+
+    const existingProduct = await Product.findById(req.params.id);
+
+    if (!existingProduct) {
+      return res.status(404).send("Product not found");
+    }
+
+
+    // --------------------------------------------------------
+    // IMAGE
+    //
+    // If a new image name is entered, update it.
+    // Otherwise preserve the existing image.
+    // --------------------------------------------------------
+
+    const image = imageName
+      ? `/images/${imageName}`
+      : existingProduct.media?.image || "";
+
+
+    // --------------------------------------------------------
+    // DEMO
+    //
+    // If a new demo filename is entered, update it.
+    // Otherwise preserve the existing demo URL.
+    // --------------------------------------------------------
+
+    const demoUrl = demoName
+      ? `/demos/Fashionfamme/${demoName}`
+      : existingProduct.media?.demoUrl || "";
+
+
+    // --------------------------------------------------------
+    // UPDATE PRODUCT
+    // --------------------------------------------------------
+
+    await Product.findByIdAndUpdate(
+      req.params.id,
+      {
+        name,
+        slug,
+
+        category: finalCategory,
+
+        description,
+
+        features: {
+          frontend,
+          backend,
+          techStack: techStack || "",
+        },
+
+        pricing: {
+          cardType: pricingCardType,
+          sourceCode: Number(priceSource),
+          assistedSetup: Number(priceAssisted),
+          doneForYou: Number(priceDone),
+        },
+
+        media: {
+          image,
+          demoUrl,
+        },
+
+        templatePath,
       },
-      pricing: {
-        cardType: pricingCardType,
-        sourceCode: Number(priceSource),
-        assistedSetup: Number(priceAssisted),
-        doneForYou: Number(priceDone),
-      },
-      media: {
-        image,
-        demoUrl,
-      },
-    });
+      {
+        new: true,
+      }
+    );
+
+
+    console.log("✅ Product updated:", name);
 
     res.redirect("/admin");
+
   } catch (error) {
-    console.error(error);
+    console.error("❌ Error editing product:", error);
     res.status(500).send("Error editing product");
   }
 };
 
-// Delete product
-export const deleteProduct = async (req: Request, res: Response) => {
+
+// ============================================================
+// DELETE PRODUCT
+// ============================================================
+
+export const deleteProduct = async (
+  req: Request,
+  res: Response
+) => {
   try {
+
     await Product.findByIdAndDelete(req.params.id);
+
+    console.log("🗑️ Product deleted:", req.params.id);
+
     res.redirect("/admin");
+
   } catch (error) {
-    console.error(error);
+    console.error("❌ Error deleting product:", error);
     res.status(500).send("Error deleting product");
   }
 };

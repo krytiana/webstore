@@ -51,7 +51,7 @@ export const createCartCheckoutSession = async (req: any, res: Response) => {
       return res.status(404).json({ success: false, message: "Product not found" });
     }
 
-    const price = product.pricing[plan];
+    const price = product.pricing?.[plan];
     if (!price) {
       return res.status(400).json({ success: false, message: "Invalid pricing" });
     }

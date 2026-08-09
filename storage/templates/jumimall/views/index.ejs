@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><%= settings.siteName || "MyStore" %></title>
+<link rel="stylesheet" href="/css/index.css">
+<style>
+:root {
+
+  /* Brand */
+  --primary: <%= settings.primaryColor %>;
+  --secondary: <%= settings.secondaryColor %>;
+
+  /* Backgrounds */
+  --background: <%= settings.backgroundColor %>;
+  --surface: <%= settings.surfaceColor %>;
+  --surfaceAlt: <%= settings.surfaceAltColor %>;
+
+  /* Text */
+  --heading: <%= settings.headingColor %>;
+  --text: <%= settings.textColor %>;
+  --muted: <%= settings.mutedTextColor %>;
+  --interaction: <%= settings.interactionColor %>;
+
+  /* Border */
+  --border: <%= settings.borderColor %>;
+
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="header">
+  <div class="top-bar">
+    <p><%= settings.siteName || "MyStore" %></p>
+    <div id="userSection"></div>
+  </div>
+
+  <div class="search-box">
+    <input type="text" id="searchInput" placeholder="Search products...">
+  </div>
+</div>
+
+<a href="/cart" class="floating-cart">
+  🛒
+  <span id="floatingCartCount" class="floating-cart-count">0</span>
+</a>
+
+<div id="searchResults" style="display:none;"></div>
+
+<div id="hero" class="hero">
+  <div class="slides">
+    <% if (settings.heroImages && settings.heroImages.length) { %>
+      
+      <% settings.heroImages.forEach((img, index) => { %>
+          <img
+              src="<%= img %>"
+              class="slide <%= index === 0 ? 'active' : '' %>"
+              alt="Hero"
+          >
+      <% }) %>
+
+    <% } else { %>
+
+      <!-- fallback (important) -->
+      <img src="https://images.unsplash.com/photo-1512436991641-6745cdb1723f?q=80&w=1000" />
+
+
+    <% } %>
+  </div>
+  
+</div>
+
+<div id="delivery" class="delivery">
+  <div>🚚 Free Shipping</div>
+  <div>🔒 Secure Payment</div>
+</div>
+
+<div id="categorySections"></div>
+
+<a href="#" class="scroll-top" id="scrollTopBtn">⬆</a>
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-container">
+
+    <!-- BRAND -->
+    <div class="footer-section">
+      <h3><%= settings?.siteName || "MyStore" %></h3>
+      <p><%= settings?.footerText || "Your one-stop shop for everything." %></p>
+    </div>
+
+    <!-- CONTACT -->
+    <div class="footer-section">
+      <h4>Contact</h4>
+      <p>Email: <%= settings?.contactEmail || "support@email.com" %></p>
+      <p>Phone: <%= settings?.contactPhone || "+233..." %></p>
+    </div>
+
+    <!-- LINKS -->
+    <div class="footer-section">
+      <h4>Quick Links</h4>
+      <a href="/">Home</a>
+      <a href="/cart">Cart</a>
+      <a href="/dashboard">Account</a>
+    </div>
+
+  </div>
+
+  <div class="footer-bottom">
+    © <%= new Date().getFullYear() %> 
+    <%= settings?.siteName || "MyStore" %> — All rights reserved.
+  </div>
+</footer>
+<!-- KEEP YOUR JS FILES -->
+<script src="/js/cartUtils.js" defer></script>
+<script src="/js/cartBadge.js" defer></script>
+<script type="module" src="/js/login.js"></script>
+
+<!-- 🔥 INJECT PRODUCTS FROM BACKEND -->
+<script>
+  let products = <%- JSON.stringify(products) %>;
+
+  // Fix MongoDB _id → id
+  products.forEach(p => {
+    p.id = p._id;
+  });
+
+  /* ===== GROUP PRODUCTS ===== */
+  function groupByCategory(products){
+    return products.reduce((acc,product)=>{
+      if(!acc[product.category]){
+        acc[product.category]=[];
+      }
+      acc[product.category].push(product);
+      return acc;
+    },{});
+  }
+
+  /* ===== RENDER SECTIONS ===== */
+  function renderSections(){
+    const container=document.getElementById("categorySections");
+    const grouped=groupByCategory(products);
+
+    for(const category in grouped){
+
+      const section=document.createElement("div");
+      section.className="section";
+
+      section.innerHTML=`
+        <div class="section-header">
+          <span>${category.toUpperCase()}</span>
+          <a href="/category/${category}">See All</a>
+        </div>
+        <div class="horizontal-products">
+          ${grouped[category].slice(0,6).map(product=>`
+            <div class="product-card">
+              ${product.discount ? `<div class="discount-badge">-${product.discount}%</div>`:""}
+              <a href="/product/${product.id}" style="text-decoration:none;color:black;">
+                <img src="${product.images[0]}" alt="${product.name}">
+                <div class="title">${product.name}</div>
+                <div class="price">GH₵ ${product.price.toFixed(2)}</div>
+                <div class="rating">⭐ ${product.rating} (${product.reviews})</div>
+              </a>
+            </div>
+          `).join("")}
+        </div>
+      `;
+
+      container.appendChild(section);
+    }
+  }
+
+  renderSections();
+
+  /* ===== SCROLL ===== */
+  const scrollBtn=document.getElementById("scrollTopBtn");
+
+  window.addEventListener("scroll",()=>{
+    scrollBtn.style.display = window.scrollY > 300 ? "flex" : "none";
+  });
+
+  scrollBtn.addEventListener("click",(e)=>{
+    e.preventDefault();
+    window.scrollTo({top:0,behavior:"smooth"});
+  });
+
+  /* ================= SLIDE SHOW ================= */
+const slides = document.querySelectorAll(".slide");
+
+if (slides.length > 1) {
+  let current = 0;
+
+  setInterval(() => {
+    slides[current].classList.remove("active");
+
+    current = (current + 1) % slides.length;
+
+    slides[current].classList.add("active");
+  }, 7000); // Change every 7 seconds
+}
+searchInput.addEventListener('input', applyFilters);
+
+
+  /* ===== SEARCH ===== */
+  const searchInput = document.getElementById("searchInput");
+  const searchResults = document.getElementById("searchResults");
+  const categorySections = document.getElementById("categorySections");
+  const hero = document.getElementById("hero");
+  const delivery = document.getElementById("delivery");
+
+  searchInput.addEventListener("input", function(){
+
+    const value = this.value.toLowerCase().trim();
+
+    if(value === ""){
+      searchResults.style.display = "none";
+      categorySections.style.display = "block";
+      hero.style.display = "block";
+      delivery.style.display = "block";
+      return;
+    }
+
+    const filtered = products.filter(product =>
+      product.name.toLowerCase().includes(value) ||
+      product.category.toLowerCase().includes(value)
+    );
+
+    categorySections.style.display = "none";
+    hero.style.display = "none";
+    delivery.style.display = "none";
+    searchResults.style.display = "block";
+
+    if(filtered.length === 0){
+      searchResults.innerHTML = "<p style='padding:15px;'>No products found.</p>";
+      return;
+    }
+
+    searchResults.innerHTML = `
+      <div class="search-grid">
+        ${filtered.map(product=>`
+          <div class="product-card">
+            ${product.discount ? `<div class="discount-badge">-${product.discount}%</div>`:""}
+            <a href="/product/${product.id}" style="text-decoration:none;color:black;">
+              <img src="${product.images[0]}" alt="${product.name}">
+              <div class="title">${product.name}</div>
+              <div class="price">GH₵ ${product.price.toFixed(2)}</div>
+              <div class="rating">⭐ ${product.rating} (${product.reviews})</div>
+            </a>
+          </div>
+        `).join("")}
+      </div>
+    `;
+  });
+
+</script>
+
+</body>
+</html>

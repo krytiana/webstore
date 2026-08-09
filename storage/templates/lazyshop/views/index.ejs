@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title> <%= settings.siteName || "MyStore" %></title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+
+    /* Brand */
+    --primary: <%= settings.primaryColor %>;
+    --secondary: <%= settings.secondaryColor %>;
+
+    /* Backgrounds */
+    --background: <%= settings.backgroundColor %>;
+    --surface: <%= settings.surfaceColor %>;
+    --surfaceAlt: <%= settings.surfaceAltColor %>;
+
+    /* Text */
+    --heading: <%= settings.headingColor %>;
+    --text: <%= settings.textColor %>;
+    --muted: <%= settings.mutedTextColor %>;
+    --interaction: <%= settings.interactionColor %>;
+
+    /* Border */
+    --border: <%= settings.borderColor %>;
+
+  }
+</style>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,sans-serif;background:var(--background);color:var(--text)}
+
+header{background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
+.nav{max-width:1200px;margin:auto;padding:16px 24px;display:flex;justify-content:space-between;align-items:center}
+.logo{font-weight:800;font-size:20px;color:var(--primary)}
+.nav-right{display:flex;gap:10px}
+input{padding:10px 12px;border-radius:12px;border:1px solid var(--border)}
+button{border:none;border-radius:12px;padding:10px 14px;background:var(--primary);color:var(--interaction);cursor:pointer}
+button.outline{background:var(--surface);color:var(--text);border:1px solid var(--border)}
+
+.main{max-width:1200px;margin:30px auto;display:grid;grid-template-columns:240px 1fr;gap:24px;padding:0 20px}
+
+.sidebar{background:var(--surface);border-radius:18px;padding:16px;height:fit-content;box-shadow:0 6px 18px var(--muted);position:sticky;top:70px}
+.sidebar h3{margin-bottom:10px;color:var(--heading)}
+.sidebar button{width:100%;margin-bottom:8px;background:var(--surface);color:var(--text);border:1px solid var(--border)}
+.sidebar button.active{background:var(--primary);color:var(--interaction);border:1px solid var(--primary)}
+
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.grid a {text-decoration: none; color: inherit}
+.card{background:var(--surface);border-radius:18px;overflow:hidden;box-shadow:0 6px 18px var(--muted);transition:.2s}
+.card:hover{transform:translateY(-5px)}
+.card img{width:100%;height:180px;object-fit:cover}
+.card-body{padding:14px; color:var(--heading)}
+.price{font-size:14px;color:var(--primary);margin-top:4px}
+.rating{font-size:13px;margin-top:4px;color:var(--muted)}
+.card-body button{width:100%;margin-top:10px}
+
+/* FLOATING CART */
+
+.floating-cart{
+  position:fixed;
+  bottom:20px;
+  right:20px;
+  background:var(--primary);
+  color:var(--interaction);
+  border:1px solid var(--border);
+  width:55px;
+  height:55px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:24px;
+  text-decoration:none;
+  box-shadow:0 6px 20px var(--border);
+  z-index:1000;
+}
+
+.floating-cart-count{
+  position:absolute;
+  top:-5px;
+  right:-5px;
+  background:red;
+  color:white;
+  font-size:12px;
+  padding:2px 6px;
+  border-radius:50%;
+  min-width:18px;
+  text-align:center;
+  display:none;
+}
+
+/* FOOTER */
+
+.footer{
+  background:var(--surface);
+  color:var(--text);
+  padding:30px 20px 10px;
+  margin-top:40px;
+  border-top:1px solid var(--border);
+}
+
+.footer-container{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:20px;
+}
+
+.footer-section h3,
+.footer-section h4{
+  margin-bottom:10px;
+  color:var(--heading);
+}
+
+.footer-section p{
+  font-size:14px;
+  margin-bottom:6px;
+  color:var(--text);
+}
+
+.footer-section a{
+  display:block;
+  font-size:14px;
+  color:var(--text);
+  margin-bottom:6px;
+}
+
+.footer-section a:hover{
+  color:var(--primary);
+}
+
+.footer-bottom{
+  text-align:center;
+  margin-top:20px;
+  border-top:1px solid var(--border);
+  padding-top:10px;
+  font-size:13px;
+  color:var(--muted);
+}
+@media(max-width:900px){
+  .main{grid-template-columns:1fr}
+  .grid{grid-template-columns:repeat(2,1fr)}
+  .sidebar{position:unset; top:unset}
+}
+@media(max-width:520px){
+  .grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="nav">
+    <div class="logo"><%= settings.siteName || "MyStore" %></div>
+    <div class="nav-right">
+      <input id="search" placeholder="Search products…" />
+      <a href="dashboard">
+        <button class="outline">👤</button>
+      </a>
+    </div>
+  </div>
+</header>
+
+<div class="main">
+
+  <aside class="sidebar" id="sidebar">
+    <h3>Categories</h3>
+
+    <div id="categoryButtons">
+      <button class="active" data-cat="all">All</button>
+    </div>
+  </aside>
+
+  <section>
+    <div id="productGrid" class="grid"></div>
+  </section>
+
+</div>
+
+<a href="/cart" class="floating-cart">
+  🛒
+  <span id="floatingCartCount" class="floating-cart-count">0</span>
+</a>
+
+<div id="toast" class="toast"></div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-container">
+
+    <!-- BRAND -->
+    <div class="footer-section">
+      <h3><%= settings?.siteName || "MyStore" %></h3>
+      <p><%= settings?.footerText || "Your one-stop shop for everything." %></p>
+    </div>
+
+    <!-- CONTACT -->
+    <div class="footer-section">
+      <h4>Contact</h4>
+      <p>Email: <%= settings?.contactEmail || "support@email.com" %></p>
+      <p>Phone: <%= settings?.contactPhone || "+233..." %></p>
+    </div>
+
+    <!-- LINKS -->
+    <div class="footer-section">
+      <h4>Quick Links</h4>
+      <a href="/">Home</a>
+      <a href="/cart">Cart</a>
+      <a href="/dashboard">Account</a>
+    </div>
+
+  </div>
+
+  <div class="footer-bottom">
+    © <%= new Date().getFullYear() %> 
+    <%= settings?.siteName || "MyStore" %> — All rights reserved.
+  </div>
+</footer>
+
+<!-- KEEP YOUR JS -->
+<script src="/js/cartUtils.js"></script>
+<script src="/js/cartBadge.js"></script>
+
+<!-- 🔥 INJECT PRODUCTS -->
+<script>
+let products = <%- JSON.stringify(products) %>;
+
+// Fix MongoDB _id
+products.forEach(p => p.id = p._id);
+
+// Generate unique categories from products
+const categories = [...new Set(products.map(p => p.category))];
+
+const categoryContainer = document.getElementById("categoryButtons");
+
+categories.forEach(category => {
+    const button = document.createElement("button");
+
+    button.dataset.cat = category;
+
+    // Optional: nicer display
+    button.textContent =
+        category.charAt(0).toUpperCase() + category.slice(1);
+
+    categoryContainer.appendChild(button);
+});
+
+const grid = document.getElementById("productGrid");
+const search = document.getElementById("search");
+const toast = document.getElementById("toast");
+
+let current = "all";
+let toastTimer;
+
+/* Toast */
+function showToast(msg){
+  toast.textContent = msg;
+  toast.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>toast.classList.remove("show"),2000);
+}
+
+/* Render */
+function render(list){
+  grid.innerHTML = "";
+  list.forEach(p=>{
+    const card=document.createElement("div");
+    card.className="card";
+
+    card.innerHTML=`
+      <a href="/product/${p.id}">
+        <img src="${p.images[0]}" />
+        <div class="card-body">
+          <strong>${p.name}</strong>
+          <div class="price">GH₵ ${p.price}</div>
+          <div class="rating">⭐ ${p.rating} (${p.reviews})</div>
+          <button>View Details</button>
+        </div>
+      </a>
+    `;
+
+    card.querySelector("button").onclick=()=>addToCart(p);
+    grid.appendChild(card);
+  });
+}
+
+/* Filters */
+function apply(){
+  const q=search.value.toLowerCase();
+  let list=products.filter(p=>p.name.toLowerCase().includes(q));
+  if(current!=="all") list=list.filter(p=>p.category===current);
+  render(list);
+}
+
+/* Cart */
+function addToCart(product){
+  const cart=getCart();
+  const existing=cart.find(i=>i.id===product.id);
+
+  if(existing){
+    existing.quantity+=1;
+    showToast("Quantity updated in cart");
+  }else{
+    cart.push({
+      id:product.id,
+      name:product.name,
+      price:product.price,
+      image:product.images[0],
+      quantity:1
+    });
+    showToast("Added to cart");
+  }
+  saveCart(cart);
+}
+
+/* Init */
+render(products);
+const sidebar = document.getElementById("sidebar");
+
+search.addEventListener("input", function () {
+  const value = this.value.trim();
+
+  if (value.length > 0) {
+    sidebar.style.display = "none"; // hide categories
+  } else {
+    sidebar.style.display = "block"; // show again
+  }
+
+  apply();
+});
+
+document.getElementById("sidebar").addEventListener("click", e => {
+
+    const btn = e.target.closest("button");
+    if (!btn) return;
+
+    document
+        .querySelectorAll(".sidebar button")
+        .forEach(b => b.classList.remove("active"));
+
+    btn.classList.add("active");
+
+    current = btn.dataset.cat;
+
+    apply();
+});
+
+</script>
+
+</body>
+</html>
