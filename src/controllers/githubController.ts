@@ -7,7 +7,7 @@ import simpleGit from "simple-git";
 import os from "os";
 import fs from "fs";
 import Product from "../models/ProductModel";
-
+import { getTemplateDirectory } from "../utils/templateStorage";
 
 
 
@@ -213,121 +213,94 @@ export const deployToRepo = async (
     const productId = req.session.currentProductId;
 
     if (!productId) {
-      return res.status(400).send(
-        "No product selected"
-      );
+      return res.status(400).send("No product selected");
     }
 
     const product = await Product.findById(productId);
 
     if (!product) {
-      return res.status(404).send(
-        "Product not found"
-      );
+      return res.status(404).send("Product not found");
     }
 
     // ---------------------------------------
-    // 2. Check GitHub session
+    // 2. Get GitHub session
     // ---------------------------------------
     const github = req.session.github;
 
     if (!github) {
-      return res.status(401).send(
-        "GitHub is not connected"
-      );
+      return res.status(401).send("GitHub not connected");
     }
 
     const {
       username,
-      accessToken
+      accessToken,
+      id: githubId
     } = github;
 
-    const repoName =
-      req.session.githubRepoName;
+    const repoName = req.session.githubRepoName;
 
     if (!repoName) {
       return res.status(400).send(
-        "GitHub repository not selected"
+        "GitHub repository not configured"
       );
     }
 
     // ---------------------------------------
-    // 3. Validate templatePath
+    // 3. Validate template
     // ---------------------------------------
     if (!product.templatePath) {
-      return res.status(500).send(
+      return res.status(400).send(
         "This product does not have a template configured."
       );
     }
 
     // ---------------------------------------
-    // 4. Locate template
+    // 4. Locate purchased template
     // ---------------------------------------
-    const templateDir = path.resolve(
-      process.cwd(),
-      "storage",
-      "templates",
-      product.templatePath
-    );
+    const templateDirectory = getTemplateDirectory({
+      templatePath: product.templatePath,
+    });
 
-    if (!fs.existsSync(templateDir)) {
+    if (!fs.existsSync(templateDirectory)) {
       return res.status(404).send(
-        "Template files were not found."
+        "Template source code not found."
       );
     }
 
     console.log(
-      `📦 Using template: ${templateDir}`
+      `📦 Using template: ${templateDirectory}`
     );
 
     // ---------------------------------------
-    // 5. Create temporary working directory
+    // 5. Create temporary Git directory
     // ---------------------------------------
     tempDir = path.join(
       os.tmpdir(),
       `deploy-${product.slug}-${Date.now()}`
     );
 
-    await fs.promises.mkdir(
-      tempDir,
-      { recursive: true }
+    fs.mkdirSync(tempDir, {
+      recursive: true,
+    });
+
+    console.log(
+      `📁 Temporary deployment directory: ${tempDir}`
     );
 
     // ---------------------------------------
     // 6. Copy template into temp directory
     // ---------------------------------------
-    console.log(
-      "📁 Copying template files..."
-    );
-
     await fs.promises.cp(
-      templateDir,
+      templateDirectory,
       tempDir,
       {
         recursive: true,
-        filter: (source) => {
-          const name = path.basename(source);
-
-          // Never send environment files
-          if (
-            name === ".env" ||
-            name.startsWith(".env.")
-          ) {
-            return false;
-          }
-
-          // Never send Git history
-          if (name === ".git") {
-            return false;
-          }
-
-          return true;
-        }
+        force: true,
       }
     );
 
     console.log(
-      "✅ Template copied successfully"
+      `✅ ${product.name} copied to deployment directory`
     );
 
     // ---------------------------------------
@@ -337,11 +310,33 @@ export const deployToRepo = async (
 
     await repoGit.init();
 
-    // Make sure branch is main
-    await repoGit.checkoutLocalBranch("main");
+    // ---------------------------------------
+    // 8. Configure Git identity
+    // ---------------------------------------
+    //
+    // GitHub requires an identity when creating
+    // the commit. Use the customer's GitHub
+    // noreply identity.
+    //
+    const gitEmail =
+      `${githubId}+${username}@users.noreply.github.com`;
+
+    await repoGit.addConfig(
+      "user.name",
+      username
+    );
+
+    await repoGit.addConfig(
+      "user.email",
+      gitEmail
+    );
+
+    console.log(
+      `👤 Git identity configured: ${username}`
+    );
 
     // ---------------------------------------
-    // 8. Add customer GitHub repository
+    // 9. Add customer GitHub repository
     // ---------------------------------------
     const repoUrl =
       `https://${accessToken}@github.com/${username}/${repoName}.git`;
@@ -351,77 +346,51 @@ export const deployToRepo = async (
       repoUrl
     );
 
-    console.log(
-      `🔗 Customer repository: https://github.com/${username}/${repoName}`
-    );
-
     // ---------------------------------------
-    // 9. Add template files
+    // 10. Add template files
     // ---------------------------------------
     await repoGit.add(".");
 
     // ---------------------------------------
-    // 10. Create commit
+    // 11. Create commit
     // ---------------------------------------
     await repoGit.commit(
-      `Deploy ${product.name} template`
+      `Deploy ${product.name}`
     );
 
     console.log(
-      "✅ Template committed"
+      `✅ Source code committed for ${product.name}`
     );
 
     // ---------------------------------------
-    // 11. Push to customer repository
+    // 12. Push to customer's repository
     // ---------------------------------------
-    console.log(
-      "🚀 Pushing template to GitHub..."
-    );
-
     await repoGit.push(
       "origin",
       "main",
       {
-        "--force": null
+        "--force": null,
       }
     );
 
     console.log(
-      "✅ Template successfully pushed to GitHub"
+      `🚀 ${product.name} pushed to GitHub`
     );
 
     // ---------------------------------------
-    // 12. Update session
+    // 13. Remove authenticated remote
+    // ---------------------------------------
+    //
+    // This prevents the access token from
+    // remaining inside the temporary repo config.
+    //
+    await repoGit.removeRemote("origin");
+
+    // ---------------------------------------
+    // 14. Mark deployment complete
     // ---------------------------------------
     req.session.sourceCodePushed = true;
 
-    // ---------------------------------------
-    // 13. Clean temporary directory
-    // ---------------------------------------
-    try {
-      await fs.promises.rm(
-        tempDir,
-        {
-          recursive: true,
-          force: true
-        }
-      );
-
-      console.log(
-        "🗑️ Temporary deployment folder deleted"
-      );
-
-      tempDir = null;
-    } catch (cleanupError) {
-      console.error(
-        "⚠️ Failed to delete temporary deployment folder:",
-        cleanupError
-      );
-    }
-
-    // ---------------------------------------
-    // 14. Return to deploy page
-    // ---------------------------------------
     return res.redirect(
       `/deploy/${productId}`
     );
@@ -433,36 +402,42 @@ export const deployToRepo = async (
       error
     );
 
-    // ---------------------------------------
-    // Cleanup after failure
-    // ---------------------------------------
-    if (tempDir) {
-      try {
-        await fs.promises.rm(
-          tempDir,
-          {
-            recursive: true,
-            force: true
-          }
-        );
-
-        console.log(
-          "🗑️ Temporary deployment folder cleaned"
-        );
-      } catch (cleanupError) {
-        console.error(
-          "❌ Deployment cleanup error:",
-          cleanupError
-        );
-      }
-    }
-
     return res.status(500).json({
       success: false,
       message:
         error.message ||
-        "Failed to deploy template to GitHub"
+        "Failed to deploy source code",
     });
+
+  } finally {
+
+    // ---------------------------------------
+    // 15. Delete temporary directory
+    // ---------------------------------------
+    if (tempDir && fs.existsSync(tempDir)) {
+      try {
+
+        await fs.promises.rm(
+          tempDir,
+          {
+            recursive: true,
+            force: true,
+          }
+        );
+
+        console.log(
+          `🗑️ Temporary deployment directory deleted: ${tempDir}`
+        );
+
+      } catch (cleanupError) {
+
+        console.error(
+          "❌ Failed to clean deployment directory:",
+          cleanupError
+        );
+
+      }
+    }
   }
 };
 
