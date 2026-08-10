@@ -213,13 +213,17 @@ export const deployToRepo = async (
     const productId = req.session.currentProductId;
 
     if (!productId) {
-      return res.status(400).send("No product selected");
+      return res.status(400).send(
+        "No product selected"
+      );
     }
 
     const product = await Product.findById(productId);
 
     if (!product) {
-      return res.status(404).send("Product not found");
+      return res.status(404).send(
+        "Product not found"
+      );
     }
 
     // ---------------------------------------
@@ -228,7 +232,9 @@ export const deployToRepo = async (
     const github = req.session.github;
 
     if (!github) {
-      return res.status(401).send("GitHub not connected");
+      return res.status(401).send(
+        "GitHub not connected"
+      );
     }
 
     const {
@@ -237,7 +243,8 @@ export const deployToRepo = async (
       id: githubId
     } = github;
 
-    const repoName = req.session.githubRepoName;
+    const repoName =
+      req.session.githubRepoName;
 
     if (!repoName) {
       return res.status(400).send(
@@ -257,11 +264,17 @@ export const deployToRepo = async (
     // ---------------------------------------
     // 4. Locate purchased template
     // ---------------------------------------
-    const templateDirectory = getTemplateDirectory({
-      templatePath: product.templatePath,
-    });
+    const templateDirectory =
+      getTemplateDirectory({
+        templatePath: product.templatePath,
+      });
 
     if (!fs.existsSync(templateDirectory)) {
+      console.error(
+        "❌ Template source code not found:",
+        templateDirectory
+      );
+
       return res.status(404).send(
         "Template source code not found."
       );
@@ -272,7 +285,7 @@ export const deployToRepo = async (
     );
 
     // ---------------------------------------
-    // 5. Create temporary Git directory
+    // 5. Create temporary deployment directory
     // ---------------------------------------
     tempDir = path.join(
       os.tmpdir(),
@@ -306,17 +319,21 @@ export const deployToRepo = async (
     // ---------------------------------------
     // 7. Initialize Git repository
     // ---------------------------------------
-    const repoGit = simpleGit(tempDir);
+    const repoGit =
+      simpleGit(tempDir);
 
     await repoGit.init();
+
+    console.log(
+      "✅ Temporary Git repository initialized"
+    );
 
     // ---------------------------------------
     // 8. Configure Git identity
     // ---------------------------------------
     //
-    // GitHub requires an identity when creating
-    // the commit. Use the customer's GitHub
-    // noreply identity.
+    // Git requires a user identity when
+    // creating the commit.
     //
     const gitEmail =
       `${githubId}+${username}@users.noreply.github.com`;
@@ -336,7 +353,7 @@ export const deployToRepo = async (
     );
 
     // ---------------------------------------
-    // 9. Add customer GitHub repository
+    // 9. Add customer's GitHub repository
     // ---------------------------------------
     const repoUrl =
       `https://${accessToken}@github.com/${username}/${repoName}.git`;
@@ -346,10 +363,18 @@ export const deployToRepo = async (
       repoUrl
     );
 
+    console.log(
+      `🔗 GitHub repository connected: ${username}/${repoName}`
+    );
+
     // ---------------------------------------
     // 10. Add template files
     // ---------------------------------------
     await repoGit.add(".");
+
+    console.log(
+      "📦 Template files added to Git"
+    );
 
     // ---------------------------------------
     // 11. Create commit
@@ -363,7 +388,19 @@ export const deployToRepo = async (
     );
 
     // ---------------------------------------
-    // 12. Push to customer's repository
+    // 12. Rename branch to main
+    // ---------------------------------------
+    await repoGit.branch([
+      "-M",
+      "main",
+    ]);
+
+    console.log(
+      "🌿 Branch set to main"
+    );
+
+    // ---------------------------------------
+    // 13. Push to customer's repository
     // ---------------------------------------
     await repoGit.push(
       "origin",
@@ -378,18 +415,28 @@ export const deployToRepo = async (
     );
 
     // ---------------------------------------
-    // 13. Remove authenticated remote
+    // 14. Remove authenticated remote
     // ---------------------------------------
     //
-    // This prevents the access token from
-    // remaining inside the temporary repo config.
+    // Prevent the access token from remaining
+    // inside the temporary Git configuration.
     //
-    await repoGit.removeRemote("origin");
+    await repoGit.removeRemote(
+      "origin"
+    );
+
+    console.log(
+      "🔐 Authenticated Git remote removed"
+    );
 
     // ---------------------------------------
-    // 14. Mark deployment complete
+    // 15. Mark deployment complete
     // ---------------------------------------
     req.session.sourceCodePushed = true;
+
+    console.log(
+      `✅ Source code deployment completed for ${product.name}`
+    );
 
     return res.redirect(
       `/deploy/${productId}`
@@ -412,9 +459,12 @@ export const deployToRepo = async (
   } finally {
 
     // ---------------------------------------
-    // 15. Delete temporary directory
+    // 16. Delete temporary directory
     // ---------------------------------------
-    if (tempDir && fs.existsSync(tempDir)) {
+    if (
+      tempDir &&
+      fs.existsSync(tempDir)
+    ) {
       try {
 
         await fs.promises.rm(
