@@ -95,7 +95,7 @@
 
       <p>
         If you don't already have a Render account,
-        create one before continuing or skip.
+        create one before continuing or skip this step.
       </p>
 
       <div class="guide-actions">
@@ -107,6 +107,7 @@
         >
           Create Render Account
         </a>
+
 
       </div>
 
@@ -150,35 +151,113 @@
 
     </div>
 
-    <div class="guide-step">
 
-      <h3>Step 4: Select Your Repository</h3>
+<div class="guide-step">
+
+  <h3>Step 4: Select Your Repository</h3>
+
+  <p>
+    In Render, select the private GitHub repository
+    created for your purchased template.
+  </p>
+
+  <% if (githubRepoUrl) { %>
+
+    <div class="success-box">
+
+      <h4>✅ Your Repository</h4>
 
       <p>
-        Choose the repository created during deployment.
+        Select this repository in Render:
       </p>
 
-      <% if (githubRepoUrl) { %>
+      <div class="code-box">
+        <%= githubRepoUrl %>
+      </div>
 
-        <div class="code-box">
-          <%= githubRepoUrl %>
-        </div>
+      <div class="guide-actions">
 
-        <div class="guide-actions">
+        <a
+          href="<%= githubRepoUrl %>"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="btn"
+        >
+          🔗 View Repository
+        </a>
 
-          <a
-            href="<%= githubRepoUrl %>"
-            target="_blank"
-            class="btn"
-          >
-            View Repository
-          </a>
-
-        </div>
-
-      <% } %>
+      </div>
 
     </div>
+
+    <hr>
+
+    <h4>Repository not showing in Render?</h4>
+
+    <p>
+      If you cannot find the repository in Render's GitHub
+      repository list, don't worry. This usually means Render
+      has not been given access to that repository yet.
+    </p>
+
+    <ol>
+
+      <li>
+        Make sure you are signed into Render with the
+        correct account.
+      </li>
+
+      <li>
+        Make sure the GitHub account connected to Render
+        is the same account that owns the repository.
+      </li>
+
+      <li>
+        In Render, open the GitHub connection or repository
+        access settings.
+      </li>
+
+      <li>
+        Make sure Render has permission to access the repository.
+      </li>
+
+      <li>
+        Return to the <strong>New Web Service</strong> page
+        and refresh the repository list.
+      </li>
+
+    </ol>
+
+    <div class="warning-box">
+
+      <strong>⚠️ Important</strong>
+
+      <p>
+        The repository is private. Render must have permission
+        to access it before it can appear in the repository list.
+      </p>
+
+    </div>
+
+  <% } else { %>
+
+    <div class="warning-box">
+
+      <strong>⚠️ Repository information unavailable</strong>
+
+      <p>
+        We could not find your GitHub repository information.
+        Please return to the deployment page and make sure
+        your repository was created successfully.
+      </p>
+
+    </div>
+
+  <% } %>
+
+</div>
+
+
 
     <div class="guide-step">
 
