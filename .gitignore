@@ -1,4 +1,18 @@
-node_modules
+# Dependencies
+node_modules/
+
+# Environment variables / secrets
 .env
-dist
-README.md
+.env.*
+!.env.example
+
+# Build output
+dist/
+
+# Generated ZIP files
+storage/temp/
+storage/downloads/
+
+# Logs
+*.log
+npm-debug.log*
