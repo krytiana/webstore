@@ -33,12 +33,38 @@ export const githubLogin = (
   req: Request,
   res: Response
 ) => {
+  const productId =
+    req.query.productId as string;
 
-  const productId = req.query.productId as string;
+  if (!productId) {
+    return res.status(400).send(
+      "Product ID is required"
+    );
+  }
 
-  req.session.currentProductId = productId;
+  // ---------------------------------------
+  // Start a NEW deployment
+  // ---------------------------------------
+  req.session.currentProductId =
+    productId;
 
-  const clientId = process.env.GITHUB_CLIENT_ID;
+  // Clear previous deployment state
+  // but KEEP the GitHub connection.
+  req.session.githubRepoUrl =
+    undefined;
+
+  req.session.githubRepoName =
+    undefined;
+
+  req.session.sourceCodePushed =
+    false;
+
+  console.log(
+    `🚀 Starting GitHub deployment for product: ${productId}`
+  );
+
+  const clientId =
+    process.env.GITHUB_CLIENT_ID;
 
   const redirectUrl =
     `https://github.com/login/oauth/authorize?client_id=${clientId}&scope=read:user%20user:email%20repo`;
