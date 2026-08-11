@@ -1,6 +1,10 @@
 <%- include("partials/header") %>
 
 <style>
+  body {
+    background: #f3f4f6;
+    font-family: "Inter", roboto, sans-serif;
+  }
 .guide-page {
   max-width: 900px;
   margin: 40px auto;
@@ -53,6 +57,50 @@
   margin-bottom: 10px;
 }
 
+/* ---------------------------------------
+   Deployment Guide Form Styling
+--------------------------------------- */
+
+.guide-step label {
+  display: block;
+  margin-top: 16px;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+.guide-step input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 11px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 15px;
+  background: #fff;
+}
+
+.guide-step input:focus {
+  outline: none;
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
+}
+
+.guide-step input::placeholder {
+  color: #9ca3af;
+}
+
+.env-field {
+  margin-bottom: 16px;
+}
+
+.guide-note {
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin-top: 15px;
+  line-height: 1.5;
+}
+
 .code-box {
   background: #f8fafc;
   border: 1px solid #e5e7eb;
@@ -71,6 +119,34 @@
   padding: 15px;
   margin-bottom: 20px;
 }
+
+.render-env-variable {
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 16px;
+  margin-top: 16px;
+  background: #f8fafc;
+}
+
+.render-env-variable h4 {
+  margin-top: 0;
+  margin-bottom: 14px;
+}
+
+.copy-field {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.copy-field input {
+  flex: 1;
+  min-width: 0;
+}
+
+.copy-field .btn {
+  white-space: nowrap;
+}
 </style>
 
 <section class="guide-page">
@@ -79,413 +155,1322 @@
 
   <div class="success-banner">
     ✅ Your template source code has been uploaded successfully.
-    You can now deploy it on Render.
+    Follow the steps below to finish your deployment.
   </div>
 
-  <div class="guide-card">
+  <div class="step-nav">
+    <button class="btn" id="prevBtn">
+      ⬅ Back
+    </button>
 
-    <div class="step-nav">
-        <button class="btn" id="prevBtn">⬅ Back</button>
-        <button class="btn primary" id="nextBtn">Next ➡</button>
-    </div>
+    <button class="btn primary" id="nextBtn">
+      Next ➡
+    </button>
+  </div>
 
-    <div class="guide-step active">
+  <div class="guide-step active">
 
-      <h3>Step 1: Create a Render Account</h3>
+    <h2>🗄️ Set Up Your Database</h2>
 
-      <p>
-        If you don't already have a Render account,
-        create one before continuing or skip this step.
-      </p>
+    <p>
+      Your <strong><%= product.name %></strong> application
+      requires MongoDB to store its data.
+    </p>
 
-      <div class="guide-actions">
+    <p>
+      Don't worry — we'll guide you through the setup step by step.
+    </p>
 
-        <a
-          href="https://render.com/register"
-          target="_blank"
-          class="btn primary"
-        >
-          Create Render Account
-        </a>
+    <hr>
 
+    <h3>Step 1: Create a MongoDB Account</h3>
 
-      </div>
+    <p>
+      If you already have a MongoDB account, simply sign in.
+    </p>
 
-    </div>
+    <p>
+      For the fastest setup, choose
+      <strong>Continue with Google</strong>
+      and use your Google account.
+    </p>
 
-    <div class="guide-step">
+    <div class="guide-actions">
 
-      <h3>Step 2: Open Render Dashboard</h3>
-
-      <p>
-        Sign in and open your Render dashboard.
-      </p>
-
-      <div class="guide-actions">
-
-        <a
-          href="https://dashboard.render.com"
-          target="_blank"
-          class="btn"
-        >
-          Open Render Dashboard
-        </a>
-
-      </div>
-
-    </div>
-
-    <div class="guide-step">
-
-      <h3>Step 3: Create a New Web Service</h3>
-
-      <p>
-        In Render:
-      </p>
-
-      <ol>
-        <li>Click <strong>New +</strong></li>
-        <li>Select <strong>Web Service</strong></li>
-        <li>Connect GitHub if prompted</li>
-      </ol>
-
-    </div>
-
-
-<div class="guide-step">
-
-  <h3>Step 4: Select Your Repository</h3>
-
-  <p>
-    In Render, select the private GitHub repository
-    created for your purchased template.
-  </p>
-
-  <% if (githubRepoUrl) { %>
-
-    <div class="success-box">
-
-      <h4>✅ Your Repository</h4>
-
-      <p>
-        Select this repository in Render:
-      </p>
-
-      <div class="code-box">
-        <%= githubRepoUrl %>
-      </div>
-
-      <div class="guide-actions">
-
-        <a
-          href="<%= githubRepoUrl %>"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="btn"
-        >
-          🔗 View Repository
-        </a>
-
-      </div>
+      <a
+        href="https://account.mongodb.com/account/register"
+        target="_blank"
+        class="btn primary"
+      >
+        Open MongoDB
+      </a>
 
     </div>
 
     <hr>
 
-    <h4>Repository not showing in Render?</h4>
+    <h3>Step 2: Skip the First-Time Setup</h3>
 
     <p>
-      If you cannot find the repository in Render's GitHub
-      repository list, don't worry. This usually means Render
-      has not been given access to that repository yet.
+      When you first sign in, MongoDB may ask questions
+      about personalization or recommend additional setup.
+    </p>
+
+    <p>
+      You can <strong>skip the personalization setup</strong>.
+      You do not need to complete any additional setup.
+    </p>
+
+    <p>
+      Continue until you reach the MongoDB dashboard.
+    </p>
+
+    <hr>
+
+    <h3>Step 3: Create Your Free Cluster</h3>
+
+    <ol>
+      <li>
+        Click the <strong>3 line menu icon</strong> in the
+        top-left corner.
+      </li>
+
+      <li>
+        A side menu will open.
+      </li>
+
+      <li>
+        Find and click <strong>Clusters</strong>.
+      </li>
+
+      <li>
+        If you do not already have a cluster,
+        MongoDB will ask you to create one.
+      </li>
+
+      <li>
+        Select the <strong>Free</strong> plan.
+      </li>
+
+      <li>
+        Click <strong>Create</strong>.
+      </li>
+    </ol>
+
+    <p>
+      Wait for MongoDB to finish creating your cluster.
+    </p>
+
+    <hr>
+
+    <h3>Step 4: Set Your Database Password</h3>
+
+    <p>
+      Open the MongoDB side menu again and go to:
+    </p>
+
+    <p>
+      <strong>Database & Network Access → Database Users</strong>
+    </p>
+
+    <p>
+      Find the database user and click
+      <strong>Edit</strong>.
     </p>
 
     <ol>
-
-      <li>
-        Make sure you are signed into Render with the
-        correct account.
-      </li>
-
-      <li>
-        Make sure the GitHub account connected to Render
-        is the same account that owns the repository.
-      </li>
-
-      <li>
-        In Render, open the GitHub connection or repository
-        access settings.
-      </li>
-
-      <li>
-        Make sure Render has permission to access the repository.
-      </li>
-
-      <li>
-        Return to the <strong>New Web Service</strong> page
-        and refresh the repository list.
-      </li>
-
+      <li>Click <strong>Edit Password</strong>.</li>
+      <li>Enter a password you will remember.</li>
+      <li>Save or update the user.</li>
     </ol>
 
-    <div class="warning-box">
+    <div class="success-banner">
+      ⚠️ <strong>Important:</strong>
+      Remember this password. You will need it in the next step.
+    </div>
 
-      <strong>⚠️ Important</strong>
+    <hr>
 
-      <p>
-        The repository is private. Render must have permission
-        to access it before it can appear in the repository list.
-      </p>
+    <h3>Step 5: Allow Your Application to Connect</h3>
+
+    <p>
+      Stay inside <strong>Database & Network Access</strong>
+      and click <strong>IP Access List</strong>.
+    </p>
+
+    <p>
+      Click <strong>Add IP Address</strong>.
+    </p>
+
+    <p>
+      For <strong>Access List Entry</strong>, enter:
+    </p>
+
+    <div class="code-box">
+      0.0.0.0/0
+    </div>
+
+    <p>
+      Leave the comment field empty and confirm the change.
+    </p>
+
+    <hr>
+
+    <h3>Step 6: Get Your MongoDB Connection String</h3>
+
+    <p>
+      Open the left menu and click <strong>Clusters</strong>.
+    </p>
+
+    <ol>
+      <li>Find your cluster.</li>
+      <li>Click <strong>Connect</strong>.</li>
+      <li>Choose <strong>Drivers</strong>.</li>
+      <li>
+        Under <strong>Select your driver and version</strong>,
+        choose <strong>Node.js</strong>.
+      </li>
+      <li>
+        Leave the driver version at its default value.
+      </li>
+      <li>
+        Scroll down until you see the connection string.
+      </li>
+    </ol>
+
+    <p>
+      The connection string should begin with something similar to:
+    </p>
+
+    <div class="code-box">
+      mongodb+srv://
+    </div>
+
+    <p>
+      Click <strong>Copy</strong> and return to this page.
+    </p>
+
+    <hr>
+
+    <h3>Step 7: Enter Your MongoDB Details</h3>
+
+  <p>
+    Paste the connection string you copied from MongoDB
+    exactly as it was provided.
+  </p>
+
+  <label for="mongoUri">
+    <strong>MongoDB Connection String</strong>
+  </label>
+
+  <input
+    type="text"
+    id="mongoUri"
+    name="mongoUri"
+    placeholder="mongodb+srv://..."
+    autocomplete="off"
+  >
+
+  <p>
+    Example:
+  </p>
+
+  <div class="code-box">
+    mongodb+srv://username:&lt;db_password&gt;@cluster0.example.mongodb.net/?appName=Cluster0
+  </div>
+
+  <hr>
+
+  <label for="mongoPassword">
+    <strong>MongoDB Password</strong>
+  </label>
+
+  <input
+    type="password"
+    id="mongoPassword"
+    name="mongoPassword"
+    placeholder="Enter the password you created in MongoDB"
+    autocomplete="new-password"
+  >
+
+  <p>
+    Enter the password you set for your MongoDB database user.
+  </p>
+
+  <hr>
+
+  <label for="mongoDatabase">
+    <strong>Database Name</strong>
+  </label>
+
+  <input
+    type="text"
+    id="mongoDatabase"
+    name="mongoDatabase"
+    value="<%= product.slug %>"
+    placeholder="Enter your database name"
+    autocomplete="off"
+  >
+
+  <p>
+    This will be the database used by your
+    <strong><%= product.name %></strong> application.
+  </p>
+
+  <div class="success-banner">
+    🔐 Your MongoDB password is only used to build your
+    connection string. Never share it publicly.
+  </div>
+
+  <button
+    type="button"
+    id="generateMongoUriBtn"
+    class="btn primary"
+  >
+    Generate MongoDB Connection
+  </button>
+
+  <div
+    id="mongoUriResult"
+    style="display: none; margin-top: 20px;"
+  >
+
+    <label for="generatedMongoUri">
+      <strong>✅ Your MONGO_URI is ready</strong>
+    </label>
+
+    <input
+      type="text"
+      id="generatedMongoUri"
+      readonly
+      autocomplete="off"
+    >
+
+    <div class="guide-actions">
+
+      <button
+        type="button"
+        id="copyMongoUriBtn"
+        class="btn"
+      >
+        📋 Copy MONGO_URI
+      </button>
 
     </div>
 
-  <% } else { %>
-
-    <div class="warning-box">
-
-      <strong>⚠️ Repository information unavailable</strong>
-
-      <p>
-        We could not find your GitHub repository information.
-        Please return to the deployment page and make sure
-        your repository was created successfully.
-      </p>
-
+    <div class="success-banner">
+      ✅ Your MongoDB connection string has been generated.
+      Keep it private and do not share it publicly.
     </div>
+
+  </div>
+
+  </div>
+
+  <div class="guide-step">
+
+    <h2>🔐 Configure Application Security</h2>
+
+    <p>
+      Your application needs secure secret keys.
+      You don't need to create these yourself.
+    </p>
+
+    <p>
+      We'll generate secure values for you automatically.
+    </p>
+
+    <hr>
+
+    <h3>JWT Secret</h3>
+
+    <input
+      type="text"
+      id="jwtSecret"
+      readonly
+      autocomplete="off"
+    >
+
+    <button
+      type="button"
+      class="btn"
+      id="generateJwtSecretBtn"
+    >
+      🔄 Generate Secret
+    </button>
+
+    <hr>
+
+    <h3>Refresh Token Secret</h3>
+
+    <input
+      type="text"
+      id="refreshTokenSecret"
+      readonly
+      autocomplete="off"
+    >
+
+    <button
+      type="button"
+      class="btn"
+      id="generateRefreshSecretBtn"
+    >
+      🔄 Generate Secret
+    </button>
+
+    <div class="success-banner" style="margin-top: 20px;">
+      🔒 These secrets are generated for your application.
+      Keep them private.
+    </div>
+
+  </div>
+
+  <% 
+    const hasBrevo =
+      envRequirements &&
+      envRequirements.some(
+        variable => variable.name === "BREVO_API_KEY"
+      );
+  %>
+  <% if (hasBrevo) { %>
+  <div class="guide-step">
+
+    <h2>📧 Set Up Email with Brevo</h2>
+
+    <p>
+      <strong><%= product.name %></strong> uses Brevo
+      to send emails from your application.
+    </p>
+
+    <hr>
+
+    <h3>Step 1: Open Brevo</h3>
+
+    <div class="guide-actions">
+      <a
+        href="https://app.brevo.com/"
+        target="_blank"
+        class="btn primary"
+      >
+        Open Brevo
+      </a>
+    </div>
+
+    <h3>Step 2: Create Your API Key</h3>
+
+    <ol>
+      <li>Sign in to your Brevo account.</li>
+      <li>Click <strong>Settings</strong>.</li>
+      <li>Open <strong>SMTP & API</strong>.</li>
+      <li>Select <strong>API Keys & MCP</strong>.</li>
+      <li>Click <strong>Generate a new API key</strong>.</li>
+      <li>Give the key a name, such as <strong><%= product.name %></strong>.</li>
+      <li>Generate the key.</li>
+      <li>Copy the API key and keep it safe.</li>
+    </ol>
+
+    <div class="success-banner">
+      🔐 Keep your API key private. Do not share it with anyone.
+    </div>
+
+    <h3>Step 3: Add Your Sender Email</h3>
+
+    <ol>
+      <li>In Brevo, open <strong>Senders, Domains, IPs</strong>.</li>
+      <li>Click <strong>Add a sender</strong>.</li>
+      <li>Enter the email address you want to use.</li>
+      <li>Complete the verification using the code sent to your email.</li>
+    </ol>
+
+    <h3>Step 4: Enter Your Brevo Details</h3>
+
+    <label for="BREVO_API_KEY">
+      <strong>Brevo API Key</strong>
+    </label>
+
+    <input
+      type="password"
+      id="BREVO_API_KEY"
+      name="BREVO_API_KEY"
+      placeholder="Paste your Brevo API key"
+      autocomplete="off"
+    >
+
+    <label for="EMAIL_SENDER">
+      <strong>Sender Email</strong>
+    </label>
+
+    <input
+      type="email"
+      id="EMAIL_SENDER"
+      name="EMAIL_SENDER"
+      placeholder="you@example.com"
+      autocomplete="email"
+    >
+
+    <p>
+      Use the same email address that you verified in Brevo.
+    </p>
+
+  </div>
+  <% } %>
+
+
+  <%
+    const hasStripe =
+      envRequirements &&
+      envRequirements.some(
+        variable => variable.name === "STRIPE_SECRET_KEY"
+      );
+  %>
+
+  <% if (hasStripe) { %>
+
+  <div class="guide-step">
+
+    <h2>💳 Set Up Stripe Payments</h2>
+
+    <p>
+      <strong><%= product.name %></strong> uses Stripe
+      to process payments.
+    </p>
+
+    <hr>
+
+    <h3>Step 1: Open Stripe</h3>
+
+    <div class="guide-actions">
+      <a
+        href="https://dashboard.stripe.com/"
+        target="_blank"
+        class="btn primary"
+      >
+        Open Stripe
+      </a>
+    </div>
+
+    <h3>Step 2: Create Your Stripe Account</h3>
+
+    <p>
+      If you already have a Stripe account,
+      sign in and continue.
+    </p>
+
+    <ol>
+      <li>Choose <strong>Continue with Google</strong> if preferred.</li>
+      <li>Complete your name and country.</li>
+      <li>Enter your business information.</li>
+      <li>Skip optional setup questions if available.</li>
+      <li>Open <strong>Sandbox</strong> mode.</li>
+    </ol>
+
+    <h3>Step 3: Get Your Stripe API Keys</h3>
+
+    <ol>
+      <li>Click <strong>Developers</strong>.</li>
+      <li>Click <strong>API keys</strong>.</li>
+      <li>Copy your <strong>Publishable key</strong>.</li>
+      <li>Copy your <strong>Secret key</strong>.</li>
+    </ol>
+
+    <label for="STRIPE_PUBLISHABLE_KEY">
+      <strong>Publishable Key</strong>
+    </label>
+
+    <input
+      type="text"
+      id="STRIPE_PUBLISHABLE_KEY"
+      name="STRIPE_PUBLISHABLE_KEY"
+      placeholder="Paste your Stripe publishable key"
+      autocomplete="off"
+    >
+
+    <label for="STRIPE_SECRET_KEY">
+      <strong>Secret Key</strong>
+    </label>
+
+    <input
+      type="password"
+      id="STRIPE_SECRET_KEY"
+      name="STRIPE_SECRET_KEY"
+      placeholder="Paste your Stripe secret key"
+      autocomplete="off"
+    >
+
+    <hr>
+
+    <h3>Step 4: Create Your Stripe Webhook</h3>
+
+    <p>
+      Stripe needs a webhook so your application can receive
+      successful checkout notifications.
+    </p>
+
+    <ol>
+      <li>In Stripe, click <strong>Developers</strong>.</li>
+      <li>Open <strong>Webhooks</strong>.</li>
+      <li>Click <strong>Add endpoint</strong>.</li>
+      <li>Choose <strong>Webhook endpoint</strong>.</li>
+      <li>Enter your webhook URL below.</li>
+    </ol>
+
+    <div class="code-box">
+      http://localhost:3000/api/payments/webhook
+    </div>
+
+    <p>
+      If you are setting this up after deploying to Render,
+      replace <strong>localhost:3000</strong> with your Render
+      application URL.
+    </p>
+
+    <h3>Step 5: Select the Checkout Event</h3>
+
+    <p>
+      Your application needs the following Stripe event:
+    </p>
+
+    <div class="code-box">
+      checkout.session.completed
+    </div>
+
+    <p>
+      Select <strong>checkout.session.completed</strong>
+      and continue.
+    </p>
+
+    <h3>Step 6: Get Your Webhook Secret</h3>
+
+    <ol>
+      <li>Create the webhook endpoint.</li>
+      <li>Open the endpoint you created.</li>
+      <li>Find the <strong>Signing secret</strong>.</li>
+      <li>Click the eye icon.</li>
+      <li>Copy the secret.</li>
+    </ol>
+
+    <p>
+      Your webhook secret starts with <strong>whsec_</strong>.
+    </p>
+
+    <label for="STRIPE_WEBHOOK_SECRET">
+      <strong>Webhook Secret</strong>
+    </label>
+
+    <input
+      type="password"
+      id="STRIPE_WEBHOOK_SECRET"
+      name="STRIPE_WEBHOOK_SECRET"
+      placeholder="whsec_..."
+      autocomplete="off"
+    >
+
+    <div class="success-banner">
+      🔒 Keep your Stripe secret key and webhook secret private.
+    </div>
+
+  </div>
 
   <% } %>
 
-</div>
+  <%
+    const hasPaystack =
+      envRequirements &&
+      envRequirements.some(
+        variable => variable.name === "PAYSTACK_SECRET_KEY"
+      );
+  %>
 
+  <% if (hasPaystack) { %>
 
+  <div class="guide-step">
 
-    <div class="guide-step">
-
-
-
-
-      <h3>Step 5: Configure Build Settings</h3>
-      <ul>
-        <li>click web service</li>
-        <li>choose github under source code</li>
-        <li>authenticate github if prompted, select all repository and click install</li>
-        <li>select your repository</li>
-        <li>render will automatically detect the framework and fill in the details</li>
-        <li> change the name if needed</li>
-        <li> change the build and start commands if needed</li>
-      </ul>
-      <p>
-        paste the following build and start commands if they are not already filled in
-      </p>
-
-    
-
-      <div class="code-box">
-        Build Command:<br>
-        npm install && npm run build
-      </div>
-
-      <div class="code-box">
-        Start Command:<br>
-        npm start
-      </div>
-
-    </div>
-    
-    <div class="guide-step">
-
-    <h3>🗄️ MongoDB Setup (Required)</h3>
+    <h2>💳 Set Up Paystack Payments</h2>
 
     <p>
-        Follow these steps carefully to create your MongoDB database and connection string.
+      <strong><%= product.name %></strong> uses Paystack
+      to process payments.
+    </p>
+
+    <hr>
+
+    <h3>Step 1: Create Your Paystack Account</h3>
+
+    <p>
+      If you already have a Paystack account,
+      sign in and continue to the next step.
     </p>
 
     <div class="guide-actions">
 
-        <a href="https://account.mongodb.com/account/register"
+      <a
+        href="https://dashboard.paystack.com/"
         target="_blank"
-        class="btn primary">
-        🔥 Step 1: Create MongoDB Account
-        </a>
+        class="btn primary"
+      >
+        Open Paystack
+      </a>
 
     </div>
 
+    <p>
+      If you are creating a new account:
+    </p>
+
+    <ol>
+      <li>Click <strong>Create free account</strong>.</li>
+      <li>Enter your business information.</li>
+      <li>Select your business stage.</li>
+      <li>Select <strong>Developer</strong> when asked about your role.</li>
+      <li>Complete the account setup.</li>
+    </ol>
+
+    <h3>Step 2: Get Your Paystack Test Keys</h3>
+
+    <ol>
+      <li>Sign in to your Paystack dashboard.</li>
+      <li>Open <strong>Settings</strong> from the left menu.</li>
+      <li>Click <strong>API Keys & Webhooks</strong>.</li>
+      <li>Find your <strong>Test Secret Key</strong>.</li>
+      <li>Copy the Test Secret Key.</li>
+      <li>Find your <strong>Test Public Key</strong>.</li>
+      <li>Copy the Test Public Key.</li>
+    </ol>
+
+    <h3>Step 3: Enter Your Paystack Keys</h3>
+
+    <label for="PAYSTACK_PUBLIC_KEY">
+      <strong>Paystack Test Public Key</strong>
+    </label>
+
+    <input
+      type="text"
+      id="PAYSTACK_PUBLIC_KEY"
+      name="PAYSTACK_PUBLIC_KEY"
+      placeholder="Paste your Paystack public key"
+      autocomplete="off"
+    >
+
+    <label for="PAYSTACK_SECRET_KEY">
+      <strong>Paystack Test Secret Key</strong>
+    </label>
+
+    <input
+      type="password"
+      id="PAYSTACK_SECRET_KEY"
+      name="PAYSTACK_SECRET_KEY"
+      placeholder="Paste your Paystack secret key"
+      autocomplete="off"
+    >
+
+    <div class="success-banner" style="margin-top: 20px;">
+      🔒 Keep your Paystack Secret Key private.
+      Never share it publicly.
+    </div>
+
+  </div>
+
+  <% } %>
+
+  <%
+    const hasImageKit =
+      envRequirements &&
+      envRequirements.some(
+        variable => variable.name === "IMAGEKIT_PRIVATE_KEY"
+      );
+  %>
+
+  <% if (hasImageKit) { %>
+
+  <div class="guide-step">
+
+    <h2>🖼️ Set Up Image Storage</h2>
+
+    <p>
+      <strong><%= product.name %></strong> uses ImageKit
+      to store and manage images.
+    </p>
+
     <hr>
 
-    <!-- STEP 1 -->
-    <h4>🔥 Step 1: Create MongoDB Account</h4>
-    <ul>
-        <li>Click Get Started</li>
-        <li>Continue with Google (fastest)</li>
-        <li>Accept privacy terms</li>
-        <li>Skip personalization</li>
-    </ul>
+    <h3>Step 1: Create Your ImageKit Account</h3>
 
-    <hr>
-
-    <!-- STEP 2 -->
-    <h4>🧱 Step 2: Create Cluster</h4>
-    <ul>
-        <li>Click <b>Create Cluster</b></li>
-        <li>Select <b>FREE (M0)</b></li>
-        <li>Click <b>Create Deployment</b></li>
-        <li>Wait 1–3 minutes for setup</li>
-    </ul>
-
-    <hr>
-
-    <!-- STEP 3 -->
-    <h4>👤 Step 3: Create Database User</h4>
+    <p>
+      If you already have an ImageKit account,
+      sign in and continue.
+    </p>
 
     <div class="guide-actions">
-        <a href="https://cloud.mongodb.com/security/database/users"
+
+      <a
+        href="https://imagekit.io/"
         target="_blank"
-        class="btn">
-        Open Database Users
-        </a>
-    </div>
-
-    <ul>
-        <li>Go to Database Access</li>
-        <li>Click Create User</li>
-        <li>Set username (auto or custom)</li>
-        <li>Set password (SAVE IT)</li>
-        <li>Click Create User</li>
-    </ul>
-
-    <hr>
-
-    <!-- STEP 4 -->
-    <h4>🌐 Step 4: Network Access</h4>
-
-    <div class="guide-actions">
-        <a href="https://cloud.mongodb.com/security/networking"
-        target="_blank"
-        class="btn">
-        Open Network Settings
-        </a>
-    </div>
-
-    <ul>
-        <li>Click Add IP Address</li>
-        <li>Select: <b>Allow Access From Anywhere (0.0.0.0/0)</b></li>
-    </ul>
-
-    <hr>
-
-    <!-- STEP 5 -->
-    <h4>🗃️ Step 5: Create Database</h4>
-
-    <ul>
-        <li>Open your cluster</li>
-        <li>Click Browse Collections</li>
-        <li>Click Create Database</li>
-        <li>Database Name: <b>lazyshop</b></li>
-        <li>Collection Name: <b>users</b></li>
-        <li>Click Create</li>
-    </ul>
-
-    <hr>
-
-    <!-- STEP 6 -->
-    <h4>🔌 Step 6: Get Connection String</h4>
-
-    <ul>
-        <li>Click <b>Connect</b></li>
-        <li>Select <b>Drivers</b></li>
-        <li>Choose <b>Node.js</b></li>
-        <li>Leave version default</li>
-    </ul>
-
-    <div class="code-box">
-        mongodb+srv://codecarthub_db_user:&lt;db_password&gt;@cluster0.i9lxxj7.mongodb.net/?appName=Cluster0
-    </div>
-
-    <hr>
-
-    <!-- STEP 7 -->
-    <h4>🔐 Step 7: Fix Password in URL</h4>
-
-    <ul>
-        <li>Replace <b>&lt;db_password&gt;</b> with your actual password</li>
-    </ul>
-
-    <div class="code-box">
-        mongodb+srv://codecarthub_db_user:MyStrongPassword123@cluster0.i9lxxj7.mongodb.net/lazyshop?retryWrites=true&w=majority
-    </div>
-
-    <hr>
-
-    <!-- WARNING -->
-    <div class="success-banner">
-
-        ⚠️ <b>IMPORTANT</b><br><br>
-
-        Never share your MongoDB password publicly.<br>
-        Treat this like a secret key.
+        class="btn primary"
+      >
+        Open ImageKit
+      </a>
 
     </div>
 
+    <ol>
+      <li>Click <strong>Start for free</strong>.</li>
+      <li>Choose <strong>Continue with Google</strong> if preferred.</li>
+      <li>Select your Google account.</li>
+      <li>For your role, select <strong>Software or App Developer</strong>.</li>
+      <li>For your main objective, select <strong>APIs for media upload & management</strong>.</li>
+      <li>Enter the requested account information.</li>
+      <li>Select a region close to your location.</li>
+      <li>Complete the remaining setup questions.</li>
+    </ol>
+
+    <h3>Step 2: Get Your ImageKit API Keys</h3>
+
+    <ol>
+      <li>Open the ImageKit dashboard.</li>
+      <li>Scroll down the left menu.</li>
+      <li>Click <strong>Developer</strong>.</li>
+      <li>Click <strong>API Keys</strong>.</li>
+      <li>Click the eye icon to reveal your keys.</li>
+      <li>If ImageKit asks you to verify your email, complete the verification.</li>
+      <li>Copy your <strong>Public Key</strong>.</li>
+      <li>Copy your <strong>Private Key</strong>.</li>
+    </ol>
+
+    <h3>Step 3: Enter Your ImageKit Keys</h3>
+
+    <label for="IMAGEKIT_PUBLIC_KEY">
+      <strong>Public Key</strong>
+    </label>
+
+    <input
+      type="text"
+      id="IMAGEKIT_PUBLIC_KEY"
+      name="IMAGEKIT_PUBLIC_KEY"
+      placeholder="Paste your ImageKit public key"
+      autocomplete="off"
+    >
+
+    <label for="IMAGEKIT_PRIVATE_KEY">
+      <strong>Private Key</strong>
+    </label>
+
+    <input
+      type="password"
+      id="IMAGEKIT_PRIVATE_KEY"
+      name="IMAGEKIT_PRIVATE_KEY"
+      placeholder="Paste your ImageKit private key"
+      autocomplete="off"
+    >
+
+    <h3>Step 4: Enter Your ImageKit URL Endpoint</h3>
+
+    <p>
+      Copy your ImageKit URL endpoint from the same page at the top and paste it below.
+    </p>
+
+    <label for="IMAGEKIT_URL_ENDPOINT">
+      <strong>URL Endpoint</strong>
+    </label>
+
+    <input
+      type="text"
+      id="IMAGEKIT_URL_ENDPOINT"
+      name="IMAGEKIT_URL_ENDPOINT"
+      placeholder="https://ik.imagekit.io/your_id"
+      autocomplete="off"
+    >
+
+    <div class="success-banner" style="margin-top: 20px;">
+      🔒 Keep your ImageKit private key secret.
+      Never share it publicly.
     </div>
 
-    <div class="guide-step">
+  </div>
 
-  <h3>Step 5.2: Add Environment Variables</h3>
+  <% } %>
+
+
+  <%
+  const hasAdminFields =
+    envRequirements &&
+    envRequirements.some(
+      variable => variable.type === "admin"
+    );
+%>
+
+<% if (hasAdminFields) { %>
+
+<div class="guide-step">
+
+  <h2>👤 Create Your Admin Account</h2>
 
   <p>
-    In Render, scroll to <strong>Environment Variables</strong> and add the following:
+    Now let's create the administrator account for
+    <strong><%= product.name %></strong>.
   </p>
+
+  <p>
+    These details will be used to access the administration
+    area of your application.
+  </p>
+
+  <hr>
+
+  <% if (envRequirements.some(variable => variable.name === "ADMIN_EMAIL")) { %>
+
+    <label for="ADMIN_EMAIL">
+      Admin Email
+    </label>
+
+    <input
+      type="email"
+      id="ADMIN_EMAIL"
+      name="ADMIN_EMAIL"
+      placeholder="you@example.com"
+      autocomplete="email"
+    >
+
+  <% } %>
+
+  <% if (envRequirements.some(variable => variable.name === "ADMIN_USERNAME")) { %>
+
+    <label for="ADMIN_USERNAME">
+      Admin Username
+    </label>
+
+    <input
+      type="text"
+      id="ADMIN_USERNAME"
+      name="ADMIN_USERNAME"
+      placeholder="admin"
+      autocomplete="username"
+    >
+
+  <% } %>
+
+  <% if (envRequirements.some(variable => variable.name === "ADMIN_PASSWORD")) { %>
+
+    <label for="ADMIN_PASSWORD">
+      Admin Password
+    </label>
+
+    <input
+      type="password"
+      id="ADMIN_PASSWORD"
+      name="ADMIN_PASSWORD"
+      placeholder="Create a strong password"
+      autocomplete="new-password"
+    >
+
+  <% } %>
+
+  <% if (envRequirements.some(variable => variable.name === "ADMIN_FULLNAME")) { %>
+
+    <label for="ADMIN_FULLNAME">
+      Full Name
+    </label>
+
+    <input
+      type="text"
+      id="ADMIN_FULLNAME"
+      name="ADMIN_FULLNAME"
+      placeholder="Your full name"
+      autocomplete="name"
+    >
+
+  <% } %>
+
+  <% if (envRequirements.some(variable => variable.name === "ADMIN_COUNTRY")) { %>
+
+    <label for="ADMIN_COUNTRY">
+      Country
+    </label>
+
+    <input
+      type="text"
+      id="ADMIN_COUNTRY"
+      name="ADMIN_COUNTRY"
+      placeholder="Your country"
+      autocomplete="country-name"
+    >
+
+  <% } %>
+
+  <div class="guide-note">
+    🔐 Your admin details are collected only in this browser
+    while you complete the deployment guide.
+  </div>
+
+</div>
+
+<% } %>
+
+<div class="guide-step">
+
+  <h2>🚀 Deploy Your Application on Render</h2>
+
+  <p>
+    Your application is now configured.
+    The next step is to deploy it on Render.
+  </p>
+
+  <hr>
+
+  <h3>Step 1: Create Your Render Account</h3>
+
+  <p>
+    Open Render and create an account or sign in if you
+    already have one.
+  </p>
+
+  <div class="guide-actions">
+    <a
+      href="https://dashboard.render.com/register"
+      target="_blank"
+      class="btn primary"
+    >
+      Open Render
+    </a>
+  </div>
+
+  <hr>
+
+  <h3>Step 2: Create a Web Service</h3>
+
+  <ol>
+    <li>Open your Render dashboard.</li>
+    <li>Click <strong>New</strong>.</li>
+    <li>Select <strong>Web Service</strong>.</li>
+    <li>Connect your GitHub account if you have not already.</li>
+    <li>Select the repository containing your application.</li>
+    <li>Choose a name for your service.</li>
+  </ol>
+
+  <hr>
+
+  <h3>Step 3: Configure Your Build</h3>
+
+  <p>
+    Use the following settings for your application.
+  </p>
+
+  <label>
+    <strong>Build Command</strong>
+  </label>
 
   <div class="code-box">
-    MONGODB_URI = your-mongodb-connection-string<br>
-    ADMIN_EMAIL = your-admin-email<br>
-    ADMIN_PASSWORD = your-secure-password<br>
-    JWT_SECRET = any-long-random-string
+    npm install && npm run build
+  </div>
+
+  <button
+    type="button"
+    class="btn copy-command-btn"
+    data-copy="npm install && npm run build"
+  >
+    📋 Copy Build Command
+  </button>
+
+  <br><br>
+
+  <label>
+    <strong>Start Command</strong>
+  </label>
+
+  <div class="code-box">
+    npm start
+  </div>
+
+  <button
+    type="button"
+    class="btn copy-command-btn"
+    data-copy="npm start"
+  >
+    📋 Copy Start Command
+  </button>
+
+  <hr>
+
+  <h3>Step 4: Add Your Environment Variables</h3>
+
+  <p>
+    Render requires each environment variable to be entered
+    separately.
+  </p>
+
+  <div class="success-banner">
+    ⚠️ Do not paste all of the variables into one field.
+    Each variable has its own <strong>Name</strong> and
+    <strong>Value</strong>.
   </div>
 
   <p>
-    ⚠️ Without these, your application will not start.
+    For every variable below:
   </p>
 
-    </div>
+  <ol>
+    <li>Click <strong>Add Environment Variable</strong> in Render.</li>
+    <li>Copy the <strong>Name</strong> below into Render's Name field.</li>
+    <li>Copy the <strong>Value</strong> below into Render's Value field.</li>
+  </ol>
 
+  <div id="renderEnvironmentVariables">
 
+    <%
+      if (envRequirements && envRequirements.length) {
+        envRequirements.forEach(variable => {
+    %>
 
-    <div class="guide-step">
+      <div
+        class="render-env-variable"
+        data-variable-name="<%= variable.name %>"
+      >
 
-      <h3>Step 6: Deploy</h3>
+        <h4>
+          <%= variable.name %>
+        </h4>
 
-      <p>
-        Click <strong>Create Web Service</strong>.
-      </p>
+        <label>
+          <strong>Name</strong>
+        </label>
 
-      <p>
-        Render will build and deploy your application.
-        This can take a few minutes.
-      </p>
+        <div class="copy-field">
+          <input
+            type="text"
+            value="<%= variable.name %>"
+            readonly
+          >
 
-    </div>
+          <button
+            type="button"
+            class="btn copy-env-name"
+            data-copy="<%= variable.name %>"
+          >
+            📋 Copy Name
+          </button>
+        </div>
 
-    <div class="guide-step">
+        <label>
+          <strong>Value</strong>
+        </label>
 
-      <h3>🎉 Step 7: Go Live</h3>
+        <div class="copy-field">
+          <input
+            type="password"
+            class="render-env-value"
+            data-variable="<%= variable.name %>"
+            readonly
+            autocomplete="off"
+          >
 
-      <p>
-        After deployment completes,
-        Render will provide a public URL.
-      </p>
+          <button
+            type="button"
+            class="btn copy-env-value"
+            data-variable="<%= variable.name %>"
+          >
+            📋 Copy Value
+          </button>
+        </div>
 
-      <div class="code-box">
-        https://your-app.onrender.com
       </div>
 
-      <p>
-        Your application is now live.
-      </p>
-
-    </div>
+    <%
+        });
+      }
+    %>
 
   </div>
+
+  <div class="success-banner">
+    🔐 Your environment values are private.
+    Do not share them publicly or commit them to GitHub.
+  </div>
+
+</div>
+
+</section>
+<!--script to handle the generation of the MongoDB connection string and copying it to clipboard -->
+<script>
+  const generateMongoUriBtn =
+    document.getElementById("generateMongoUriBtn");
+
+  const mongoUriInput =
+    document.getElementById("mongoUri");
+
+  const mongoPasswordInput =
+    document.getElementById("mongoPassword");
+
+  const mongoDatabaseInput =
+    document.getElementById("mongoDatabase");
+
+  const mongoUriResult =
+    document.getElementById("mongoUriResult");
+
+  generateMongoUriBtn.addEventListener("click", () => {
+    const templateUri =
+      mongoUriInput.value.trim();
+
+    const password =
+      mongoPasswordInput.value;
+
+    const database =
+      mongoDatabaseInput.value.trim();
+
+    if (!templateUri) {
+      alert("Please paste your MongoDB connection string.");
+      mongoUriInput.focus();
+      return;
+    }
+
+    if (!password) {
+      alert("Please enter your MongoDB password.");
+      mongoPasswordInput.focus();
+      return;
+    }
+
+    if (!database) {
+      alert("Please enter a database name.");
+      mongoDatabaseInput.focus();
+      return;
+    }
+
+    try {
+      const safeTemplateUri = templateUri.replace(
+        "<db_password>",
+        "PLACEHOLDER_PASSWORD"
+      );
+
+      const url = new URL(safeTemplateUri);
+
+
+      url.password = password;
+
+      url.pathname = `/${encodeURIComponent(database)}`;
+
+      const finalMongoUri = url.toString();
+
+      generatedMongoUri.value = finalMongoUri;
+      mongoUriResult.style.display = "block";
+
+    } catch (error) {
+      alert(
+        "The MongoDB connection string is not valid. " +
+        "Please copy it again from MongoDB."
+      );
+
+      mongoUriInput.focus();
+    }
+  });
+</script>
+<!--script to handle copying the generated MongoDB connection string to clipboard -->
+<script>
+  const copyMongoUriBtn =
+    document.getElementById("copyMongoUriBtn");
+
+  const generatedMongoUri =
+    document.getElementById("generatedMongoUri");
+
+  copyMongoUriBtn.addEventListener("click", async () => {
+    const mongoUri =
+      generatedMongoUri.value.trim();
+
+    if (!mongoUri) {
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(
+        mongoUri
+      );
+
+      copyMongoUriBtn.textContent =
+        "✅ Copied!";
+
+      setTimeout(() => {
+        copyMongoUriBtn.textContent =
+          "📋 Copy MONGO_URI";
+      }, 2000);
+
+    } catch (error) {
+      console.error(
+        "Failed to copy MONGO_URI:",
+        error
+      );
+
+      alert(
+        "Unable to copy automatically. " +
+        "Please copy the connection string manually."
+      );
+    }
+  });
+</script>
+<!--script to handle the generation of secure secrets for JWT and Refresh Tokens -->
+<script>
+  function generateSecureSecret(length = 64) {
+    const characters =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ" +
+      "abcdefghijklmnopqrstuvwxyz" +
+      "0123456789_-";
+      
+
+    const randomValues =
+      new Uint32Array(length);
+
+    crypto.getRandomValues(randomValues);
+
+    let secret = "";
+
+    for (let i = 0; i < length; i++) {
+      secret += characters[
+        randomValues[i] % characters.length
+      ];
+    }
+
+    return secret;
+  }
+
+  const jwtSecret =
+    document.getElementById("jwtSecret");
+
+  const refreshTokenSecret =
+    document.getElementById("refreshTokenSecret");
+
+  const generateJwtSecretBtn =
+    document.getElementById("generateJwtSecretBtn");
+
+  const generateRefreshSecretBtn =
+    document.getElementById(
+      "generateRefreshSecretBtn"
+    );
+
+  function generateSecrets() {
+    jwtSecret.value =
+      generateSecureSecret();
+
+    refreshTokenSecret.value =
+      generateSecureSecret();
+  }
+
+  generateJwtSecretBtn.addEventListener(
+    "click",
+    () => {
+      jwtSecret.value =
+        generateSecureSecret();
+    }
+  );
+
+  generateRefreshSecretBtn.addEventListener(
+    "click",
+    () => {
+      refreshTokenSecret.value =
+        generateSecureSecret();
+    }
+  );
+
+  // Generate both automatically when
+  // the step is loaded.
+  generateSecrets();
+</script>
+<!--script to handle the multi-step navigation of the deployment guide -->
 <script>
   const steps = document.querySelectorAll(".guide-step");
   const nextBtn = document.getElementById("nextBtn");
@@ -498,8 +1483,13 @@
       step.classList.toggle("active", i === index);
     });
 
-    prevBtn.style.display = index === 0 ? "none" : "inline-block";
-    nextBtn.textContent = index === steps.length - 1 ? "Finish 🎉" : "Next ➡";
+    prevBtn.style.display =
+      index === 0 ? "none" : "inline-block";
+
+    nextBtn.textContent =
+      index === steps.length - 1
+        ? "Finish 🎉"
+        : "Next ➡";
   }
 
   nextBtn.addEventListener("click", () => {
@@ -518,9 +1508,196 @@
     }
   });
 
-  // init
   showStep(currentStep);
 </script>
-</section>
+<!--script to handle the generation and copying of Render environment variables -->
+<script>
+  function getEnvironmentValue(variableName) {
+    const fieldMap = {
+      MONGO_URI: "generatedMongoUri",
+
+      JWT_SECRET: "jwtSecret",
+      REFRESH_TOKEN_SECRET: "refreshTokenSecret",
+
+      BREVO_API_KEY: "BREVO_API_KEY",
+      EMAIL_SENDER: "EMAIL_SENDER",
+
+      STRIPE_SECRET_KEY: "STRIPE_SECRET_KEY",
+      STRIPE_PUBLISHABLE_KEY: "STRIPE_PUBLISHABLE_KEY",
+      STRIPE_WEBHOOK_SECRET: "STRIPE_WEBHOOK_SECRET",
+
+      PAYSTACK_PUBLIC_KEY: "PAYSTACK_PUBLIC_KEY",
+      PAYSTACK_SECRET_KEY: "PAYSTACK_SECRET_KEY",
+
+      IMAGEKIT_URL_ENDPOINT: "IMAGEKIT_URL_ENDPOINT",
+      IMAGEKIT_PUBLIC_KEY: "IMAGEKIT_PUBLIC_KEY",
+      IMAGEKIT_PRIVATE_KEY: "IMAGEKIT_PRIVATE_KEY",
+
+      ADMIN_EMAIL: "adminEmail",
+      ADMIN_PASSWORD: "adminPassword",
+      ADMIN_USERNAME: "adminUsername",
+      ADMIN_FULLNAME: "adminFullname",
+      ADMIN_COUNTRY: "adminCountry"
+    };
+
+    const fieldId = fieldMap[variableName];
+
+    if (!fieldId) {
+      return "";
+    }
+
+    const field =
+      document.getElementById(fieldId);
+
+    return field
+      ? field.value.trim()
+      : "";
+  }
+
+
+  function updateRenderEnvironmentValues() {
+    const renderFields =
+      document.querySelectorAll(
+        ".render-env-value"
+      );
+
+    renderFields.forEach((field) => {
+      const variableName =
+        field.dataset.variable;
+
+      field.value =
+        getEnvironmentValue(variableName);
+    });
+  }
+
+
+  async function copyToClipboard(
+    value,
+    button,
+    originalText
+  ) {
+    if (!value) {
+      alert("There is no value to copy yet.");
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(
+        value
+      );
+
+      button.textContent =
+        "✅ Copied!";
+
+      setTimeout(() => {
+        button.textContent =
+          originalText;
+      }, 2000);
+
+    } catch (error) {
+      console.error(
+        "Copy failed:",
+        error
+      );
+
+      alert(
+        "Unable to copy automatically. " +
+        "Please copy it manually."
+      );
+    }
+  }
+
+
+  /*
+   * Fill Render values when the page loads.
+   */
+  updateRenderEnvironmentValues();
+
+
+  /*
+   * Keep Render values synchronized
+   * with the earlier setup fields.
+   */
+  document.addEventListener(
+    "input",
+    () => {
+      updateRenderEnvironmentValues();
+    }
+  );
+
+
+  /*
+   * Update after buttons are clicked.
+   *
+   * This is important for generated values such as:
+   *
+   * MONGO_URI
+   * JWT_SECRET
+   * REFRESH_TOKEN_SECRET
+   */
+  document.addEventListener(
+    "click",
+    () => {
+      setTimeout(() => {
+        updateRenderEnvironmentValues();
+      }, 50);
+    }
+  );
+
+
+  /*
+   * Copy environment variable names.
+   */
+  document
+    .querySelectorAll(".copy-env-name")
+    .forEach((button) => {
+
+      button.addEventListener(
+        "click",
+        () => {
+
+          const value =
+            button.dataset.copy;
+
+          copyToClipboard(
+            value,
+            button,
+            "📋 Copy Name"
+          );
+        }
+      );
+
+    });
+
+
+  /*
+   * Copy environment variable values.
+   */
+  document
+    .querySelectorAll(".copy-env-value")
+    .forEach((button) => {
+
+      button.addEventListener(
+        "click",
+        () => {
+
+          const variableName =
+            button.dataset.variable;
+
+          const value =
+            getEnvironmentValue(
+              variableName
+            );
+
+          copyToClipboard(
+            value,
+            button,
+            "📋 Copy Value"
+          );
+        }
+      );
+
+    });
+</script>
 
 <%- include("partials/footer") %>
