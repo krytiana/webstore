@@ -118,3 +118,45 @@ export const getMe = async (req: RequestWithUser, res: Response) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+// Verify Email
+export const verifyEmail = async (
+  req: Request,
+  res: Response
+) => {
+  const { token } = req.params;
+
+  try {
+    const user = await User.findOne({
+      emailVerificationToken: token,
+      emailVerificationExpiry: { $gt: new Date() },
+    });
+
+    if (!user) {
+      return res.status(400).send(`
+        <h2>Email Verification Failed</h2>
+        <p>This verification link is invalid or has expired.</p>
+      `);
+    }
+
+    user.emailVerified = true;
+    user.emailVerificationToken = null;
+    user.emailVerificationExpiry = null;
+
+    await user.save();
+
+    return res.status(200).send(`
+      <h2>Email Verified Successfully!</h2>
+      <p>Your CodeCartHub email has been verified.</p>
+      <p>You can now sign in to your account.</p>
+      <a href="/register">Go to Sign In</a>
+    `);
+  } catch (error) {
+    console.error("❌ Error verifying email:", error);
+
+    return res.status(500).send(`
+      <h2>Something went wrong</h2>
+      <p>Please try again later.</p>
+    `);
+  }
+};

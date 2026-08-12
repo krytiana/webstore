@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
-import { sendResetEmail } from "../services/emailService";
+import { sendResetEmail, sendVerificationEmail, } from "../services/emailService";
 import User from "../models/User";
 
 // Generate Refresh Token
@@ -16,7 +16,7 @@ const generateRefreshToken = (user: any) => {
 
 // Handle Sign Up
 export const handleSignUp = async (req: Request, res: Response) => {
-  const { fullname, email, username, password, country } = req.body;
+  const { fullname, email, username, password, country, marketingSubscribed } = req.body;
 
   try {
     console.log("Starting sign-up process for user:", username);
@@ -36,43 +36,48 @@ export const handleSignUp = async (req: Request, res: Response) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
+    const verificationToken = crypto.randomBytes(32).toString("hex");
+
+    const verificationExpiry = new Date(
+      Date.now() + 24 * 60 * 60 * 1000
+    );
+    const isMarketingSubscribed =
+        marketingSubscribed === "true";
 
     const newUser = new User({
-      fullname,
-      email,
-      username,
-      password: hashedPassword,
-      country,
+        fullname,
+        email: email.toLowerCase(),
+        username,
+        password: hashedPassword,
+        country,
+
+        emailVerified: false,
+        emailVerificationToken: verificationToken,
+        emailVerificationExpiry: verificationExpiry,
+
+        marketingSubscribed: isMarketingSubscribed,
+        marketingSubscribedAt:
+            isMarketingSubscribed ? new Date() : null,
     });
 
     await newUser.save();
     console.log("User saved to database");
 
-    const token = jwt.sign(
-      { userId: newUser._id, email, username },
-      process.env.JWT_SECRET as string,
-      { expiresIn: "3d" }
+    await sendVerificationEmail(
+      newUser.email,
+      verificationToken
     );
 
-    const refreshToken = generateRefreshToken(newUser);
-    newUser.refreshToken = refreshToken;
-    await newUser.save();
-
-    // after generating token
-
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: true, // ⚠️ change to true in production (HTTPS)
-      sameSite: "lax",
-    });
+   
 
     res.status(201).json({
       success: true,
-      message: "Sign-up successful",
-      token,
-      refreshToken,
+      message:
+        "Account created! Please check your email to verify your account.",
+      emailVerificationRequired: true,
+      email: newUser.email,
     });
-  } catch (error) {
+      } catch (error) {
     console.error("Error during sign up:", error);
     res.status(500).json({
       success: false,
@@ -96,6 +101,15 @@ export const handleSignIn = async (req: Request, res: Response) => {
       return res.status(400).json({
         success: false,
         message: "User not found.",
+      });
+    }
+
+    if (!user.emailVerified) {
+      return res.status(403).json({
+        success: false,
+        message: "Please verify your email before signing in.",
+        emailVerificationRequired: true,
+        email: user.email,
       });
     }
 
@@ -278,3 +292,70 @@ export const getUsers = async (
     });
   }
 };
+
+export const resendVerificationEmail = async (
+  req: Request,
+  res: Response
+) => {
+  const { email } = req.body;
+
+  try {
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        message: "Email is required.",
+      });
+    }
+
+    const user = await User.findOne({
+      email: email.toLowerCase(),
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "No account found with this email.",
+      });
+    }
+
+    // Already verified
+    if (user.emailVerified) {
+      return res.status(400).json({
+        success: false,
+        message: "This email is already verified.",
+      });
+    }
+
+    // Generate a new verification token
+    const verificationToken = crypto.randomBytes(32).toString("hex");
+
+    const verificationExpiry = new Date(
+      Date.now() + 24 * 60 * 60 * 1000
+    );
+
+    user.emailVerificationToken = verificationToken;
+    user.emailVerificationExpiry = verificationExpiry;
+
+    await user.save();
+
+    // Send new verification email
+    await sendVerificationEmail(
+      user.email,
+      verificationToken
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: "A new verification email has been sent.",
+    });
+
+  } catch (error) {
+    console.error("❌ Error resending verification email:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Unable to send verification email.",
+    });
+  }
+};
+

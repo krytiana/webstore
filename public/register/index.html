@@ -63,10 +63,11 @@
 
                 <!-- Add more options as needed -->
             </select>
-            <div class="terms">
-                <input style="width: 20px;" type="checkbox" id="signup-terms" name="terms" required>
-                <label style="font-size: small;" for="signup-terms">I agree with terms and conditions</label>
+            <div class="marketing">
+                <input style="width: 20px;" type="checkbox" id="signup-terms" name="marketingSubscribed" value="true" checked>
+                <label style="font-size: small;" for="signup-terms">Send me updates, new products and special offers.</label>
             </div>
+
             <button type="submit">Sign Up</button>
         </form>
     </div>
@@ -92,6 +93,53 @@
             <div id="forgot-password-feedback" class="feedback-message"></div>
         </div>
     </div>
+
+    <!-- EMAIL VERIFICATION POPUP -->
+<div id="verification-modal" class="verification-modal hidden">
+
+    <div class="verification-modal-content">
+
+        <button
+            type="button"
+            id="close-verification-modal"
+            class="verification-close"
+        >
+            &times;
+        </button>
+
+        <div class="verification-icon">
+            ✉
+        </div>
+
+        <h2>Verify Your Email</h2>
+
+        <p id="verification-message">
+            Please check your email and click the verification link
+            to activate your account.
+        </p>
+
+        <p class="verification-email" id="verification-email"></p>
+
+        <button
+            type="button"
+            id="resend-verification-popup-btn"
+        >
+            Resend Verification Email
+        </button>
+
+        <p
+            id="resend-countdown"
+            class="resend-countdown hidden"
+        ></p>
+
+        <p
+            id="verification-popup-feedback"
+            class="verification-popup-feedback"
+        ></p>
+
+    </div>
+
+</div>
 
     <script src="/register/js/kojo.js"></script>
 </body>

@@ -1,7 +1,9 @@
 //src/routes/userRoutes.ts
 import { Router } from "express";
 import { db } from "../config/db";
-import { handleSignUp, handleSignIn, handleForgotPassword, refreshAccessToken, getUsers } from "../controllers/userController";
+import { verifyEmail } from "../controllers/authController";
+import { handleSignUp, handleSignIn, handleForgotPassword,
+     refreshAccessToken, getUsers, resendVerificationEmail } from "../controllers/userController";
 import { authenticateToken, RequestWithUser } from "../middlewares/authMiddleware";
 import { ObjectId } from "mongodb";
 
@@ -12,7 +14,10 @@ router.post("/signup", handleSignUp);
 router.post("/signin", handleSignIn);
 router.post("/forgot-password", handleForgotPassword);
 router.post("/refresh-token", refreshAccessToken);
-router.get('/', getUsers);
+router.post("/resend-verification", resendVerificationEmail);
+router.get("/verify-email/:token", verifyEmail);
+
+router.get("/", getUsers);
 
 // Get user profile
 router.get("/profile", authenticateToken, async (req: RequestWithUser, res) => {
