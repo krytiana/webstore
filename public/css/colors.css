@@ -1,8 +1,28 @@
-/* =====================
-   GLOBAL STYLES
-===================== */
+
+/* ============================================================
+   PRODUCT DETAILS PAGE
+============================================================ */
+
+
+/* ============================================================
+   GLOBAL
+============================================================ */
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
 body {
-  background: radial-gradient(circle at top, #0f1020, #05050b);
+  margin: 0;
+  background: radial-gradient(
+    circle at top,
+    #0f1020,
+    #05050b
+  );
   color: #ffffff;
   font-family: "Segoe UI", system-ui, sans-serif;
 }
@@ -13,7 +33,9 @@ section {
   padding: 0 20px;
 }
 
-h1, h2, h3 {
+h1,
+h2,
+h3 {
   font-weight: 700;
 }
 
@@ -22,20 +44,30 @@ p {
   line-height: 1.7;
 }
 
-/* =====================
-   HERO SECTION
-===================== */
+
+/* ============================================================
+   HERO
+============================================================ */
+
 .product-hero {
   display: grid;
   grid-template-columns: 1.2fr 1fr;
   gap: 50px;
   align-items: center;
-  margin-top: 0px;
+  margin-top: 0;
 }
 
 .hero-text h1 {
   font-size: 42px;
-  margin-bottom: 15px;
+  line-height: 1.15;
+  margin: 0 0 15px;
+}
+
+.hero-image img {
+  display: block;
+  width: 100%;
+  border-radius: 20px;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8);
 }
 
 .tagline {
@@ -48,42 +80,51 @@ p {
   margin: 20px 0;
 }
 
-.hero-image img {
-  width: 100%;
-  border-radius: 20px;
-  box-shadow: 0 30px 80px rgba(0,0,0,.8);
+.starting-price strong {
+  color: #ffffff;
 }
 
-/* =====================
+
+/* ============================================================
    BUTTONS
-===================== */
+============================================================ */
+
 .btn {
   display: inline-block;
   padding: 14px 30px;
   border-radius: 50px;
   font-weight: 600;
   text-decoration: none;
-  transition: all .35s ease;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease,
+    background 0.3s ease;
 }
 
 .btn.primary {
-  background: linear-gradient(90deg, #1e3cff, #c2185b);
-  color: #fff;
-  box-shadow: 0 0 25px rgba(140,80,255,.6);
+  background: linear-gradient(
+    90deg,
+    #1e3cff,
+    #c2185b
+  );
+  color: #ffffff;
+  box-shadow:
+    0 0 25px rgba(140, 80, 255, 0.6);
 }
 
 .btn.primary:hover {
-  transform: scale(1.08);
-  box-shadow: 0 0 45px rgba(140,80,255,.9);
+  transform: translateY(-2px);
+  box-shadow:
+    0 0 45px rgba(140, 80, 255, 0.9);
 }
 
 .btn.outline {
-  border: 1px solid rgba(255,255,255,.25);
-  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: #ffffff;
 }
 
 .btn.outline:hover {
-  background: rgba(255,255,255,.08);
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .btn.big {
@@ -93,88 +134,273 @@ p {
 
 .hero-actions {
   display: flex;
+  flex-wrap: wrap;
   gap: 15px;
   margin-top: 25px;
 }
 
-/* =====================
-   DEMO NOTE
-===================== */
-.demo-note {
-  background: linear-gradient(
-    180deg,
-    rgba(255,255,255,.08),
-    rgba(255,255,255,.02)
-  );
-  border-radius: 16px;
-  padding: 18px;
-  text-align: center;
-  box-shadow: 0 20px 50px rgba(0,0,0,.7);
+
+/* ============================================================
+   KEYBOARD ACCESSIBILITY
+============================================================ */
+
+.btn:focus-visible,
+.choose-plan:focus-visible,
+.read-more-btn:focus-visible {
+  outline: 3px solid #8b9cff;
+  outline-offset: 3px;
 }
 
-/* =====================
+
+/* ============================================================
+   DEMO NOTE
+============================================================ */
+
+.demo-note {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 6px;
+
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.08),
+    rgba(255, 255, 255, 0.02)
+  );
+
+  border-radius: 16px;
+  padding: 18px 20px;
+  text-align: center;
+
+  box-shadow:
+    0 20px 50px rgba(0, 0, 0, 0.7);
+}
+
+.demo-icon {
+  margin-right: 3px;
+}
+
+
+/* ============================================================
    GLASS CARDS
-===================== */
+============================================================ */
+
 .box,
 .price-card {
   background: linear-gradient(
     180deg,
-    rgba(255,255,255,.07),
-    rgba(255,255,255,.02)
+    rgba(255, 255, 255, 0.07),
+    rgba(255, 255, 255, 0.02)
   );
+
   border-radius: 18px;
+
   padding: 28px;
-  border: 1px solid rgba(255,255,255,.08);
-  box-shadow: 0 25px 60px rgba(0,0,0,.7);
-  transition: transform .4s ease, box-shadow .4s ease;
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  box-shadow:
+    0 25px 60px rgba(0, 0, 0, 0.7);
+
+  transition:
+    transform 0.35s ease,
+    box-shadow 0.35s ease;
 }
 
 .box:hover,
 .price-card:hover {
-  transform: translateY(-10px) scale(1.03);
+  transform: translateY(-8px);
+
   box-shadow:
-    0 35px 80px rgba(0,0,0,.85),
-    0 0 35px rgba(120,100,255,.3);
+    0 35px 80px rgba(0, 0, 0, 0.85),
+    0 0 35px rgba(120, 100, 255, 0.3);
 }
 
-/* =====================
-   INCLUDED SECTION
-===================== */
+
+/* ============================================================
+   PRODUCT OVERVIEW
+============================================================ */
+
+.product-description {
+  position: relative;
+
+  margin-top: 15px;
+
+  color: #d6dbff;
+
+  font-size: 15px;
+  line-height: 1.8;
+}
+
+.product-description p {
+  margin: 0 0 14px;
+}
+
+.product-description h3 {
+  margin: 22px 0 10px;
+  color: #ffffff;
+}
+
+.product-description ul {
+  padding-left: 22px;
+  margin: 10px 0 18px;
+}
+
+.product-description li {
+  margin: 8px 0;
+  color: #d6dbff;
+}
+
+
+/* ============================================================
+   COLLAPSED DESCRIPTION
+============================================================ */
+
+.product-description.collapsed {
+  display: -webkit-box;
+
+  -webkit-line-clamp: 8;
+  -webkit-box-orient: vertical;
+
+  overflow: hidden;
+}
+
+.product-description.collapsed::after {
+  content: "";
+
+  position: absolute;
+
+  bottom: 0;
+  left: 0;
+
+  width: 100%;
+  height: 60px;
+
+  background:
+    linear-gradient(
+      to bottom,
+      transparent,
+      #080912
+    );
+
+  pointer-events: none;
+}
+
+
+/* ============================================================
+   READ MORE
+============================================================ */
+
+.read-more-btn {
+  margin-top: 15px;
+
+  padding: 0;
+
+  background: none;
+  border: none;
+
+  color: #8b9cff;
+
+  cursor: pointer;
+
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.read-more-btn:hover {
+  text-decoration: underline;
+}
+
+.read-more-btn[hidden] {
+  display: none;
+}
+
+
+/* ============================================================
+   INCLUDED
+============================================================ */
+
 .included-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px,1fr));
+
+  grid-template-columns:
+    repeat(
+      auto-fit,
+      minmax(280px, 1fr)
+    );
+
   gap: 30px;
 }
 
-.box ul li {
-  margin: 10px 0;
+.box ul {
+  padding-left: 0;
+  list-style: none;
 }
 
-/* =====================
+.box ul li {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+
+  margin: 10px 0;
+
+  color: #d6dbff;
+  line-height: 1.5;
+}
+
+.feature-check {
+  flex-shrink: 0;
+  color: #8b9cff;
+  font-weight: 700;
+}
+
+
+/* ============================================================
    TECH STACK
-===================== */
+============================================================ */
+
 .tech-list {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
+
+  padding: 0;
+
+  list-style: none;
 }
 
 .tech-list li {
   padding: 10px 16px;
+
   border-radius: 30px;
-  background: rgba(255,255,255,.08);
-  border: 1px solid rgba(255,255,255,.12);
+
+  background: rgba(255, 255, 255, 0.08);
+
+  border: 1px solid rgba(255, 255, 255, 0.12);
+
+  color: #d6dbff;
+
   font-size: 14px;
 }
 
-/* =====================
-PRICING
-===================== */
+
+/* ============================================================
+   PRICING
+============================================================ */
+
+.pricing-intro {
+  max-width: 650px;
+}
 
 .pricing-cards {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
+
   gap: 30px;
+
   align-items: stretch;
 }
 
@@ -187,9 +413,14 @@ PRICING
   min-width: 0;
 }
 
+.price-card h3 {
+  margin-top: 0;
+}
+
 .price-card .plan-description {
   color: #cfd3ff;
   line-height: 1.6;
+
   min-height: 78px;
 }
 
@@ -200,144 +431,145 @@ PRICING
 
 .price-card ul li {
   margin: 10px 0;
+
   color: #d6dbff;
+
   line-height: 1.5;
 }
 
 .price {
   font-size: 36px;
   font-weight: 700;
+
   margin: 15px 0;
+
+  color: #ffffff;
 }
 
-.price-card .choose-plan {
-  margin-top: auto;
 
+/* ============================================================
+   PLAN BUTTON
+============================================================ */
+
+.price-card .choose-plan {
   width: 100%;
 
+  margin-top: auto;
+
   border: none;
+
   cursor: pointer;
 
   padding: 14px 20px;
+
   border-radius: 50px;
 
-  background: linear-gradient(90deg, #1e3cff, #c2185b);
-  color: #fff;
+  background: linear-gradient(
+    90deg,
+    #1e3cff,
+    #c2185b
+  );
+
+  color: #ffffff;
 
   font-size: 15px;
   font-weight: 600;
 
-  transition: all .35s ease;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease,
+    opacity 0.3s ease;
 }
 
 .price-card .choose-plan:hover {
-  transform: scale(1.04);
-  box-shadow: 0 0 30px rgba(140,80,255,.6);
-}
-
-.price-card.featured {
-  border: 1px solid rgba(140,120,255,.5);
+  transform: translateY(-2px);
 
   box-shadow:
-    0 0 60px rgba(140,120,255,.45);
+    0 0 30px rgba(140, 80, 255, 0.6);
+}
 
-  position: relative;
+.price-card .choose-plan:disabled {
+  cursor: wait;
+  opacity: 0.65;
+  transform: none;
+}
+
+
+/* ============================================================
+   FEATURED PLAN
+============================================================ */
+
+.price-card.featured {
+  border: 1px solid rgba(140, 120, 255, 0.5);
+
+  box-shadow:
+    0 0 40px rgba(140, 120, 255, 0.3);
 }
 
 .badge {
   position: absolute;
+
   top: -14px;
   right: 20px;
 
-  background: linear-gradient(90deg,#ff9800,#ff5722);
+  background:
+    linear-gradient(
+      90deg,
+      #ff9800,
+      #ff5722
+    );
 
   padding: 6px 14px;
 
   border-radius: 20px;
 
+  color: #ffffff;
+
   font-size: 12px;
+  font-weight: 600;
 }
 
-/* =====================
+
+/* ============================================================
    AUDIENCE
-===================== */
+============================================================ */
+
+.audience ul {
+  padding-left: 20px;
+}
+
 .audience ul li {
   margin: 10px 0;
+  color: #d6dbff;
+  line-height: 1.5;
 }
 
-/* =====================
+
+/* ============================================================
    CTA
-===================== */
+============================================================ */
+
 .cta {
   text-align: center;
+
   background: linear-gradient(
     180deg,
-    rgba(255,255,255,.07),
-    rgba(255,255,255,.02)
+    rgba(255, 255, 255, 0.07),
+    rgba(255, 255, 255, 0.02)
   );
+
   padding: 60px 20px;
+
   border-radius: 25px;
-  box-shadow: 0 30px 80px rgba(0,0,0,.8);
+
+  box-shadow:
+    0 30px 80px rgba(0, 0, 0, 0.8);
 }
 
-.product-description {
-  line-height: 1.8;
-  color: #d6dbff;
-  font-size: 15px;
-  margin-top: 15px;
-}
 
-.product-description br {
-  margin-bottom: 10px;
-  display: block;
-  content: "";
-}
-
-.product-description {
-  line-height: 1.8;
-  font-size: 15px;
-  color: #d6dbff;
-  position: relative;
-}
-
-/* COLLAPSED STATE */
-.product-description.collapsed {
-  display: -webkit-box;
-  -webkit-line-clamp: 10; /* 👈 number of lines */
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-/* FADE EFFECT (optional but nice) */
-.product-description.collapsed::after {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 60px;
-  background: linear-gradient(to bottom, transparent, #05050b);
-}
-
-.read-more-btn {
-  margin-top: 15px;
-  background: none;
-  border: none;
-  color: #6c7cff;
-  cursor: pointer;
-  font-weight: 600;
-  font-size: 14px;
-}
-
-.read-more-btn:hover {
-  text-decoration: underline;
-}
-/* =====================
-   RESPONSIVE
-===================== */
-/* =====================
-MOBILE PRICING CAROUSEL
-===================== */
+/* ============================================================
+   MOBILE PRICING CAROUSEL
+============================================================ */
 
 @media (max-width: 900px) {
 
@@ -361,6 +593,7 @@ MOBILE PRICING CAROUSEL
     margin-right: -20px;
 
     scroll-snap-type: x mandatory;
+
     scroll-behavior: smooth;
 
     -webkit-overflow-scrolling: touch;
@@ -372,12 +605,10 @@ MOBILE PRICING CAROUSEL
     display: none;
   }
 
-
-  /* Each card takes most of the screen */
   .pricing-cards .price-card {
-
     flex: 0 0 84vw;
 
+    width: 84vw;
     max-width: 430px;
 
     scroll-snap-align: center;
@@ -387,14 +618,111 @@ MOBILE PRICING CAROUSEL
     transform: none;
   }
 
-
-  .price-card.featured {
-    transform: none;
-  }
-
   .price-card:hover,
   .price-card.featured:hover {
     transform: none;
   }
 
+  .price-card.featured {
+    transform: none;
+  }
+
 }
+
+
+/* ============================================================
+   SMALL MOBILE DEVICES
+============================================================ */
+
+@media (max-width: 600px) {
+
+  section {
+    margin: 55px auto;
+    padding: 0 16px;
+  }
+
+  .product-hero {
+    gap: 30px;
+  }
+
+  .hero-text h1 {
+    font-size: 32px;
+    line-height: 1.15;
+  }
+
+  .tagline {
+    font-size: 16px;
+  }
+
+  .starting-price {
+    font-size: 18px;
+  }
+
+  .hero-actions {
+    flex-direction: column;
+  }
+
+  .hero-actions .btn {
+    width: 100%;
+    text-align: center;
+  }
+
+  .demo-note {
+    font-size: 14px;
+  }
+
+  .box,
+  .price-card {
+    padding: 14px;
+  }
+
+  .price {
+    font-size: 32px;
+  }
+
+  .plan-description {
+    margin: 0px;
+    padding: 0px;
+    line-height: 0.6;
+  }
+  .price-card p, h3, ul{
+    margin: 0px;
+    padding: 0px;
+  }
+
+
+}
+
+
+/* ============================================================
+   REDUCED MOTION
+============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+
+  html {
+    scroll-behavior: auto;
+  }
+
+
+
+
+
+
+
+
+
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+
+    transition-duration: 0.01ms !important;
+
+    animation-duration: 0.01ms !important;
+
+    animation-iteration-count: 1 !important;
+  }
+
+}
+

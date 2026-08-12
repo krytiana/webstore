@@ -1,7 +1,7 @@
+
 <%- include("partials/header") %>
 
 <link rel="stylesheet" href="/css/colors.css" />
-
 
 <!-- =========================================================
      PRODUCT HERO
@@ -16,23 +16,25 @@
     <div class="hero-image">
       <img
         src="<%= product.media.image %>"
-        alt="<%= product.name %>"
+        alt="<%= product.name %> website template preview"
+        loading="eager"
+        decoding="async"
       />
     </div>
 
     <p class="tagline">
-      A complete business website with admin dashboard and database integration
+      A complete business website with admin dashboard and database integration.
     </p>
 
     <p class="starting-price">
-      Starting from
+      Plans starting from
       <strong>$<%= product.pricing.sourceCode %></strong>
     </p>
 
     <div class="hero-actions">
 
       <a href="#pricing" class="btn primary">
-        Buy Now
+        View Pricing
       </a>
 
       <% if (product.media.demoUrl) { %>
@@ -57,13 +59,16 @@
      DEMO NOTE
 ========================================================= -->
 
-<section class="demo-note">
+<section class="demo-note" aria-label="Demo information">
 
-  🔍
-  <strong>Live demo shows frontend only.</strong>
+  <span class="demo-icon" aria-hidden="true">🔍</span>
 
-  Backend, admin dashboard, database integration, and authentication
-  are included in the purchased package.
+  <strong>Live demo shows the frontend only.</strong>
+
+  <span>
+    Backend, admin dashboard, database integration, and authentication
+    are included in the purchased package.
+  </span>
 
 </section>
 
@@ -79,13 +84,16 @@
   <div
     class="product-description collapsed"
     id="desc"
-    data-description='<%- JSON.stringify(product.description) %>'
+    data-description="<%= JSON.stringify(product.description) %>"
+    aria-live="polite"
   ></div>
 
   <button
     id="toggleDesc"
     class="read-more-btn"
     type="button"
+    aria-expanded="false"
+    aria-controls="desc"
   >
     Read More
   </button>
@@ -111,14 +119,24 @@
       data-aos-delay="150"
     >
 
-      <h3>🖥️ Frontend</h3>
+      <h3>
+        <span aria-hidden="true">🖥️</span>
+        Frontend
+      </h3>
 
       <ul>
-        <% product.features.frontend.forEach(item => { %>
+        <% if (Array.isArray(product.features.frontend)) { %>
 
-          <li>✔ <%= item %></li>
+          <% product.features.frontend.forEach(item => { %>
 
-        <% }) %>
+            <li>
+              <span class="feature-check" aria-hidden="true">✓</span>
+              <span><%= item %></span>
+            </li>
+
+          <% }) %>
+
+        <% } %>
       </ul>
 
     </div>
@@ -126,16 +144,30 @@
 
     <!-- BACKEND -->
 
-    <div class="box">
+    <div
+      class="box"
+      data-aos="fade-up"
+      data-aos-delay="250"
+    >
 
-      <h3>⚙️ Backend</h3>
+      <h3>
+        <span aria-hidden="true">⚙️</span>
+        Backend
+      </h3>
 
       <ul>
-        <% product.features.backend.forEach(item => { %>
+        <% if (Array.isArray(product.features.backend)) { %>
 
-          <li>✔ <%= item %></li>
+          <% product.features.backend.forEach(item => { %>
 
-        <% }) %>
+            <li>
+              <span class="feature-check" aria-hidden="true">✓</span>
+              <span><%= item %></span>
+            </li>
+
+          <% }) %>
+
+        <% } %>
       </ul>
 
     </div>
@@ -155,11 +187,29 @@
 
   <ul class="tech-list">
 
-    <% product.features.techStack.split(",").forEach(t => { %>
+    <% if (typeof product.features.techStack === "string") { %>
 
-      <li><%= t.trim() %></li>
+      <% product.features.techStack
+        .split(",")
+        .map(t => t.trim())
+        .filter(Boolean)
+        .forEach(t => { %>
 
-    <% }) %>
+          <li><%= t %></li>
+
+      <% }) %>
+
+    <% } else if (Array.isArray(product.features.techStack)) { %>
+
+      <% product.features.techStack
+        .filter(Boolean)
+        .forEach(t => { %>
+
+          <li><%= t %></li>
+
+      <% }) %>
+
+    <% } %>
 
   </ul>
 
@@ -173,9 +223,10 @@
 <section
   id="pricing"
   class="pricing-section"
+  aria-labelledby="pricing-title"
 >
 
-  <h2>Choose Your Setup Option</h2>
+  <h2 id="pricing-title">Choose Your Setup Option</h2>
 
   <p class="pricing-intro">
     Choose the option that best fits how much of the technical setup
@@ -198,7 +249,7 @@
       data-plan="sourceCode"
     >
 
-      <h3>Source Code</h3>
+      <h3>Basic Plan</h3>
 
       <p class="plan-description">
         Get the complete website files and set everything up yourself.
@@ -210,31 +261,20 @@
 
       <ul>
 
-        <li>
-          Complete frontend & backend source code
-        </li>
-
-        <li>
-          Admin dashboard included
-        </li>
-
-        <li>
-          Database integration included
-        </li>
-
-        <li>
-          Setup instructions included
-        </li>
-
-        <li>
-          Best for developers and technical users
-        </li>
+        <li style="color: green;">✔ Full Source Code</li>
+        <li style="color: green;">✔ Setup Guide (setup.md)</li>
+        <li style="color: green;">✔ Project Documentation (README.md)</li>
+        <li style="color: green;">✔ Lifetime Access</li>
+        <li style="color: rgb(255, 60, 0);">❌ No support included</li>
+        <li style="color: rgb(255, 60, 0);"">❌ No installation help</li>
 
       </ul>
 
       <button
         type="button"
         class="btn choose-plan"
+        data-plan-name="Source Code"
+        aria-label="Choose Source Code plan"
       >
         Choose Source Code
       </button>
@@ -251,7 +291,10 @@
       data-plan="assistedSetup"
     >
 
-      <span class="badge">
+      <span
+        class="badge"
+        aria-label="Recommended plan"
+      >
         Most Popular
       </span>
 
@@ -267,35 +310,20 @@
 
       <ul>
 
-        <li>
-          Everything in Source Code
-        </li>
-
-        <li>
-          Installation assistance
-        </li>
-
-        <li>
-          Database configuration
-        </li>
-
-        <li>
-          Environment variable setup
-        </li>
-
-        <li>
-          Help getting the website running
-        </li>
-
-        <li>
-          Best for users who need technical help
-        </li>
+        <li>Everything in Source Code</li>
+        <li>Installation assistance</li>
+        <li>Database configuration</li>
+        <li>Environment variable setup</li>
+        <li>Help getting the website running</li>
+        <li>Best for users who need technical help</li>
 
       </ul>
 
       <button
         type="button"
         class="btn choose-plan"
+        data-plan-name="Assisted Setup"
+        aria-label="Choose Assisted Setup plan"
       >
         Choose Assisted Setup
       </button>
@@ -325,35 +353,20 @@
 
       <ul>
 
-        <li>
-          Complete website source code
-        </li>
-
-        <li>
-          Full installation and configuration
-        </li>
-
-        <li>
-          Database setup
-        </li>
-
-        <li>
-          Environment configuration
-        </li>
-
-        <li>
-          Server deployment
-        </li>
-
-        <li>
-          Ready-to-use website
-        </li>
+        <li>Complete website source code</li>
+        <li>Full installation and configuration</li>
+        <li>Database setup</li>
+        <li>Environment configuration</li>
+        <li>Server deployment</li>
+        <li>Ready-to-use website</li>
 
       </ul>
 
       <button
         type="button"
         class="btn choose-plan"
+        data-plan-name="Done For You"
+        aria-label="Choose Done For You plan"
       >
         Choose Done For You
       </button>
@@ -379,7 +392,7 @@
     <li>Startups</li>
     <li>Freelancers</li>
     <li>Developers and technical users</li>
-    <li>Anyone who wants a ready-made website solution</li>
+    <li>Anyone looking for a ready-made website solution</li>
 
   </ul>
 
