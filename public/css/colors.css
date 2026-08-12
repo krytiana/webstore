@@ -634,12 +634,20 @@ p {
    SMALL MOBILE DEVICES
 ============================================================ */
 
+/* ============================================================
+   SMALL MOBILE DEVICES
+============================================================ */
+
 @media (max-width: 600px) {
 
   section {
     margin: 55px auto;
     padding: 0 16px;
   }
+
+  /* ----------------------------------------------------------
+     HERO
+  ---------------------------------------------------------- */
 
   .product-hero {
     gap: 30px;
@@ -667,29 +675,74 @@ p {
     text-align: center;
   }
 
+
+  /* ----------------------------------------------------------
+     DEMO NOTE
+  ---------------------------------------------------------- */
+
   .demo-note {
     font-size: 14px;
   }
 
+
+  /* ----------------------------------------------------------
+     CARDS
+  ---------------------------------------------------------- */
+
   .box,
   .price-card {
-    padding: 14px;
+    padding: 6px;
+    max-width: none;
+    
   }
 
-  .price {
+
+  /* ----------------------------------------------------------
+     PRICING CARD
+  ---------------------------------------------------------- */
+
+  .price-card h3 {
+    margin: 0 0 10px;
+    padding: 0;
+  }
+
+  .price-card .plan-description {
+    margin: 0 0 15px;
+    padding: 0;
+
+    min-height: 0;
+
+    line-height: 1.2;
+  }
+
+  .price-card .price {
+    margin: 0px 0 0px;
+    padding: 0;
+
     font-size: 32px;
+    line-height: 1.2;
   }
 
-  .plan-description {
-    margin: 0px;
-    padding: 0px;
-    line-height: 0.6;
-  }
-  .price-card p, h3, ul{
-    margin: 0px;
-    padding: 0px;
+  .price-card ul {
+    margin: 0 0 25px;
+    padding-left: 20px;
   }
 
+  .price-card ul li {
+    margin: 8px 0;
+    padding: 0;
+
+    line-height: 1.5;
+  }
+
+
+  /* ----------------------------------------------------------
+     BUTTON
+  ---------------------------------------------------------- */
+
+  .price-card .choose-plan {
+    margin-top: auto;
+  }
 
 }
 
