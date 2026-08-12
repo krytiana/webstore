@@ -3,144 +3,397 @@
 <link rel="stylesheet" href="/css/colors.css" />
 
 
+<!-- =========================================================
+     PRODUCT HERO
+========================================================= -->
+
 <section class="product-hero" data-aos="fade-up">
+
   <div class="hero-text">
+
     <h1><%= product.name %></h1>
 
     <div class="hero-image">
-    <img src="<%= product.media.image %>" alt="<%= product.name %>" />
-  </div>
+      <img
+        src="<%= product.media.image %>"
+        alt="<%= product.name %>"
+      />
+    </div>
+
     <p class="tagline">
       A complete business website with admin dashboard and database integration
     </p>
 
     <p class="starting-price">
-      Starting from <strong>$<%= product.pricing.sourceCode %></strong>
+      Starting from
+      <strong>$<%= product.pricing.sourceCode %></strong>
     </p>
 
     <div class="hero-actions">
-      <a href="#pricing" class="btn primary">Buy Now</a>
-      <a href="<%= product.media.demoUrl %>" target="_blank" class="btn outline">
-        Live Demo
+
+      <a href="#pricing" class="btn primary">
+        Buy Now
       </a>
+
+      <% if (product.media.demoUrl) { %>
+        <a
+          href="<%= product.media.demoUrl %>"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="btn outline"
+        >
+          Live Demo
+        </a>
+      <% } %>
+
     </div>
+
   </div>
 
-  
 </section>
+
+
+<!-- =========================================================
+     DEMO NOTE
+========================================================= -->
 
 <section class="demo-note">
-  🔍 <strong>Live demo shows frontend only.</strong>
-  Backend (admin, database, authentication) is included in delivery.
+
+  🔍
+  <strong>Live demo shows frontend only.</strong>
+
+  Backend, admin dashboard, database integration, and authentication
+  are included in the purchased package.
+
 </section>
 
+
+<!-- =========================================================
+     PRODUCT OVERVIEW
+========================================================= -->
+
 <section class="overview">
+
   <h2>Product Overview</h2>
 
-  <div 
-    class="product-description collapsed" 
+  <div
+    class="product-description collapsed"
     id="desc"
     data-description='<%- JSON.stringify(product.description) %>'
   ></div>
 
-  <button id="toggleDesc" class="read-more-btn">
+  <button
+    id="toggleDesc"
+    class="read-more-btn"
+    type="button"
+  >
     Read More
   </button>
+
 </section>
+
+
+<!-- =========================================================
+     WHAT'S INCLUDED
+========================================================= -->
 
 <section class="included">
-  <h2>What’s Included</h2>
+
+  <h2>What's Included</h2>
 
   <div class="included-grid">
-    <div class="box" data-aos="fade-up" data-aos-delay="150">
+
+    <!-- FRONTEND -->
+
+    <div
+      class="box"
+      data-aos="fade-up"
+      data-aos-delay="150"
+    >
+
       <h3>🖥️ Frontend</h3>
+
       <ul>
         <% product.features.frontend.forEach(item => { %>
+
           <li>✔ <%= item %></li>
+
         <% }) %>
       </ul>
+
     </div>
+
+
+    <!-- BACKEND -->
 
     <div class="box">
+
       <h3>⚙️ Backend</h3>
+
       <ul>
         <% product.features.backend.forEach(item => { %>
+
           <li>✔ <%= item %></li>
+
         <% }) %>
       </ul>
+
     </div>
+
   </div>
+
 </section>
+
+
+<!-- =========================================================
+     TECHNICAL STACK
+========================================================= -->
 
 <section class="tech">
+
   <h2>Technical Stack</h2>
+
   <ul class="tech-list">
+
     <% product.features.techStack.split(",").forEach(t => { %>
+
       <li><%= t.trim() %></li>
+
     <% }) %>
+
   </ul>
+
 </section>
 
-<section id="pricing" class="pricing">
-  <h2>Delivery & Pricing</h2>
 
-  <div class="pricing-grid">
-    <div class="price-card" data-aos="zoom-in" data-aos-delay="200">
-      <h3>Basic Plan</h3>
-      <p class="price">$<%= product.pricing.sourceCode %></p>
-      <ul>
-        <li>Full source code</li>
-        <li>Best for: Developers or users comfortable with basic setup</li>
-        <li>Setup.md</li>
-      </ul>
-    </div>
+<!-- =========================================================
+     PRICING
+========================================================= -->
 
-    <div class="price-card featured">
-      <span class="badge">Most Popular</span>
-      <h3>Assisted Setup</h3>
-      <p class="price">$<%= product.pricing.assistedSetup %></p>
-      <ul>
-        <li>Everything above</li>
-        <li>Installation help</li>
-        <li>Database setup</li>
-      </ul>
-    </div>
+<section
+  id="pricing"
+  class="pricing-section"
+>
 
-    <div class="price-card">
-      <h3>Done For You</h3>
-      <p class="price">$<%= product.pricing.doneForYou %></p>
-      <ul>
-        <li>Full installation</li>
-        <li>Server deployment</li>
-        <li>Ready to use</li>
-      </ul>
-    </div>
-  </div>
-</section>
+  <h2>Choose Your Setup Option</h2>
 
-<section class="audience">
-  <h2>Who This Is For</h2>
-  <ul>
-    <li> Small businesses</li>
-    <li> Startups</li>
-    <li> Freelancers</li>
-    <li> Not for total beginners</li>
-  </ul>
-</section>
+  <p class="pricing-intro">
+    Choose the option that best fits how much of the technical setup
+    you want to handle yourself.
+  </p>
 
-<section class="cta" data-aos="zoom-in">
-  <h2>Choose your delivery option</h2>
-  <a 
-    id="getWebsiteBtn" 
-    href="#" 
-    class="btn primary big" 
+
+  <div
+    class="pricing-cards"
     data-product="<%= product.slug %>"
   >
-    Get This Website
-  </a>
+
+
+    <!-- =====================================================
+         SOURCE CODE
+    ====================================================== -->
+
+    <div
+      class="price-card"
+      data-plan="sourceCode"
+    >
+
+      <h3>Source Code</h3>
+
+      <p class="plan-description">
+        Get the complete website files and set everything up yourself.
+      </p>
+
+      <p class="price">
+        $<%= product.pricing.sourceCode %>
+      </p>
+
+      <ul>
+
+        <li>
+          Complete frontend & backend source code
+        </li>
+
+        <li>
+          Admin dashboard included
+        </li>
+
+        <li>
+          Database integration included
+        </li>
+
+        <li>
+          Setup instructions included
+        </li>
+
+        <li>
+          Best for developers and technical users
+        </li>
+
+      </ul>
+
+      <button
+        type="button"
+        class="btn choose-plan"
+      >
+        Choose Source Code
+      </button>
+
+    </div>
+
+
+    <!-- =====================================================
+         ASSISTED SETUP
+    ====================================================== -->
+
+    <div
+      class="price-card featured"
+      data-plan="assistedSetup"
+    >
+
+      <span class="badge">
+        Most Popular
+      </span>
+
+      <h3>Assisted Setup</h3>
+
+      <p class="plan-description">
+        Get the complete website plus help getting it properly set up.
+      </p>
+
+      <p class="price">
+        $<%= product.pricing.assistedSetup %>
+      </p>
+
+      <ul>
+
+        <li>
+          Everything in Source Code
+        </li>
+
+        <li>
+          Installation assistance
+        </li>
+
+        <li>
+          Database configuration
+        </li>
+
+        <li>
+          Environment variable setup
+        </li>
+
+        <li>
+          Help getting the website running
+        </li>
+
+        <li>
+          Best for users who need technical help
+        </li>
+
+      </ul>
+
+      <button
+        type="button"
+        class="btn choose-plan"
+      >
+        Choose Assisted Setup
+      </button>
+
+    </div>
+
+
+    <!-- =====================================================
+         DONE FOR YOU
+    ====================================================== -->
+
+    <div
+      class="price-card"
+      data-plan="doneForYou"
+    >
+
+      <h3>Done For You</h3>
+
+      <p class="plan-description">
+        We handle the technical setup and deployment so your website
+        is ready to use.
+      </p>
+
+      <p class="price">
+        $<%= product.pricing.doneForYou %>
+      </p>
+
+      <ul>
+
+        <li>
+          Complete website source code
+        </li>
+
+        <li>
+          Full installation and configuration
+        </li>
+
+        <li>
+          Database setup
+        </li>
+
+        <li>
+          Environment configuration
+        </li>
+
+        <li>
+          Server deployment
+        </li>
+
+        <li>
+          Ready-to-use website
+        </li>
+
+      </ul>
+
+      <button
+        type="button"
+        class="btn choose-plan"
+      >
+        Choose Done For You
+      </button>
+
+    </div>
+
+  </div>
+
 </section>
-<script type="module" src="/js/product-details.js"></script>
-<script src="/js/product-details.js"></script>
+
+
+<!-- =========================================================
+     WHO THIS IS FOR
+========================================================= -->
+
+<section class="audience">
+
+  <h2>Who This Is For</h2>
+
+  <ul>
+
+    <li>Small businesses</li>
+    <li>Startups</li>
+    <li>Freelancers</li>
+    <li>Developers and technical users</li>
+    <li>Anyone who wants a ready-made website solution</li>
+
+  </ul>
+
+</section>
+
+
+<!-- =========================================================
+     PRODUCT DETAILS JAVASCRIPT
+========================================================= -->
+
+<script
+  type="module"
+  src="/js/product-details.js"
+></script>
 
 
 <%- include("partials/footer") %>

@@ -1,141 +1,412 @@
-// Smooth scroll for anchor links
+// ============================================================
+// SMOOTH SCROLL FOR ANCHOR LINKS
+// ============================================================
+
 document.querySelectorAll('a[href^="#"]').forEach(link => {
+
   link.addEventListener("click", e => {
+
     const href = link.getAttribute("href");
 
-    try {
-      const target = document.querySelector(href);
-      if (target) {
-        e.preventDefault();
-        target.scrollIntoView({ behavior: "smooth" });
-      }
-    } catch (err) {
-      // ❌ Ignore invalid selectors (like /checkout?...)
-      console.warn("Invalid selector:", href);
+    if (!href || href === "#") return;
+
+    const target = document.querySelector(href);
+
+    if (target) {
+
+      e.preventDefault();
+
+      target.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
+
     }
+
   });
+
 });
 
-// Format product description
+
+// ============================================================
+// FORMAT PRODUCT DESCRIPTION
+// ============================================================
+
 function formatDescription(text) {
+
   const lines = text.split("\n");
+
   let html = "";
   let inList = false;
 
   lines.forEach(line => {
+
     line = line.trim();
+
     if (!line) return;
 
+
+    // List item
     if (line.startsWith("-")) {
-      if (!inList) { html += "<ul>"; inList = true; }
+
+      if (!inList) {
+        html += "<ul>";
+        inList = true;
+      }
+
       html += `<li>${line.substring(1).trim()}</li>`;
-    } else {
-      if (inList) { html += "</ul>"; inList = false; }
-      html += (!line.includes(".") && line.length < 60) ? `<h3>${line}</h3>` : `<p>${line}</p>`;
+
     }
+
+    else {
+
+      // Close previous list
+      if (inList) {
+        html += "</ul>";
+        inList = false;
+      }
+
+
+      // Heading or paragraph
+      if (!line.includes(".") && line.length < 60) {
+
+        html += `<h3>${line}</h3>`;
+
+      }
+
+      else {
+
+        html += `<p>${line}</p>`;
+
+      }
+
+    }
+
   });
 
-  if (inList) html += "</ul>";
+
+  // Close list if still open
+  if (inList) {
+    html += "</ul>";
+  }
+
   return html;
 }
 
-// Apply description & toggle
+
+// ============================================================
+// APPLY DESCRIPTION & READ MORE TOGGLE
+// ============================================================
+
 document.addEventListener("DOMContentLoaded", () => {
+
   const descEl = document.getElementById("desc");
   const btn = document.getElementById("toggleDesc");
 
   if (!descEl) return;
 
+
   const raw = descEl.getAttribute("data-description");
-  const text = JSON.parse(raw || '""');
+
+  let text = "";
+
+  try {
+
+    text = JSON.parse(raw || '""');
+
+  } catch (error) {
+
+    console.error(
+      "Failed to parse product description:",
+      error
+    );
+
+    text = "";
+
+  }
+
 
   descEl.innerHTML = formatDescription(text);
 
-  if (btn && descEl.scrollHeight <= descEl.clientHeight) btn.style.display = "none";
 
-  if (btn) {
-    btn.addEventListener("click", () => {
-      descEl.classList.toggle("collapsed");
-      btn.textContent = descEl.classList.contains("collapsed") ? "Read More" : "Show Less";
-    });
+  // Hide Read More if description is short
+  if (
+    btn &&
+    descEl.scrollHeight <= descEl.clientHeight
+  ) {
+
+    btn.style.display = "none";
+
   }
+
+
+  // Read More / Show Less
+  if (btn) {
+
+    btn.addEventListener("click", () => {
+
+      descEl.classList.toggle("collapsed");
+
+      btn.textContent =
+        descEl.classList.contains("collapsed")
+          ? "Read More"
+          : "Show Less";
+
+    });
+
+  }
+
 });
+
+
+// ============================================================
+// PRICING / CHECKOUT
+// ============================================================
 
 import { getCurrentUser } from "/js/userService.js";
 
-// ----------------------------
-// ELEMENTS
-// ----------------------------
-const priceCards = document.querySelectorAll(".price-card");
-const ctaBtn = document.getElementById("getWebsiteBtn");
-const productSlug = ctaBtn?.dataset.product;
 
-// ----------------------------
-// PLAN MAP
-// ----------------------------
-const planMap = {
-  "Source Code": "sourceCode",
-  "Assisted Setup": "assistedSetup",
-  "Done For You": "doneForYou"
-};
+// Pricing container
+const pricingContainer =
+  document.querySelector(".pricing-cards");
 
-// ----------------------------
-// DEFAULT SELECTION
-// ----------------------------
-let defaultCard = Array.from(priceCards).find(
-  c => c.querySelector("h3")?.textContent?.trim() === "Assisted Setup"
-);
 
-if (defaultCard) {
-  priceCards.forEach(c => c.classList.remove("featured"));
-  defaultCard.classList.add("featured");
+// Pricing cards
+const pricingCards =
+  document.querySelectorAll(".price-card");
 
-  if (ctaBtn && productSlug) {
-    ctaBtn.href = `/checkout?product=${productSlug}&plan=assistedSetup`;
-  }
+
+// Product slug
+const productSlug =
+  pricingContainer?.dataset.product;
+
+
+// Choose-plan buttons
+const planButtons =
+  document.querySelectorAll(".choose-plan");
+
+
+// ============================================================
+// CENTER ASSISTED SETUP BY DEFAULT
+// ============================================================
+
+function centerFeaturedPlan() {
+
+  if (!pricingContainer) return;
+
+
+  // Desktop uses normal 3-column layout
+  if (window.innerWidth > 900) return;
+
+
+  const featuredCard =
+    pricingContainer.querySelector(".price-card.featured");
+
+
+  if (!featuredCard) return;
+
+
+  featuredCard.scrollIntoView({
+    behavior: "auto",
+    block: "nearest",
+    inline: "center"
+  });
+
 }
 
-// ----------------------------
-// CTA CLICK (AUTH CHECK)
-// ----------------------------
-if (ctaBtn) {
-  ctaBtn.addEventListener("click", async (e) => {
-    e.preventDefault();
 
-    const user = await getCurrentUser();
+// Wait until page/images/layout are ready
+window.addEventListener("load", () => {
 
-    if (!user) {
-      alert("Please login first");
+  setTimeout(() => {
 
-      // 🔥 Better UX (redirect back after login)
-      const url = ctaBtn.getAttribute("href");
-      window.location.href = "/register?redirect=" + encodeURIComponent(url);
+    centerFeaturedPlan();
+
+  }, 150);
+
+});
+
+
+// ============================================================
+// CLICK CARD → CENTER CARD
+// ============================================================
+
+pricingCards.forEach(card => {
+
+  card.addEventListener("click", event => {
+
+
+    // Do not interfere with checkout button
+    if (event.target.closest(".choose-plan")) {
       return;
     }
 
-    const url = ctaBtn.getAttribute("href");
 
-    if (url && url !== "#") {
-      window.location.href = url;
-    } else {
-      alert("Please select a plan first");
+    // Only carousel on mobile/tablet
+    if (window.innerWidth > 900) {
+      return;
     }
+
+
+    card.scrollIntoView({
+      behavior: "smooth",
+      block: "nearest",
+      inline: "center"
+    });
+
   });
-}
 
-// ----------------------------
-// PLAN CLICK
-// ----------------------------
-priceCards.forEach(card => {
-  card.addEventListener("click", () => {
-    priceCards.forEach(c => c.classList.remove("featured"));
-    card.classList.add("featured");
+});
 
-    const planName = card.querySelector("h3")?.textContent?.trim();
-    const plan = planMap[planName];
 
-    if (ctaBtn && productSlug && plan) {
-      ctaBtn.href = `/checkout?product=${productSlug}&plan=${plan}`;
+// ============================================================
+// PLAN BUTTON → CHECKOUT
+// ============================================================
+
+planButtons.forEach(button => {
+
+  button.addEventListener("click", async () => {
+
+    const card =
+      button.closest(".price-card");
+
+
+    // Safety check
+    if (!card) {
+
+      console.error(
+        "Could not find pricing card."
+      );
+
+      return;
+
     }
+
+
+    // Get plan from data-plan
+    const plan = card.dataset.plan;
+
+
+    // Validate product and plan
+    if (!productSlug || !plan) {
+
+      console.error(
+        "Missing product slug or plan.",
+        {
+          productSlug,
+          plan
+        }
+      );
+
+      alert(
+        "Unable to continue. Please refresh the page and try again."
+      );
+
+      return;
+
+    }
+
+
+    // Build checkout URL
+    const checkoutUrl =
+      `/checkout?product=${encodeURIComponent(productSlug)}&plan=${encodeURIComponent(plan)}`;
+
+
+    // Prevent multiple clicks
+    button.disabled = true;
+
+
+    const originalText =
+      button.textContent;
+
+
+    button.textContent = "Checking...";
+
+
+    try {
+
+      // Check authentication
+      const user =
+        await getCurrentUser();
+
+
+      // ------------------------------------------------------
+      // USER NOT LOGGED IN
+      // ------------------------------------------------------
+
+      if (!user) {
+
+        window.location.href =
+          "/register?redirect=" +
+          encodeURIComponent(checkoutUrl);
+
+        return;
+
+      }
+
+
+      // ------------------------------------------------------
+      // USER IS LOGGED IN
+      // ------------------------------------------------------
+
+      window.location.href =
+        checkoutUrl;
+
+
+    }
+
+    catch (error) {
+
+      console.error(
+        "Authentication check failed:",
+        error
+      );
+
+
+      alert(
+        "Something went wrong. Please try again."
+      );
+
+
+      button.disabled = false;
+
+      button.textContent =
+        originalText;
+
+    }
+
   });
+
+});
+
+
+// ============================================================
+// KEEP ASSISTED SETUP CENTERED AFTER RESIZE
+// ============================================================
+
+let previousWidth = window.innerWidth;
+
+window.addEventListener("resize", () => {
+
+  const currentWidth = window.innerWidth;
+
+
+  // Only recenter when crossing the
+  // desktop/mobile breakpoint
+  if (
+    (previousWidth > 900 && currentWidth <= 900) ||
+    (previousWidth <= 900 && currentWidth > 900)
+  ) {
+
+    setTimeout(() => {
+
+      centerFeaturedPlan();
+
+    }, 100);
+
+  }
+
+
+  previousWidth = currentWidth;
+
 });

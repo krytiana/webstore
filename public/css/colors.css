@@ -168,22 +168,79 @@ p {
 }
 
 /* =====================
-   PRICING
+PRICING
 ===================== */
-.pricing-grid {
+
+.pricing-cards {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px,1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 30px;
+  align-items: stretch;
+}
+
+.price-card {
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+
+  min-width: 0;
+}
+
+.price-card .plan-description {
+  color: #cfd3ff;
+  line-height: 1.6;
+  min-height: 78px;
+}
+
+.price-card ul {
+  padding-left: 20px;
+  margin-bottom: 25px;
+}
+
+.price-card ul li {
+  margin: 10px 0;
+  color: #d6dbff;
+  line-height: 1.5;
 }
 
 .price {
   font-size: 36px;
+  font-weight: 700;
   margin: 15px 0;
+}
+
+.price-card .choose-plan {
+  margin-top: auto;
+
+  width: 100%;
+
+  border: none;
+  cursor: pointer;
+
+  padding: 14px 20px;
+  border-radius: 50px;
+
+  background: linear-gradient(90deg, #1e3cff, #c2185b);
+  color: #fff;
+
+  font-size: 15px;
+  font-weight: 600;
+
+  transition: all .35s ease;
+}
+
+.price-card .choose-plan:hover {
+  transform: scale(1.04);
+  box-shadow: 0 0 30px rgba(140,80,255,.6);
 }
 
 .price-card.featured {
   border: 1px solid rgba(140,120,255,.5);
-  box-shadow: 0 0 60px rgba(140,120,255,.45);
+
+  box-shadow:
+    0 0 60px rgba(140,120,255,.45);
+
   position: relative;
 }
 
@@ -191,9 +248,13 @@ p {
   position: absolute;
   top: -14px;
   right: 20px;
+
   background: linear-gradient(90deg,#ff9800,#ff5722);
+
   padding: 6px 14px;
+
   border-radius: 20px;
+
   font-size: 12px;
 }
 
@@ -274,8 +335,66 @@ p {
 /* =====================
    RESPONSIVE
 ===================== */
+/* =====================
+MOBILE PRICING CAROUSEL
+===================== */
+
 @media (max-width: 900px) {
+
   .product-hero {
     grid-template-columns: 1fr;
   }
+
+  .pricing-cards {
+    display: flex;
+
+    flex-wrap: nowrap;
+
+    gap: 16px;
+
+    overflow-x: auto;
+    overflow-y: hidden;
+
+    padding: 30px 8vw 35px;
+
+    margin-left: -20px;
+    margin-right: -20px;
+
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+
+    -webkit-overflow-scrolling: touch;
+
+    scrollbar-width: none;
+  }
+
+  .pricing-cards::-webkit-scrollbar {
+    display: none;
+  }
+
+
+  /* Each card takes most of the screen */
+  .pricing-cards .price-card {
+
+    flex: 0 0 84vw;
+
+    max-width: 430px;
+
+    scroll-snap-align: center;
+
+    box-sizing: border-box;
+
+    transform: none;
+  }
+
+
+  .price-card.featured {
+    transform: none;
+  }
+
+  .price-card:hover,
+  .price-card.featured:hover {
+    transform: none;
+  }
+
 }
