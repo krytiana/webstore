@@ -503,8 +503,16 @@ p {
 .price-card.featured {
   border: 1px solid rgba(140, 120, 255, 0.5);
 
-  box-shadow:
-    0 0 40px rgba(140, 120, 255, 0.3);
+ 
+}
+
+.price-card.basic {
+  border: 1px solid rgba(248, 22, 22, 0.603);
+
+  
+}
+.price-card.done {
+  border: 1px solid rgba(30, 248, 22, 0.644);
 }
 
 .badge {
