@@ -4,6 +4,7 @@ import crypto from "crypto";
 import jwt from "jsonwebtoken";
 import { sendResetEmail, sendVerificationEmail, } from "../services/emailService";
 import User from "../models/User";
+import Subscriber from "../models/Subscriber";
 
 // Generate Refresh Token
 const generateRefreshToken = (user: any) => {
@@ -21,8 +22,10 @@ export const handleSignUp = async (req: Request, res: Response) => {
   try {
     console.log("Starting sign-up process for user:", username);
 
+    const normalizedEmail = email.toLowerCase();
+
     const existingUser = await User.findOne({
-      $or: [{ email }, { username }],
+      $or: [{ email: normalizedEmail }, { username }],
     });
 
     if (existingUser) {
@@ -42,6 +45,7 @@ export const handleSignUp = async (req: Request, res: Response) => {
       Date.now() + 24 * 60 * 60 * 1000
     );
     const isMarketingSubscribed =
+        marketingSubscribed === true ||
         marketingSubscribed === "true";
 
     const newUser = new User({
@@ -67,6 +71,20 @@ export const handleSignUp = async (req: Request, res: Response) => {
       newUser.email,
       verificationToken
     );
+
+    if (isMarketingSubscribed) {
+        const unsubscribeToken =
+            crypto.randomBytes(32).toString("hex");
+
+        await Subscriber.create({
+            user: newUser._id,
+            email: newUser.email,
+            fullname: newUser.fullname,
+            subscribed: true,
+            subscribedAt: new Date(),
+            unsubscribeToken,
+        });
+    }
 
    
 

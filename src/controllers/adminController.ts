@@ -366,3 +366,33 @@ export const deleteProduct = async (
     res.status(500).send("Error deleting product");
   }
 };
+
+// ==========================================
+// CAMPAIGN PAGE
+// ==========================================
+
+export const getCampaignPage = async (
+    req: Request,
+    res: Response
+) => {
+
+    try {
+
+        return res.render("admin/campaign", {
+            title: "Create Campaign"
+        });
+
+    } catch (error) {
+
+        console.error(
+            "❌ Error loading campaign page:",
+            error
+        );
+
+        return res.status(500).send(
+            "Unable to load campaign page."
+        );
+
+    }
+
+};

@@ -1,0 +1,843 @@
+<%- include("../partials/header") %>
+
+<section class="campaign-page">
+
+    <div class="campaign-header">
+
+        <div>
+            <h1>Create Campaign</h1>
+            <p>
+                Send an email to all active marketing subscribers.
+            </p>
+        </div>
+
+        <a href="/admin" class="admin-btn">
+            ← Back to Dashboard
+        </a>
+
+    </div>
+
+
+    <div class="campaign-card">
+
+        <form
+            id="campaignForm"
+        >
+
+            <div class="form-group">
+
+                <label for="subject">
+                    Email Subject
+                </label>
+
+                <input
+                    type="text"
+                    id="subject"
+                    name="subject"
+                    placeholder="Example: New templates are now available!"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="content">
+                    Email Content
+                </label>
+
+                <textarea
+                    id="content"
+                    name="content"
+                    rows="15"
+                    placeholder="Write your email content here..."
+                    required
+                ></textarea>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="recipientType">
+                    Send To
+                </label>
+
+                <select id="recipientType" name="recipientType">
+
+                    <option value="all">
+                        All Active Subscribers
+                    </option>
+
+                    <option value="specific">
+                        Specific Subscribers
+                    </option>
+
+                    <option value="date">
+                        Subscribers by Date
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- Specific subscribers -->
+
+            <div
+                id="specificRecipients"
+                class="recipient-section"
+                style="display:none;"
+            >
+
+                <label>
+                    Select Subscribers
+                </label>
+
+                <div id="subscriberList">
+                    Loading subscribers...
+                </div>
+
+            </div>
+
+
+            <!-- Date filter -->
+
+            <div
+                id="dateRecipients"
+                class="recipient-section"
+                style="display:none;"
+            >
+
+                <div class="date-fields">
+
+                    <div>
+
+                        <label for="startDate">
+                            From
+                        </label>
+
+                        <input
+                            type="date"
+                            id="startDate"
+                        >
+
+                    </div>
+
+
+                    <div>
+
+                        <label for="endDate">
+                            To
+                        </label>
+
+                        <input
+                            type="date"
+                            id="endDate"
+                        >
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="recipient-info">
+
+                <strong>
+                    Recipients
+                </strong>
+
+                <span id="subscriberCount">
+                    Loading subscribers...
+                </span>
+
+            </div>
+
+
+            <button
+                type="submit"
+                id="sendCampaignBtn"
+                class="send-btn"
+            >
+                Send Campaign
+            </button>
+
+        </form>
+
+
+        <div
+            id="campaignResult"
+            class="campaign-result"
+            style="display:none;"
+        ></div>
+
+    </div>
+
+</section>
+
+
+<style>
+
+.campaign-page {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 30px 20px;
+}
+
+.campaign-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    gap: 20px;
+}
+
+.campaign-header h1 {
+    margin: 0 0 6px;
+}
+
+.campaign-header p {
+    margin: 0;
+    opacity: .7;
+}
+
+.campaign-card {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0,0,0,.08);
+}
+
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-family: Arial, sans-serif;
+}
+
+.form-group textarea {
+    resize: vertical;
+}
+
+.recipient-info {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px;
+    margin-bottom: 20px;
+    background: #f5f5f5;
+    border-radius: 6px;
+}
+
+.send-btn {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 15px;
+}
+
+.send-btn:disabled {
+    opacity: .6;
+    cursor: not-allowed;
+}
+
+.campaign-result {
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 6px;
+}
+
+.admin-btn {
+    display: inline-block;
+    padding: 10px 16px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.form-group select {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+.recipient-section {
+    margin-bottom: 25px;
+}
+
+.recipient-section label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+#subscriberList {
+    max-height: 300px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 10px;
+}
+
+.subscriber-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px;
+}
+
+.subscriber-option input {
+    width: auto;
+}
+
+.date-fields {
+    display: flex;
+    gap: 20px;
+}
+
+.date-fields > div {
+    flex: 1;
+}
+
+.date-fields input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+@media (max-width: 600px) {
+
+    .date-fields {
+        flex-direction: column;
+    }
+
+}
+
+</style>
+
+<script>
+
+const recipientType =
+    document.getElementById("recipientType");
+
+const specificRecipients =
+    document.getElementById("specificRecipients");
+
+const dateRecipients =
+    document.getElementById("dateRecipients");
+
+const subscriberList =
+    document.getElementById("subscriberList");
+
+const startDate =
+    document.getElementById("startDate");
+
+const endDate =
+    document.getElementById("endDate");
+
+const form =
+    document.getElementById("campaignForm");
+
+const subjectInput =
+    document.getElementById("subject");
+
+const contentInput =
+    document.getElementById("content");
+
+const sendButton =
+    document.getElementById("sendCampaignBtn");
+
+const subscriberCount =
+    document.getElementById("subscriberCount");
+
+const result =
+    document.getElementById("campaignResult");
+
+let subscribers = [];
+
+
+// ==========================================
+// LOAD SUBSCRIBERS
+// ==========================================
+
+async function loadSubscribers() {
+
+    try {
+
+        const response =
+            await fetch("/api/marketing/subscribers");
+
+        const data =
+            await response.json();
+
+        if (!data.success) {
+
+            subscriberCount.textContent =
+                "Unable to load subscribers.";
+
+            return;
+        }
+
+        subscribers = data.subscribers;
+
+        subscriberCount.textContent =
+            `${data.count} active subscriber${data.count === 1 ? "" : "s"}`;
+
+        renderSubscriberList();
+
+    } catch (error) {
+
+        console.error(error);
+
+        subscriberCount.textContent =
+            "Unable to load subscribers.";
+
+    }
+
+}
+
+
+// ==========================================
+// RENDER SPECIFIC SUBSCRIBERS
+// ==========================================
+
+function renderSubscriberList() {
+
+    subscriberList.innerHTML = "";
+
+    if (subscribers.length === 0) {
+
+        subscriberList.textContent =
+            "No active subscribers.";
+
+        return;
+    }
+
+
+    subscribers.forEach(subscriber => {
+
+        const label =
+            document.createElement("label");
+
+        label.className =
+            "subscriber-option";
+
+
+        const checkbox =
+            document.createElement("input");
+
+        checkbox.type = "checkbox";
+
+        checkbox.value =
+            subscriber.email;
+
+        checkbox.className =
+            "subscriber-checkbox";
+
+
+        const span =
+            document.createElement("span");
+
+        span.textContent =
+            `${subscriber.fullname || "No name"} — ${subscriber.email}`;
+
+
+        label.appendChild(checkbox);
+
+        label.appendChild(span);
+
+        subscriberList.appendChild(label);
+
+    });
+
+}
+
+
+// ==========================================
+// RECIPIENT TYPE CHANGE
+// ==========================================
+
+recipientType.addEventListener("change", () => {
+
+    const type =
+        recipientType.value;
+
+
+    specificRecipients.style.display =
+        type === "specific"
+            ? "block"
+            : "none";
+
+
+    dateRecipients.style.display =
+        type === "date"
+            ? "block"
+            : "none";
+
+
+    updateRecipientCount();
+
+});
+
+
+// ==========================================
+// COUNT SELECTED RECIPIENTS
+// ==========================================
+
+function updateRecipientCount() {
+
+    const type =
+        recipientType.value;
+
+
+    if (type === "all") {
+
+        subscriberCount.textContent =
+            `${subscribers.length} active subscriber${subscribers.length === 1 ? "" : "s"}`;
+
+        return;
+    }
+
+
+    if (type === "specific") {
+
+        const selected =
+            document.querySelectorAll(
+                ".subscriber-checkbox:checked"
+            );
+
+
+        subscriberCount.textContent =
+            `${selected.length} selected subscriber${selected.length === 1 ? "" : "s"}`;
+
+        return;
+    }
+
+
+    if (type === "date") {
+
+        subscriberCount.textContent =
+            "Select a date range";
+
+    }
+
+}
+
+
+// Update count when checkbox changes
+
+subscriberList.addEventListener("change", () => {
+
+    updateRecipientCount();
+
+});
+
+
+// ==========================================
+// DATE CHANGE
+// ==========================================
+
+startDate.addEventListener(
+    "change",
+    updateRecipientCount
+);
+
+endDate.addEventListener(
+    "change",
+    updateRecipientCount
+);
+
+
+// ==========================================
+// SEND CAMPAIGN
+// ==========================================
+
+form.addEventListener("submit", async (event) => {
+
+    event.preventDefault();
+
+
+    const subject =
+        subjectInput.value.trim();
+
+    const content =
+        contentInput.value.trim();
+
+    const type =
+        recipientType.value;
+
+
+    if (!subject || !content) {
+
+        alert(
+            "Please enter a subject and email content."
+        );
+
+        return;
+
+    }
+
+
+    // ======================================
+    // SPECIFIC VALIDATION
+    // ======================================
+
+    let selectedEmails = [];
+
+
+    if (type === "specific") {
+
+        selectedEmails =
+            Array.from(
+                document.querySelectorAll(
+                    ".subscriber-checkbox:checked"
+                )
+            )
+            .map(
+                checkbox => checkbox.value
+            );
+
+
+        if (selectedEmails.length === 0) {
+
+            alert(
+                "Please select at least one subscriber."
+            );
+
+            return;
+
+        }
+
+    }
+
+
+    // ======================================
+    // DATE VALIDATION
+    // ======================================
+
+    if (type === "date") {
+
+        if (!startDate.value || !endDate.value) {
+
+            alert(
+                "Please select both start and end dates."
+            );
+
+            return;
+
+        }
+
+
+        if (startDate.value > endDate.value) {
+
+            alert(
+                "Start date cannot be after end date."
+            );
+
+            return;
+
+        }
+
+    }
+
+
+    // ======================================
+    // CONFIRMATION MESSAGE
+    // ======================================
+
+    let recipientMessage;
+
+
+    if (type === "all") {
+
+        recipientMessage =
+            `all ${subscribers.length} active subscribers`;
+
+    }
+
+
+    if (type === "specific") {
+
+        recipientMessage =
+            `${selectedEmails.length} selected subscriber${selectedEmails.length === 1 ? "" : "s"}`;
+
+    }
+
+
+    if (type === "date") {
+
+        recipientMessage =
+            `subscribers from ${startDate.value} to ${endDate.value}`;
+
+    }
+
+
+    const confirmed =
+        confirm(
+            `Are you sure you want to send this campaign to ${recipientMessage}?`
+        );
+
+
+    if (!confirmed) {
+
+        return;
+
+    }
+
+
+    sendButton.disabled = true;
+
+    sendButton.textContent =
+        "Sending Campaign...";
+
+
+    result.style.display =
+        "none";
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/marketing/campaign",
+                {
+
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+
+                        subject,
+
+                        content,
+
+                        recipientType: type,
+
+                        selectedEmails,
+
+                        startDate:
+                            startDate.value,
+
+                        endDate:
+                            endDate.value
+
+                    })
+
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        result.style.display =
+            "block";
+
+
+        if (data.success) {
+
+            result.innerHTML = `
+
+                <strong>
+                    Campaign completed.
+                </strong>
+
+                <br><br>
+
+                Recipients:
+                ${data.totalRecipients}
+
+                <br>
+
+                Successful:
+                ${data.successful}
+
+                <br>
+
+                Failed:
+                ${data.failed}
+
+            `;
+
+
+            form.reset();
+
+            specificRecipients.style.display =
+                "none";
+
+            dateRecipients.style.display =
+                "none";
+
+
+            loadSubscribers();
+
+        } else {
+
+            result.innerHTML =
+                `<strong>${data.message}</strong>`;
+
+        }
+
+
+    } catch (error) {
+
+        console.error(error);
+
+
+        result.style.display =
+            "block";
+
+
+        result.innerHTML =
+            "<strong>Unable to send campaign.</strong>";
+
+    }
+
+
+    sendButton.disabled =
+        false;
+
+
+    sendButton.textContent =
+        "Send Campaign";
+
+});
+
+
+// ==========================================
+// INITIAL LOAD
+// ==========================================
+
+loadSubscribers();
+
+</script>
+
+
+<%- include("../partials/footer") %>

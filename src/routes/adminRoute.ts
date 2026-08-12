@@ -7,8 +7,10 @@ import {
   postAddProduct,
   getEditProduct,
   postEditProduct,
-  deleteProduct
+  deleteProduct,
+  getCampaignPage
 } from "../controllers/adminController";
+
 
 const router = Router();
 
@@ -27,5 +29,8 @@ router.post("/edit-product/:id", postEditProduct);
 
 // Delete product
 router.post("/delete-product/:id", deleteProduct);
+
+// Campaign page
+router.get("/campaign", getCampaignPage);
 
 export default router;

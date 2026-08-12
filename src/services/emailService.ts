@@ -1,7 +1,7 @@
 // src/services/emailService.ts
 import nodemailer from "nodemailer";
 
-const transporter = nodemailer.createTransport({
+export const transporter = nodemailer.createTransport({
   host: process.env.EMAIL_HOST || "mail.privateemail.com",
   port: Number(process.env.EMAIL_PORT) || 465,
   secure: true, // true for port 465
