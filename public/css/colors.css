@@ -1,13 +1,4 @@
 
-/* ============================================================
-   PRODUCT DETAILS PAGE
-============================================================ */
-
-
-/* ============================================================
-   GLOBAL
-============================================================ */
-
 * {
   box-sizing: border-box;
 }
@@ -336,6 +327,7 @@ p {
 .box ul {
   padding-left: 0;
   list-style: none;
+  
 }
 
 .box ul li {
@@ -397,7 +389,7 @@ p {
   display: grid;
 
   grid-template-columns:
-    repeat(3, minmax(0, 1fr));
+  repeat(3, minmax(0, 1fr));
 
   gap: 30px;
 
@@ -411,17 +403,17 @@ p {
   flex-direction: column;
 
   min-width: 0;
+  
 }
 
 .price-card h3 {
   margin-top: 0;
+  margin-bottom: 0;
 }
 
 .price-card .plan-description {
   color: #cfd3ff;
-  line-height: 1.6;
-
-  min-height: 78px;
+ 
 }
 
 .price-card ul {
@@ -434,7 +426,7 @@ p {
 
   color: #d6dbff;
 
-  line-height: 1.5;
+  line-height: 1;
 }
 
 .price {
@@ -446,7 +438,16 @@ p {
   color: #ffffff;
 }
 
+.price-card .pbf{
+  margin: 0px;
+  color: green;
+}
 
+.price-card .pls{
+  margin: 0px;
+  color: #ff5722;
+
+}
 /* ============================================================
    PLAN BUTTON
 ============================================================ */
@@ -634,20 +635,12 @@ p {
    SMALL MOBILE DEVICES
 ============================================================ */
 
-/* ============================================================
-   SMALL MOBILE DEVICES
-============================================================ */
-
 @media (max-width: 600px) {
 
   section {
     margin: 55px auto;
     padding: 0 16px;
   }
-
-  /* ----------------------------------------------------------
-     HERO
-  ---------------------------------------------------------- */
 
   .product-hero {
     gap: 30px;
@@ -675,74 +668,79 @@ p {
     text-align: center;
   }
 
-
-  /* ----------------------------------------------------------
-     DEMO NOTE
-  ---------------------------------------------------------- */
-
   .demo-note {
     font-size: 14px;
   }
 
-
-  /* ----------------------------------------------------------
-     CARDS
-  ---------------------------------------------------------- */
-
   .box,
   .price-card {
-    padding: 6px;
-    max-width: none;
-    
+    padding: 22px;
   }
 
-
-  /* ----------------------------------------------------------
-     PRICING CARD
-  ---------------------------------------------------------- */
+  
 
   .price-card h3 {
-    margin: 0 0 10px;
-    padding: 0;
+    margin-top: 0;
+    margin-bottom: 0;
   }
 
   .price-card .plan-description {
-    margin: 0 0 15px;
-    padding: 0;
-
-    min-height: 0;
-
-    line-height: 1.2;
-  }
-
-  .price-card .price {
-    margin: 0px 0 0px;
-    padding: 0;
-
-    font-size: 32px;
-    line-height: 1.2;
+    color: #cfd3ff;
+  
   }
 
   .price-card ul {
-    margin: 0 0 25px;
     padding-left: 20px;
+    margin-bottom: 25px;
   }
 
   .price-card ul li {
-    margin: 8px 0;
-    padding: 0;
+    margin: 0;
+
+    color: #d6dbff;
 
     line-height: 1.5;
   }
 
+  .price {
+    font-size: 26px;
+    font-weight: 700;
 
-  /* ----------------------------------------------------------
-     BUTTON
-  ---------------------------------------------------------- */
+    margin: 0;
 
-  .price-card .choose-plan {
-    margin-top: auto;
+    color: #ffffff;
   }
+
+  .price-card .plan-description {
+    color: #cfd3ff;
+    line-height: 1.2;
+  
+  }
+
+  .price-card ul {
+    padding-left: 5px;
+    margin-bottom: 5px;
+  }
+
+  .price-card .pbf{
+    margin: 0px;
+    color: green;
+  }
+
+  .price-card .pls{
+    margin: 0px;
+    color: #ff5722;
+
+  }
+
+  .pricing-cards {
+
+    gap: 10px;
+
+  
+  }
+
+  
 
 }
 
@@ -757,14 +755,6 @@ p {
     scroll-behavior: auto;
   }
 
-
-
-
-
-
-
-
-
   *,
   *::before,
   *::after {
@@ -778,4 +768,3 @@ p {
   }
 
 }
-
