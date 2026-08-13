@@ -1,58 +1,22 @@
-// src/services/emailService.ts
-// once in production we will replace this with smpt
-const BREVO_API_URL = "https://api.brevo.com/v3/smtp/email";
+// src/services/emailService.smtp.ts
+//inactive for now, it has replaced by brevo api setup in emailService.ts 
+import nodemailer from "nodemailer";
 
-export const transporter = {
-  sendMail: async ({
-    from,
-    to,
-    subject,
-    html,
-  }: {
-    from: {
-      name: string;
-      address: string;
-    };
-    to: string;
-    subject: string;
-    html: string;
-  }) => {
-    const response = await fetch(BREVO_API_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "api-key": process.env.BREVO_API_KEY || "",
-      },
-      body: JSON.stringify({
-        sender: {
-          name: from.name,
-          email: from.address,
-        },
-        to: [
-          {
-            email: to,
-          },
-        ],
-        subject,
-        htmlContent: html,
-      }),
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(
-        `Brevo API error (${response.status}): ${errorText}`
-      );
-    }
-
-    return response.json();
+export const transporter = nodemailer.createTransport({
+  host: process.env.EMAIL_HOST || "mail.privateemail.com",
+  port: Number(process.env.EMAIL_PORT) || 465,
+  secure: true, // true for port 465
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASSWORD,
   },
-};
+});
 
 const sender = {
   name: "Code CartHub",
   address: process.env.EMAIL_SENDER || "support@codecarthub.com",
 };
+
 // ---------------------------
 // Send password reset email
 // ---------------------------
