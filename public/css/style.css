@@ -6,6 +6,9 @@ body {
 header {
   background: #111;
   padding: 1rem;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
 }
 
 nav a {
@@ -25,37 +28,175 @@ nav a {
   margin-bottom: -15px;
 }
 
-.chat-fab {
-    position: fixed;
-    bottom: 24px;
-    right: 24px;
-    width: 50px;
-    height: 50px;
-    background: #2563eb;
-    color: #fff;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-decoration: none;
-    font-size: 28px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-    z-index: 9999;
-    transition: all 0.3s ease;
-    border: 2px solid #fff;
+
+/* =====================================================
+   AI CHAT WIDGET
+===================================================== */
+
+.chat-widget {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+
+  z-index: 9999;
 }
+
+
+/* =====================================================
+   AI CONSULTANT BADGE
+===================================================== */
+
+.chat-badge {
+  background: #ffffff;
+  color: #111827;
+
+  padding: 10px 16px;
+
+  border-radius: 14px;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  box-shadow:
+    0 8px 25px rgba(0, 0, 0, 0.25);
+
+  white-space: nowrap;
+
+  position: relative;
+
+  animation: chatBadgeFloat 3s ease-in-out infinite;
+
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+
+  transition:
+    opacity 0.4s ease,
+    visibility 0.4s ease;
+}
+
+.chat-badge.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Small pointer pointing toward chat button */
+
+.chat-badge::after {
+  content: "";
+
+  position: absolute;
+
+  right: 18px;
+  bottom: -7px;
+
+  width: 14px;
+  height: 14px;
+
+  background: #ffffff;
+
+  transform: rotate(45deg);
+}
+
+
+/* =====================================================
+   CHAT BUTTON
+===================================================== */
+
+.chat-fab {
+  width: 56px;
+  height: 56px;
+
+  background: #2563eb;
+
+  color: #fff;
+
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  text-decoration: none;
+
+  font-size: 28px;
+
+  box-shadow:
+    0 6px 20px rgba(37, 99, 235, 0.45);
+
+  border: 2px solid #fff;
+
+  transition:
+    transform 0.3s ease,
+    background 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
 
 .chat-fab:hover {
-    transform: scale(1.1);
-    background: #1d4ed8;
+  transform: scale(1.1);
+
+  background: #1d4ed8;
+
+  box-shadow:
+    0 10px 30px rgba(37, 99, 235, 0.6);
 }
 
+
+/* =====================================================
+   BADGE ANIMATION
+===================================================== */
+
+@keyframes chatBadgeFloat {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-4px);
+  }
+
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
 @media (max-width: 600px) {
-   
-  
 
-  
+  .chat-widget {
+    right: 18px;
+    bottom: 18px;
+  }
 
-  
+
+  .chat-badge {
+    font-size: 12px;
+
+    padding: 9px 13px;
+
+    max-width: 230px;
+
+    white-space: normal;
+
+    text-align: center;
+  }
+
+
+  .chat-fab {
+    width: 52px;
+    height: 52px;
+
+    font-size: 25px;
+  }
+
 }
 

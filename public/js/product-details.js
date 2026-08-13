@@ -495,18 +495,57 @@ document.addEventListener(
 
 
 // ============================================================
-// CENTER FEATURED PLAN AFTER PAGE LOAD
+// CENTER FEATURED PLAN WHEN PRICING SECTION BECOMES VISIBLE
 // ============================================================
 
-window.addEventListener("load", () => {
+const pricingSection =
+  document.getElementById("pricing");
 
-  setTimeout(() => {
+let pricingHasBeenSeen = false;
 
-    centerFeaturedPlan();
 
-  }, 150);
+if (pricingSection && pricingContainer) {
 
-});
+  const pricingObserver =
+    new IntersectionObserver(
+      entries => {
+
+        const entry = entries[0];
+
+        if (!entry.isIntersecting) {
+          return;
+        }
+
+        // Only center the featured plan once.
+        if (pricingHasBeenSeen) {
+          return;
+        }
+
+        pricingHasBeenSeen = true;
+
+
+        // Give the browser a moment to finish
+        // positioning the pricing section.
+        setTimeout(() => {
+
+          centerFeaturedPlan();
+
+        }, 150);
+
+
+        // We don't need to observe it anymore.
+        pricingObserver.disconnect();
+
+      },
+      {
+        threshold: 0.25
+      }
+    );
+
+
+  pricingObserver.observe(pricingSection);
+
+}
 
 
 // ============================================================

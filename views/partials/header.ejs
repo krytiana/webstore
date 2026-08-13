@@ -6,15 +6,71 @@
   <title><%= title || "WebStore" %></title>
   <link rel="stylesheet" href="/css/style.css" />
 </head>
+
 <body>
+
 <header>
   <nav>
-    
-    <a href="/"><img src="/images/logoi.png" alt="Logo" class="logo" /></a>
+
+    <a href="/">
+      <img
+        src="/images/logoi.png"
+        alt="Logo"
+        class="logo"
+      />
+    </a>
+
     <a href="/products">Products</a>
+
     <a href="/pricing">Pricing</a>
+
     <a href="/dashboard">Dashboard</a>
-    <a href="/chat" class="chat-fab">💬</a>
+
+    <!-- AI CHAT -->
+    <div class="chat-widget">
+
+      <div class="chat-badge">
+        Hello 👋 I'm your AI consultant
+      </div>
+
+      <a
+        href="/chat"
+        class="chat-fab"
+        aria-label="Chat with your AI consultant"
+      >
+        💬
+      </a>
+
+    </div>
+
   </nav>
 </header>
+
 <main>
+
+  <script>
+  document.addEventListener("DOMContentLoaded", () => {
+
+    const chatBadge =
+      document.querySelector(".chat-badge");
+
+    if (!chatBadge) return;
+
+
+    // Wait 4 seconds after page load
+    setTimeout(() => {
+
+      chatBadge.classList.add("show");
+
+
+      // Keep visible for 5 seconds
+      setTimeout(() => {
+
+        chatBadge.classList.remove("show");
+
+      }, 9000);
+
+    }, 4000);
+
+  });
+</script>

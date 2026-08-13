@@ -1,8 +1,381 @@
-</main>
+<footer class="site-footer">
 
-<footer style="text-align: center; padding: 20px;  margin-top: 40px;">
-  <p>© <%= new Date().getFullYear() %> Code CartHub</p>
-  <a style="text-decoration: none;" href="/documentation.html">Documentation</a>
+  <div class="footer-container">
+
+    <!-- =========================
+         BRAND / ABOUT
+    ========================== -->
+    <div class="footer-column footer-brand">
+
+      <img
+        src="/images/logow.png"
+        alt="Code CartHub"
+        class="footer-logo"
+      />
+
+      <p>
+        Ready-to-use websites and digital solutions
+        for businesses, startups and creators.
+      </p>
+
+    </div>
+
+
+    <!-- =========================
+         CONTACT
+    ========================== -->
+    <div class="footer-column">
+
+      <h3>Contact</h3>
+
+      <ul>
+        <li>
+          <strong>Support:</strong>
+          <a href="mailto:support@codecarthub.com">
+            support@codecarthub.com
+          </a>
+        </li>
+
+        <li>
+          <strong>Email:</strong>
+          <a href="mailto:codecarthub@gmail.com">
+            codecarthub@gmail.com
+          </a>
+        </li>
+
+        <li>
+          <strong>WhatsApp:</strong>
+          <a
+            href="https://wa.me/233555952767"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            +233 55 595 2767
+          </a>
+        </li>
+      </ul>
+
+    </div>
+
+
+    <!-- =========================
+         QUICK LINKS
+    ========================== -->
+    <div class="footer-column">
+
+      <h3>Quick Links</h3>
+
+      <ul>
+
+        <li>
+          <a href="/documentation.html">
+            Documentation
+          </a>
+        </li>
+
+        <li>
+          <a href="/chat">
+            AI Consultant
+          </a>
+        </li>
+
+        <li>
+          <a href="/products">
+            All Products
+          </a>
+        </li>
+
+        <li>
+          <a href="/dashboard">
+            Dashboard
+          </a>
+        </li>
+
+        <li>
+          <a href="/privacy">
+            Privacy Policy
+          </a>
+        </li>
+
+      </ul>
+
+    </div>
+
+
+    <!-- =========================
+         TECHNOLOGY / SERVICES
+    ========================== -->
+    <div class="footer-column">
+
+      <h3>Technology & Services</h3>
+
+      <ul class="partner-list">
+
+        <li>Render</li>
+        <li>Namecheap</li>
+        <li>Brevo</li>
+        <li>ImageKit</li>
+        <li>Stripe</li>
+        <li>MongoDB</li>
+        <li>Paystack</li>
+
+      </ul>
+
+    </div>
+
+
+    <!-- =========================
+         SOCIAL MEDIA
+    ========================== -->
+    <div class="footer-column">
+
+      <h3>Follow Us</h3>
+
+      <div class="footer-social">
+
+        <a
+          href="#"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Facebook"
+        >
+          Facebook
+        </a>
+
+        <a
+          href="#"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="TikTok"
+        >
+          TikTok
+        </a>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- =========================
+       BOTTOM BAR
+  ========================== -->
+  <div class="footer-bottom">
+
+    <p>
+      © <%= new Date().getFullYear() %> Code CartHub.
+      All rights reserved.
+    </p>
+
+    <div class="footer-bottom-links">
+
+      <a href="/privacy">
+        Privacy Policy
+      </a>
+
+    </div>
+
+  </div>
+
 </footer>
+<style>
+
+/* =====================================================
+   FOOTER
+===================================================== */
+
+.site-footer {
+  background: #080810;
+  color: #fff;
+
+  margin-top: 80px;
+  padding: 60px 20px 20px;
+
+  border-top: 1px solid rgba(255,255,255,.08);
+}
+
+
+/* =====================================================
+   FOOTER CONTAINER
+===================================================== */
+
+.footer-container {
+  max-width: 1200px;
+  margin: 0 auto;
+
+  display: grid;
+
+  grid-template-columns:
+    1.4fr
+    1.2fr
+    1fr
+    1fr
+    .8fr;
+
+  gap: 40px;
+}
+
+
+/* =====================================================
+   FOOTER COLUMNS
+===================================================== */
+
+.footer-column h3 {
+  font-size: 16px;
+  margin-bottom: 18px;
+  color: #fff;
+}
+
+
+.footer-column p {
+  color: #aeb3d1;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+
+.footer-column ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+
+.footer-column li {
+  margin-bottom: 12px;
+
+  color: #aeb3d1;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+
+.footer-column a {
+  color: #aeb3d1;
+  text-decoration: none;
+
+  transition:
+    color .25s ease;
+}
+
+
+.footer-column a:hover {
+  color: #6c7cff;
+}
+
+
+/* =====================================================
+   FOOTER LOGO
+===================================================== */
+
+.footer-logo {
+  width: 160px;
+  height: auto;
+
+  margin-bottom: 15px;
+}
+
+
+/* =====================================================
+   PARTNERS
+===================================================== */
+
+.partner-list {
+  display: flex;
+  flex-direction: column;
+}
+
+
+/* =====================================================
+   SOCIAL MEDIA
+===================================================== */
+
+.footer-social {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+
+/* =====================================================
+   BOTTOM BAR
+===================================================== */
+
+.footer-bottom {
+  max-width: 1200px;
+
+  margin: 50px auto 0;
+  padding-top: 20px;
+
+  border-top: 1px solid rgba(255,255,255,.08);
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+
+.footer-bottom p {
+  margin: 0;
+
+  color: #8f94b2;
+  font-size: 13px;
+}
+
+
+.footer-bottom-links a {
+  color: #8f94b2;
+  text-decoration: none;
+
+  font-size: 13px;
+}
+
+
+.footer-bottom-links a:hover {
+  color: #6c7cff;
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 900px) {
+
+  .footer-container {
+    grid-template-columns:
+      repeat(2, 1fr);
+
+    gap: 35px;
+  }
+
+}
+
+
+@media (max-width: 600px) {
+
+  .site-footer {
+    padding: 45px 20px 20px;
+  }
+
+
+  .footer-container {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+
+
+  .footer-bottom {
+    flex-direction: column;
+    text-align: center;
+  }
+
+}
+
+</style>
+
+
 </body>
 </html>
