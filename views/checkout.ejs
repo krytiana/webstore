@@ -5,30 +5,37 @@
 <section class="checkout">
   <h1>Checkout: <%= product.name %></h1>
   <p>Selected Plan: <strong><%= planLabel %></strong></p>
-  <p>Price: <strong>$<%= planPrice %></strong></p>
+  <p>Price: <strong>GH₵<%= planPrice %></strong></p>
 
-  <button id="checkoutBtn" class="btn primary big">Proceed to Payment</button>
+  <button id="checkoutBtn" class="btn primary big">
+    Proceed to Payment
+  </button>
 </section>
 
-<script src="https://js.stripe.com/v3/"></script>
-
 <script>
-  console.log("Stripe key:", "<%= stripeKey %>");
-  const stripe = Stripe("<%= stripeKey %>");
   const checkoutBtn = document.getElementById("checkoutBtn");
 
   checkoutBtn.addEventListener("click", async () => {
     try {
-      const token = localStorage.getItem("token"); // ✅ get token
 
-      console.log("TOKEN:", token); // debug
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        alert("Please log in before proceeding to payment.");
+        return;
+      }
+
+      checkoutBtn.disabled = true;
+      checkoutBtn.textContent = "Connecting to Paystack...";
 
       const res = await fetch("/api/payments/cart-checkout", {
         method: "POST",
+
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}` // ✅ ADD THIS
+          "Authorization": `Bearer ${token}`
         },
+
         body: JSON.stringify({
           productSlug: "<%= product.slug %>",
           plan: "<%= plan %>"
@@ -37,15 +44,31 @@
 
       const data = await res.json();
 
-      if (data.url) {
+      if (data.success && data.url) {
         window.location.href = data.url;
-      } else {
-        alert("Failed to create checkout session");
-        console.error(data);
+        return;
       }
+
+      console.error("Paystack checkout response:", data);
+
+      alert(
+        data.message ||
+        "Failed to create Paystack checkout."
+      );
+
+      checkoutBtn.disabled = false;
+      checkoutBtn.textContent = "Proceed to Payment";
+
     } catch (err) {
+
       console.error("Checkout error:", err);
-      alert("Something went wrong, try again.");
+
+      alert(
+        "Something went wrong while connecting to Paystack."
+      );
+
+      checkoutBtn.disabled = false;
+      checkoutBtn.textContent = "Proceed to Payment";
     }
   });
 </script>

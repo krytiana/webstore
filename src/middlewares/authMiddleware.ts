@@ -6,7 +6,7 @@ import { ObjectId } from 'mongodb';
 import { db } from '../config/db'; // Import MongoDB connection
 
 // Custom interface for the JWT payload
-interface CustomJwtPayload extends JwtPayload {
+export interface CustomJwtPayload extends JwtPayload {
   id: string;
   userId: string;
   email: string;

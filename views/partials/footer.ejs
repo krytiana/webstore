@@ -91,11 +91,6 @@
           </a>
         </li>
 
-        <li>
-          <a href="/privacy">
-            Privacy Policy
-          </a>
-        </li>
 
       </ul>
 
@@ -107,17 +102,49 @@
     ========================== -->
     <div class="footer-column">
 
-      <h3>Technology & Services</h3>
+  <h3>Technology & Services</h3>
 
-      <ul class="partner-list">
+  <ul class="service-list">
 
-        <li>Render</li>
-        <li>Namecheap</li>
-        <li>Brevo</li>
-        <li>ImageKit</li>
-        <li>Stripe</li>
-        <li>MongoDB</li>
-        <li>Paystack</li>
+    <li>
+      <img src="/images/services/render.png" alt="Render">
+      <span>Render</span>
+    </li>
+
+    <li>
+      <img src="/images/services/github.webp" alt="github">
+      <span>GitHub</span>
+    </li>
+
+    <li>
+      <img src="/images/services/namecheap.png" alt="Namecheap">
+      <span>Namecheap</span>
+    </li>
+
+        <li>
+          <img src="/images/services/brevo.jpeg" alt="Brevo">
+          <span>Brevo</span>
+        </li>
+
+        <li>
+          <img src="/images/services/imagekit.jpeg" alt="ImageKit">
+          <span>ImageKit</span>
+        </li>
+
+        <li>
+          <img src="/images/services/stripe.png" alt="Stripe">
+          <span>Stripe</span>
+        </li>
+
+        <li>
+          <img src="/images/services/mongodb.png" alt="MongoDB">
+          <span>MongoDB</span>
+        </li>
+
+        <li>
+          <img src="/images/services/paystack.png" alt="Paystack">
+          <span>Paystack</span>
+        </li>
 
       </ul>
 
@@ -139,16 +166,20 @@
           rel="noopener noreferrer"
           aria-label="Facebook"
         >
-          Facebook
+          <img src="/images/services/facebook.webp" alt="Paystack">
+          <span>Facebook</span>
         </a>
+
+       
 
         <a
           href="#"
           target="_blank"
           rel="noopener noreferrer"
-          aria-label="TikTok"
+          aria-label="ticktok"
         >
-          TikTok
+          <img src="/images/services/tiktok.avif" alt="Paystack">
+          <span>TikTok</span>
         </a>
 
       </div>
@@ -278,16 +309,6 @@
 
 
 /* =====================================================
-   PARTNERS
-===================================================== */
-
-.partner-list {
-  display: flex;
-  flex-direction: column;
-}
-
-
-/* =====================================================
    SOCIAL MEDIA
 ===================================================== */
 
@@ -295,6 +316,79 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-social a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  
+  color: #aeb3d1;
+  text-decoration: none;
+}
+
+.footer-social span {
+  display: inline-flex;
+  align-items: center;
+  line-height: 1;
+  font-size: 14px;
+}
+
+.footer-social img {
+  width: 32px;
+  height: 32px;
+
+  border-radius: 50%;
+
+  object-fit: contain;
+
+  background: #fff;
+  padding: 5px;
+
+  box-sizing: border-box;
+}
+
+
+
+
+/* =====================================================
+   TECHNOLOGY & SERVICES
+===================================================== */
+
+.service-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.service-list li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  color: #aeb3d1;
+  font-size: 14px;
+}
+
+.service-list  img {
+  width: 32px;
+  height: 32px;
+
+  border-radius: 50%;
+
+  object-fit: contain;
+
+  background: #fff;
+  padding: 5px;
+
+  box-sizing: border-box;
 }
 
 

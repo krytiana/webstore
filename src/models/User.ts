@@ -8,6 +8,8 @@ interface IUser extends Document {
   password: string;
   country: string;
 
+  role: "user" | "admin";
+
   refreshToken?: string | null;
 
   resetToken?: string | null;
@@ -52,6 +54,12 @@ const UserSchema = new Schema<IUser>(
     country: {
       type: String,
       required: true,
+    },
+
+    role: {
+      type: String,
+      enum: ["user", "admin"],
+      default: "user",
     },
 
     refreshToken: {

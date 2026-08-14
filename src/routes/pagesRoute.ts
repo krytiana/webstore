@@ -57,18 +57,17 @@ const planKey = plan.toString() as keyof typeof planMap;
 
 const planInfo = planMap[planKey];
 
-if (!planInfo) {
-return res.redirect("/");
-}
+  if (!planInfo) {
+  return res.redirect("/");
+  }
 
-res.render("checkout", {
-title: `Checkout - ${product.name}`,
-product,
-plan: planKey,
-planLabel: planInfo.label,
-planPrice: planInfo.price,
-stripeKey: process.env.STRIPE_PUBLISHABLE_KEY || "",
-});
-});
+    res.render("checkout", {
+      title: `Checkout - ${product.name}`,
+      product,
+      plan: planKey,
+      planLabel: planInfo.label,
+      planPrice: planInfo.price,
+    });
+  });
 
 export default router;

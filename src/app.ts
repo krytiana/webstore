@@ -17,7 +17,7 @@ import adminRoutes from "./routes/adminRoute";
 import userRoutes from "./routes/userRoutes";
 import authRoutes from "./routes/authRoute";
 import { refreshToken } from "./middlewares/authMiddleware";
-import stripeRoute from "./routes/stripeRoute";
+import paystackRoute from "./routes/paystackRoute";
 import downloadRoute from "./routes/downloadRoute";
 import dashboardRoutes from "./routes/dashboardRoute";
 import deployRoute from "./routes/deployRoute";
@@ -51,9 +51,9 @@ app.use(
 );
 
 // ------------------------
-// 🚨 STRIPE ROUTES FIRST
+// 💳 PAYSTACK ROUTES FIRST
 // ------------------------
-app.use("/api/payments", stripeRoute);
+app.use("/api/payments", paystackRoute);
 
 // ------------------------
 // Middleware
