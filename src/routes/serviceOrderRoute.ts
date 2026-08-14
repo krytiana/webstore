@@ -1,9 +1,21 @@
 import { Router, Response } from "express";
 import { authenticateToken, RequestWithUser } from "../middlewares/authMiddleware";
 import ServiceOrder from "../models/ServiceOrder";
+import {
+  notifyAdminDoneForYou
+} from "../controllers/serviceOrderController";
 
 const router = Router();
 
+// ============================================================
+// NOTIFY ADMIN — DONE FOR YOU
+// ============================================================
+
+router.post(
+  "/notify-admin",
+  authenticateToken,
+  notifyAdminDoneForYou
+);
 
 // ============================================================
 // VIEW SERVICE ORDER

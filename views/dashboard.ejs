@@ -51,93 +51,234 @@
         <!-- SERVICE ORDERS -->
         <!-- ================================================== -->
 
-        <h4>Your Services</h4>
+        
+        <!-- ================================================== -->
+<!-- SERVICE ORDERS -->
+<!-- ================================================== -->
 
-        <% if (serviceOrders.length > 0) { %>
+<h4>Your Services</h4>
 
-          <% serviceOrders.forEach(order => { %>
+<% if (serviceOrders.length > 0) { %>
 
-            <div class="card">
+  <% serviceOrders.forEach(order => { %>
 
-              <h2>
-                <%= order.product.name %>
-              </h2>
+    <div class="card">
 
-              <% if (order.product.media?.image) { %>
+      <h2>
+        <%= order.product.name %>
+      </h2>
 
-                <img
-                  src="<%= order.product.media.image %>"
-                  width="150"
-                >
+      <% if (order.product.media?.image) { %>
 
-              <% } %>
+        <img
+          src="<%= order.product.media.image %>"
+          width="150"
+          alt="<%= order.product.name %>"
+        >
 
+      <% } %>
 
-              <p>
-                <strong>Plan:</strong>
-                <%= order.plan %>
-              </p>
+      <p>
+        <strong>Plan:</strong>
+        <%= order.plan %>
+      </p>
 
+      <p>
+        <strong>Payment:</strong>
+        <%= order.paymentStatus %>
+      </p>
 
-              <p>
-                <strong>Payment:</strong>
-                <%= order.paymentStatus %>
-              </p>
-
-
-              <p>
-                <strong>Status:</strong>
-                <%= order.status %>
-              </p>
-
-
-              <% if (order.status === "pending") { %>
-
-                <p>
-                  Your service order has been received.
-                  You can continue from here.
-                </p>
-
-                <a
-                  href="/deploy/<%= order.product._id %>"
-                  class="deploy-btn"
-                >
-                  Continue Setup
-                </a>
-
-              <% } %>
+      <p>
+        <strong>Status:</strong>
+        <%= order.status %>
+      </p>
 
 
-              <% if (order.status === "inProgress") { %>
+      <!-- ============================================== -->
+      <!-- ASSISTED SETUP -->
+      <!-- ============================================== -->
 
-                <p>
-                  Your service is currently in progress.
-                </p>
+      <% if (
+        order.status === "pending" &&
+        order.plan === "assistedSetup"
+      ) { %>
 
-              <% } %>
+        <p>
+          Your assisted setup order has been received.
+          You can continue from here.
+        </p>
+
+        <a
+          href="/deploy/<%= order.product._id %>"
+          class="deploy-btn"
+        >
+          Continue Setup
+        </a>
+
+      <% } %>
 
 
-              <% if (order.status === "completed") { %>
+      <!-- ============================================== -->
+      <!-- DONE FOR YOU -->
+      <!-- ============================================== -->
 
-                <p>
-                  Your service has been completed.
-                </p>
+      <% if (
+        order.status === "pending" &&
+        order.plan === "doneForYou"
+      ) { %>
 
-              <% } %>
+        <p>
+          Your order has been received.
+          Our team will handle the setup and deployment
+          for you.
+        </p>
+
+        <p>
+          <strong>Next step:</strong>
+          Notify our team when you are ready for us to begin.
+        </p>
+
+        <button
+          type="button"
+          class="notify-admin-btn"
+          data-order-id="<%= order._id %>"
+        >
+          Notify Admin
+        </button>
+
+      <% } %>
 
 
-            </div>
+      <!-- ============================================== -->
+      <!-- IN PROGRESS -->
+      <!-- ============================================== -->
 
-          <% }); %>
+      <% if (order.status === "inProgress") { %>
 
-        <% } else { %>
+        <p>
+          Your service is currently in progress.
+        </p>
 
-          <p>No service orders found.</p>
+      <% } %>
 
-        <% } %>
+
+      <!-- ============================================== -->
+      <!-- COMPLETED -->
+      <!-- ============================================== -->
+
+      <% if (order.status === "completed") { %>
+
+        <p>
+          Your service has been completed.
+        </p>
+
+      <% } %>
+
+    </div>
+
+  <% }); %>
+
+<% } else { %>
+
+  <p>No service orders found.</p>
+
+<% } %>
 
   </section>
 
+<script>
 
+document.querySelectorAll(".notify-admin-btn")
+  .forEach(button => {
+
+    button.addEventListener("click", async () => {
+
+      const orderId =
+        button.dataset.orderId;
+
+      if (!orderId) {
+        alert("Invalid service order.");
+        return;
+      }
+
+      const originalText =
+        button.textContent;
+
+      button.disabled = true;
+      button.textContent = "Sending...";
+
+      try {
+
+        const token =
+          localStorage.getItem("token");
+
+        const response =
+          await fetch(
+            "/service-orders/notify-admin",
+            {
+              method: "POST",
+
+              headers: {
+                "Content-Type": "application/json",
+                ...(token
+                  ? {
+                      "Authorization":
+                        `Bearer ${token}`
+                    }
+                  : {})
+              },
+
+              body: JSON.stringify({
+                orderId
+              })
+            }
+          );
+
+
+        const data =
+          await response.json();
+
+
+        if (!response.ok || !data.success) {
+
+          throw new Error(
+            data.message ||
+            "Failed to notify admin."
+          );
+
+        }
+
+
+        button.textContent =
+          "Admin Notified";
+
+        alert(
+          "Admin has been notified successfully."
+        );
+
+
+      } catch (error) {
+
+        console.error(
+          "Notify admin error:",
+          error
+        );
+
+        alert(
+          error.message ||
+          "Unable to notify admin."
+        );
+
+        button.disabled = false;
+        button.textContent =
+          originalText;
+
+      }
+
+    });
+
+  });
+
+</script>
 
   <%- include("partials/footer") %>

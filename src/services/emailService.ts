@@ -236,3 +236,83 @@ export const sendDashboardLinkEmail = async (
     throw error;
   }
 };
+
+export const sendDoneForYouNotificationEmail = async (
+  order: any
+) => {
+
+  const adminEmail =
+    process.env.ADMIN_EMAIL ||
+    "codecarthub@gmail.com";
+
+
+  const productName =
+    order.product?.name ||
+    "Unknown Product";
+
+
+  const userEmail =
+    order.user?.email ||
+    "Unknown User";
+
+
+    const EMAIL_FROM = {
+      name: "CodeCartHub",
+      address: process.env.EMAIL_USER!
+    };
+    
+  await transporter.sendMail({
+
+    from: EMAIL_FROM,
+
+    to: adminEmail,
+
+    subject:
+      `🚀 Done For You Setup Requested - ${productName}`,
+
+    html: `
+      <h2>Done For You Setup Requested</h2>
+
+      <p>
+        A customer has requested that you begin
+        their Done For You setup.
+      </p>
+
+      <hr>
+
+      <p>
+        <strong>Product:</strong>
+        ${productName}
+      </p>
+
+      <p>
+        <strong>Plan:</strong>
+        ${order.plan}
+      </p>
+
+      <p>
+        <strong>Customer:</strong>
+        ${userEmail}
+      </p>
+
+      <p>
+        <strong>Order ID:</strong>
+        ${order._id}
+      </p>
+
+      <p>
+        <strong>Payment Reference:</strong>
+        ${order.paymentReference}
+      </p>
+
+      <hr>
+
+      <p>
+        Please log into the admin dashboard to begin
+        the setup.
+      </p>
+    `
+
+  });
+
+};

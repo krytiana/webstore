@@ -292,6 +292,10 @@ body {
 }
 /* Media Query for Small Screens */
 @media (max-width: 480px) {
+
+  body{
+    padding: 0;
+  }
   .switcher {
     
     text-align: center;
@@ -313,6 +317,12 @@ body {
 
   .form-container {
       padding: 15px;
+      width: 100%;
+      border-radius: 0;
+  }
+
+  .form-container form{
+    width: 100%;
   }
 
   .form-container input, .form-container select, .form-container button {
