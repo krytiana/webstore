@@ -9,7 +9,7 @@
 
 <body>
    <p style="color: red; font-weight: bolder; padding: 0; margin: 0px;">please Log In</p> 
-    <header class="header" style="padding: 20px; height: 70px; ">
+    <header class="header" >
         
         <div class="logo" style="height: 100%;">
             <a href="/"><img src="/images/logow.png" alt="Logo" style="height: 80%;"></a>
@@ -72,74 +72,146 @@
         </form>
     </div>
     
-    <div id="signin-form" class="form-container ">
-        <h2 id="heading2">Sign In</h2>
-        <form id="signinForm" method="POST">
-            <input type="text" id="signin-email" name="email" placeholder="Email" required>
-            <input type="password" id="signin-password" name="password" placeholder="Password" required>
-            <button type="submit">Sign In</button>
+    <div id="signup-form" class="form-container hidden">
+        <h2>Create Free Account</h2>
+        <form id="signupForm" method="POST">
+            <input type="text" id="signup-fullname" name="fullname" placeholder="Full Name" required>
+            <input type="email" id="signup-email" name="email" placeholder="Email" required>
+            <input type="text" id="signup-username" name="username" placeholder="Public Username" required>
+            <input type="password" id="signup-password" name="password" placeholder="Password" required>
+            <input type="password" id="signup-confirm-password" name="confirm-password" placeholder="Confirm Password" required>
+            <select id="signup-country" name="country" required>
+                <option value="" disabled selected>Country/Region</option>
+                <option value="ng">Nigeria</option>
+                <option value="gh">Ghana</option>
+                <option value="ke">Kenya</option>
+                <option value="za">South Africa</option>
+                <option value="ug">Uganda</option>
+                <option value="tz">Tanzania</option>
+                <option value="zm">Zambia</option>
+                <option value="zw">Zimbabwe</option>
+                <option value="sl">Sierra Leone</option>
+                <option value="gm">Gambia</option>
+                <option value="lr">Liberia</option>
+                <option value="bw">Botswana</option>
+                <option value="mw">Malawi</option>
+                <option value="ls">Lesotho</option>
+                <option value="sz">Eswatini (Swaziland)</option>
+                <option value="na">Namibia</option>
+                <option value="rw">Rwanda</option>
+                <option value="cm">Cameroon</option>
+                <option value="mu">Mauritius</option>
+                <option value="et">Ethiopia</option>
+                <option value="europe">Any Europe</option>
+                <option value="asia">Any Asia</option>
+                <option value="north-america">Any North America</option>
+                <option value="south-america">Any South America</option>
+                <option value="australia">Any Australia</option>
+                <option value="antarctica">Any Antarctica</option>
+
+                <!-- Add more options as needed -->
+            </select>
+            <div class="terms">
+                <input style="width: 20px;" type="checkbox" id="signup-terms" name="terms" required>
+                <label style="font-size: small;" for="signup-terms">I agree with terms and conditions</label>
+            </div>
+            <button type="submit">Sign Up</button>
         </form>
-        <div class="forgot-password">
-            <p><a href="#" id="forgot-password-link">Forgot Password?</a></p>
-        </div>
-        
-        <!-- Forgot Password Form (Initially Hidden) -->
-        <div id="forgot-password-form" class="form-container hidden">
-            <h2>Forgot Password</h2>
-            <form id="forgotPasswordForm" method="POST">
-                <input type="email" id="forgot-email" name="email" placeholder="Enter your email" required>
-                <button type="submit">Send Reset Link</button>
+    </div>
+    
+    <div id="signin-form" class="form-container">
+
+            <h2>Sign In</h2>
+
+            <form id="signinForm">
+                <input type="text" name="email" placeholder="Email" required>
+                <input type="password" name="password" placeholder="Password" required>
+
+                <button type="submit">
+                    Sign In
+                </button>
             </form>
-            <div id="forgot-password-feedback" class="feedback-message"></div>
-        </div>
+
+            <div class="forgot-password">
+                <p>
+                    <a href="#" id="forgot-password-link">
+                        Forgot Password?
+                    </a>
+                </p>
+            </div>
+
+    </div>
+
+
+    <div id="forgot-password-form" class="form-container hidden">
+
+        <h2>Forgot Password</h2>
+
+        <form id="forgotPasswordForm">
+
+            <input 
+                type="email" 
+                name="email" 
+                placeholder="Enter your email"
+                required
+            >
+
+            <button type="submit">
+                Send Reset Link
+            </button>
+
+        </form>
+
     </div>
 
     <!-- EMAIL VERIFICATION POPUP -->
-<div id="verification-modal" class="verification-modal hidden">
+    <div id="verification-modal" class="verification-modal hidden">
 
-    <div class="verification-modal-content">
+        <div class="verification-modal-content">
 
-        <button
-            type="button"
-            id="close-verification-modal"
-            class="verification-close"
-        >
-            &times;
-        </button>
+            <button
+                type="button"
+                id="close-verification-modal"
+                class="verification-close"
+            >
+                &times;
+            </button>
 
-        <div class="verification-icon">
-            ✉
+            <div class="verification-icon">
+                ✉
+            </div>
+
+            <h2>Verify Your Email</h2>
+
+            <p id="verification-message">
+                Please check your email and click the verification link
+                to activate your account.
+            </p>
+
+            <p class="verification-email" id="verification-email"></p>
+
+            <button
+                type="button"
+                id="resend-verification-popup-btn"
+            >
+                Resend Verification Email
+            </button>
+
+            <p
+                id="resend-countdown"
+                class="resend-countdown hidden"
+            ></p>
+
+            <p
+                id="verification-popup-feedback"
+                class="verification-popup-feedback"
+            ></p>
+
         </div>
-
-        <h2>Verify Your Email</h2>
-
-        <p id="verification-message">
-            Please check your email and click the verification link
-            to activate your account.
-        </p>
-
-        <p class="verification-email" id="verification-email"></p>
-
-        <button
-            type="button"
-            id="resend-verification-popup-btn"
-        >
-            Resend Verification Email
-        </button>
-
-        <p
-            id="resend-countdown"
-            class="resend-countdown hidden"
-        ></p>
-
-        <p
-            id="verification-popup-feedback"
-            class="verification-popup-feedback"
-        ></p>
 
     </div>
 
-</div>
+
 
     <script src="/register/js/kojo.js"></script>
 </body>

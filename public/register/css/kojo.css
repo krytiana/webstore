@@ -13,6 +13,11 @@ body {
   box-sizing: border-box;
 }
 
+header{
+  padding: 20px; 
+  height: 70px; 
+}
+
 .switcher {
   text-align: center;
   margin-bottom: 20px;
@@ -296,6 +301,11 @@ body {
   body{
     padding: 0;
   }
+
+  header{
+    padding: 10px;
+    height: 50px;
+  }
   .switcher {
     
     text-align: center;
@@ -330,7 +340,8 @@ body {
   }
 
   .form-container h2 {
-      font-size: 38px;
+      font-size: 18px;
+      margin-bottom: 10px;
       
 
   .forgot-password {
