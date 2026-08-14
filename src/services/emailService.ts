@@ -1,5 +1,5 @@
 // src/services/emailService.ts
-// once in production we will replace this with smpt
+
 const BREVO_API_URL = "https://api.brevo.com/v3/smtp/email";
 
 export const transporter = {
@@ -178,6 +178,61 @@ export const sendVerificationEmail = async (
     console.log(`✅ Verification email sent to ${email}`);
   } catch (error) {
     console.error("❌ Error sending verification email:", error);
+    throw error;
+  }
+};
+
+export const sendDashboardLinkEmail = async (
+  email: string,
+  productName: string,
+  plan: string
+) => {
+  try {
+    const dashboardUrl =
+      `${process.env.CLIENT_URL}/dashboard`;
+
+    await transporter.sendMail({
+      from: sender,
+      to: email,
+      subject: `Your ${productName} Purchase - Continue in Dashboard`,
+      html: `
+        <h2>Thank you for your purchase!</h2>
+
+        <p>
+          Your purchase of
+          <strong>${productName} - ${plan}</strong>
+          was successful.
+        </p>
+
+        <p>
+          Your next steps are available in your Code CartHub dashboard.
+        </p>
+
+        <p>
+          <a href="${dashboardUrl}">
+            Open Your Dashboard
+          </a>
+        </p>
+
+        <p>
+          Please log in to your Code CartHub account to continue.
+        </p>
+
+        <p>— Code CartHub</p>
+      `,
+    });
+
+    console.log(
+      `✅ Dashboard email sent to ${email}`
+    );
+
+  } catch (error) {
+
+    console.error(
+      "❌ Error sending dashboard email:",
+      error
+    );
+
     throw error;
   }
 };

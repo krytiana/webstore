@@ -33,21 +33,111 @@
             <a href="<%= download.url %>" class="download-btn">Download</a>
             
           <% } else { %>
-            <p class="blocked">Download not available</p>
-
-            <a href="/deploy/<%= download.product._id %>" class="deploy-btn">
-              Deploy Now
-            </a>
+            <p class="blocked">
+              Download not available.
+            </p>
           <% } %>
 
         </div>
 
       <% }); %>
 
-    <% } else { %>
-      <p>No downloads found.</p>
-    <% } %>
+        <% } else { %>
+          <p>No downloads found.</p>
+        <% } %>
+
+
+        <!-- ================================================== -->
+        <!-- SERVICE ORDERS -->
+        <!-- ================================================== -->
+
+        <h4>Your Services</h4>
+
+        <% if (serviceOrders.length > 0) { %>
+
+          <% serviceOrders.forEach(order => { %>
+
+            <div class="card">
+
+              <h2>
+                <%= order.product.name %>
+              </h2>
+
+              <% if (order.product.media?.image) { %>
+
+                <img
+                  src="<%= order.product.media.image %>"
+                  width="150"
+                >
+
+              <% } %>
+
+
+              <p>
+                <strong>Plan:</strong>
+                <%= order.plan %>
+              </p>
+
+
+              <p>
+                <strong>Payment:</strong>
+                <%= order.paymentStatus %>
+              </p>
+
+
+              <p>
+                <strong>Status:</strong>
+                <%= order.status %>
+              </p>
+
+
+              <% if (order.status === "pending") { %>
+
+                <p>
+                  Your service order has been received.
+                  You can continue from here.
+                </p>
+
+                <a
+                  href="/deploy/<%= order.product._id %>"
+                  class="deploy-btn"
+                >
+                  Continue Setup
+                </a>
+
+              <% } %>
+
+
+              <% if (order.status === "inProgress") { %>
+
+                <p>
+                  Your service is currently in progress.
+                </p>
+
+              <% } %>
+
+
+              <% if (order.status === "completed") { %>
+
+                <p>
+                  Your service has been completed.
+                </p>
+
+              <% } %>
+
+
+            </div>
+
+          <% }); %>
+
+        <% } else { %>
+
+          <p>No service orders found.</p>
+
+        <% } %>
 
   </section>
+
+
 
   <%- include("partials/footer") %>

@@ -7,8 +7,8 @@ import { paystackSecretKey } from "../config/paystack";
 import Product from "../models/ProductModel";
 import User from "../models/User";
 import DownloadLink from "../models/DownloadLink";
-import { sendDownloadLinkEmail } from "../services/emailService";
-
+import { sendDownloadLinkEmail,sendDashboardLinkEmail, } from "../services/emailService";
+import ServiceOrder from "../models/ServiceOrder";
 
 // ============================================================
 // TYPES
@@ -576,29 +576,55 @@ const processSuccessfulPayment = async (
     throw new Error("Payment email mismatch");
   }
 
-  // ----------------------------------------------------------
-  // PREVENT DUPLICATE FULFILLMENT
-  // ----------------------------------------------------------
-  const existingDownload =
-    await DownloadLink.findOne({
-      user: user._id,
-      product: product._id,
-      plan,
-      paymentReference:
-        transaction.reference,
-    });
+    // ----------------------------------------------------------
+    // PREVENT DUPLICATE FULFILLMENT
+    // ----------------------------------------------------------
+
+    if (plan === "sourceCode") {
+
+      const existingDownload =
+        await DownloadLink.findOne({
+          paymentReference:
+            transaction.reference,
+        });
+
+      if (existingDownload) {
+
+        console.log(
+          "ℹ️ Source code payment already fulfilled:",
+          transaction.reference
+        );
+
+        return;
+
+      }
+
+    }
 
 
-  if (existingDownload) {
+    if (
+      plan === "assistedSetup" ||
+      plan === "doneForYou"
+    ) {
 
-    console.log(
-      "ℹ️ Payment already fulfilled:",
-      transaction.reference
-    );
+      const existingServiceOrder =
+        await ServiceOrder.findOne({
+          paymentReference:
+            transaction.reference,
+        });
 
-    return;
+      if (existingServiceOrder) {
 
-  }
+        console.log(
+          "ℹ️ Service order already fulfilled:",
+          transaction.reference
+        );
+
+        return;
+
+      }
+
+    }
 
 
   // ----------------------------------------------------------
@@ -611,71 +637,97 @@ const processSuccessfulPayment = async (
 
 
   // ----------------------------------------------------------
-  // CREATE DOWNLOAD RECORD
+  // SOURCE CODE PLAN
   // ----------------------------------------------------------
 
-  const downloadLink =
-    await DownloadLink.create({
+  if (plan === "sourceCode") {
 
-      user: user._id,
+    // CREATE DOWNLOAD RECORD
 
-      product: product._id,
+    const downloadLink =
+      await DownloadLink.create({
 
-      plan,
+        user: user._id,
 
-      url: "",
+        product: product._id,
 
-      maxDownloads: 3,
+        plan,
 
-      successfulDownloads: 0,
+        url: "",
 
-      expiresAt:
-        new Date(
-          Date.now() +
-          48 * 60 * 60 * 1000
-        ),
+        maxDownloads: 3,
 
-      paymentReference:
-        transaction.reference,
+        successfulDownloads: 0,
 
-    });
+        expiresAt:
+          new Date(
+            Date.now() +
+            48 * 60 * 60 * 1000
+          ),
 
+        paymentReference:
+          transaction.reference,
 
-  // ----------------------------------------------------------
-  // CREATE SECURE DOWNLOAD URL
-  // ----------------------------------------------------------
-
-  const downloadUrl =
-    `${BASE_URL}/downloads/${downloadLink._id}`;
+      });
 
 
-  downloadLink.url =
-    downloadUrl;
+    // CREATE SECURE DOWNLOAD URL
+
+    const downloadUrl =
+      `${BASE_URL}/downloads/${downloadLink._id}`;
 
 
-  await downloadLink.save();
+    downloadLink.url =
+      downloadUrl;
 
 
-  // ----------------------------------------------------------
-  // SEND EMAIL
-  // ----------------------------------------------------------
-
-  await sendDownloadLinkEmail(
-
-    user.email,
-
-    downloadUrl,
-
-    product.name,
-
-    plan
-
-  );
+    await downloadLink.save();
 
 
-  console.log(
-    `📧 Download email sent to: ${user.email}`
-  );
+    // SEND DOWNLOAD EMAIL
+
+    await sendDownloadLinkEmail(
+      user.email,
+      downloadUrl,
+      product.name,
+      plan
+    );
+
+  }
+    else if (
+      plan === "assistedSetup" ||
+      plan === "doneForYou"
+    ) {
+
+      // CREATE SERVICE ORDER
+
+      await ServiceOrder.create({
+
+        user: user._id,
+
+        product: product._id,
+
+        plan,
+
+        paymentReference:
+          transaction.reference,
+
+        paymentStatus: "paid",
+
+        status: "pending",
+
+      });
+
+
+      // SEND DASHBOARD EMAIL
+
+      await sendDashboardLinkEmail(
+        user.email,
+        product.name,
+        plan
+      );
+
+    }
 
   console.log(
     `💰 Paystack payment fulfilled: ${transaction.reference}`
