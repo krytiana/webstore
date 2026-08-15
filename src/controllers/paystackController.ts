@@ -9,7 +9,9 @@ import User from "../models/User";
 import DownloadLink from "../models/DownloadLink";
 import { sendDownloadLinkEmail,sendDashboardLinkEmail, } from "../services/emailService";
 import ServiceOrder from "../models/ServiceOrder";
-
+import {
+  convertUsdToGhs
+} from "../services/currencyService";
 // ============================================================
 // TYPES
 // ============================================================
@@ -160,9 +162,14 @@ export const createCartCheckoutSession = async (
     // PRICE
     // --------------------------------------------------------
 
-    const price = product.pricing?.[plan];
+// --------------------------------------------------------
+// PRICE — DATABASE PRICES ARE USD
+// --------------------------------------------------------
 
-    if (!price || price <= 0) {
+    const usdPrice =
+      product.pricing?.[plan];
+
+    if (!usdPrice || usdPrice <= 0) {
 
       return res.status(400).json({
         success: false,
@@ -170,6 +177,34 @@ export const createCartCheckoutSession = async (
       });
 
     }
+
+
+    // --------------------------------------------------------
+    // CONVERT USD → GHS
+    // --------------------------------------------------------
+
+    const conversion =
+      await convertUsdToGhs(usdPrice);
+
+
+    const ghsPrice =
+      conversion.ghsAmount;
+
+
+    const paystackAmount =
+      Math.round(ghsPrice * 100);
+
+
+    console.log(
+      "💱 Currency conversion:",
+      {
+        usdPrice,
+        ghsPrice,
+        rate: conversion.rate,
+        rateDate: conversion.rateDate,
+        paystackAmount
+      }
+    );
 
 
     // --------------------------------------------------------
@@ -204,25 +239,35 @@ export const createCartCheckoutSession = async (
 
           email: user.email,
 
-          // Paystack expects the amount in the
-          // currency's smallest unit.
-          amount: Math.round(price * 100),
+          amount: paystackAmount,
 
           currency: "GHS",
 
           reference,
 
           callback_url:
-             `${BASE_URL}/api/payments/callback`,
+            `${BASE_URL}/api/payments/callback`,
 
           metadata: {
 
-            userId: user._id.toString(),
+            userId:
+              user._id.toString(),
 
             productId:
               product._id.toString(),
 
             plan,
+
+            usdPrice,
+
+            ghsAmount:
+              ghsPrice,
+
+            exchangeRate:
+              conversion.rate,
+
+            exchangeRateDate:
+              conversion.rateDate,
 
           },
 
@@ -551,20 +596,77 @@ const processSuccessfulPayment = async (
   }
 
 
-  // ----------------------------------------------------------
-  // VERIFY PAYMENT AMOUNT + CURRENCY
-  // ----------------------------------------------------------
+    // ----------------------------------------------------------
+    // VERIFY PAYMENT AMOUNT + CURRENCY
+    // ----------------------------------------------------------
 
-  const expectedAmount =
-    Math.round((product.pricing?.[plan as PlanType] ?? 0) * 100);
+    const expectedGhsAmount =
+      Number(metadata.ghsAmount);
 
-  if (transaction.amount !== expectedAmount) {
-    throw new Error("Payment amount mismatch");
-  }
 
-  if (transaction.currency !== "GHS") {
-    throw new Error("Payment currency mismatch");
-  }
+    if (
+      !Number.isFinite(expectedGhsAmount) ||
+      expectedGhsAmount <= 0
+    ) {
+
+      throw new Error(
+        "Missing or invalid GHS payment amount"
+      );
+
+    }
+
+
+    const expectedPaystackAmount =
+      Math.round(
+        expectedGhsAmount * 100
+      );
+
+
+    console.log(
+      "💰 Payment amount verification:",
+      {
+        transactionAmount:
+          transaction.amount,
+
+        expectedPaystackAmount,
+
+        currency:
+          transaction.currency,
+
+        usdPrice:
+          metadata.usdPrice,
+
+        ghsAmount:
+          expectedGhsAmount,
+
+        exchangeRate:
+          metadata.exchangeRate
+      }
+    );
+
+
+    if (
+      transaction.amount !==
+      expectedPaystackAmount
+    ) {
+
+      throw new Error(
+        "Payment amount mismatch"
+      );
+
+    }
+
+
+    if (
+      transaction.currency !==
+      "GHS"
+    ) {
+
+      throw new Error(
+        "Payment currency mismatch"
+      );
+
+    }
 
   // VERIFY PAYMENT EMAIL
 

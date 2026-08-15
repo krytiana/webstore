@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const signinBtn =
         document.getElementById("signup-btn");
-
+            
     const signupFormElement =
         document.getElementById("signup-form");
 
@@ -44,6 +44,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const forgotPasswordFormElement =
         document.getElementById("forgotPasswordForm");
+
+    const feedbackMessage =
+         document.getElementById("feedback-message");
+
 
 
     // ==========================================
@@ -72,8 +76,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (!signupBtn || !signinBtn) return;
 
+        // Hide forgot password whenever switching
+        // between Sign In and Sign Up.
+        forgotPasswordForm?.classList.add("hidden");
+
         signupBtn.classList.remove("active");
         signinBtn.classList.remove("active");
+
 
         if (activeForm === "signup") {
 
@@ -90,14 +99,15 @@ document.addEventListener("DOMContentLoaded", function () {
             signupFormElement?.classList.add("hidden");
 
         }
+
     }
 
 
-    // ==========================================
-    // FORGOT PASSWORD
-    // ==========================================
+        // ==========================================
+        // FORGOT PASSWORD
+        // ==========================================
 
-    if (
+        if (
         forgotPasswordLink &&
         forgotPasswordForm
     ) {
@@ -108,7 +118,29 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 event.preventDefault();
 
-                forgotPasswordForm.classList.toggle("hidden");
+
+                // Hide Sign In
+                signinFormElement?.classList.add("hidden");
+
+
+                // Hide Sign Up
+                signupFormElement?.classList.add("hidden");
+
+
+                // Hide switcher
+                document
+                    .querySelector(".switcher")
+                    ?.classList.add("hidden");
+
+
+                // Show Forgot Password
+                forgotPasswordForm.classList.remove("hidden");
+
+
+                // Clear old feedback
+                if (feedbackMessage) {
+                    feedbackMessage.style.display = "none";
+                }
 
             }
         );
@@ -147,6 +179,9 @@ document.addEventListener("DOMContentLoaded", function () {
         );
 
     }
+
+    
+
 
 
     // ==========================================
@@ -449,115 +484,167 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("signupForm");
 
 
-    if (signupForm) {
+        if (signupForm) {
 
-        signupForm.addEventListener(
-            "submit",
-            async function (event) {
+            signupForm.addEventListener(
+                "submit",
+                async function (event) {
 
-                event.preventDefault();
+                    event.preventDefault();
 
+                    const formData =
+                        createFormData(this);
 
-                const formData =
-                    createFormData(this);
-
-                if (!formData) return;
-
-
-                const password =
-                    formData.get("password")?.trim();
-
-                const confirmPassword =
-                    formData.get("confirm-password")?.trim();
+                    if (!formData) return;
 
 
-                if (!validatePassword(password)) {
+                    const password =
+                        String(
+                            formData.get("password") || ""
+                        ).trim();
 
-                    showFeedback(
-                        "Password must be at least 8 characters long, include a letter and a number.",
-                        "error"
-                    );
-
-                    return;
-                }
-
-
-                if (password !== confirmPassword) {
-
-                    showFeedback(
-                        "Passwords do not match. Please re-enter.",
-                        "error"
-                    );
-
-                    return;
-                }
+                    const confirmPassword =
+                        String(
+                            formData.get("confirm-password") || ""
+                        ).trim();
 
 
-                try {
-
-                    const response = await fetch(
-                        "/api/users/signup",
-                        {
-                            method: "POST",
-
-                            headers: {
-                                "Content-Type":
-                                    "application/json"
-                            },
-
-                            body: JSON.stringify(
-                                Object.fromEntries(
-                                    formData.entries()
-                                )
-                            )
-                        }
-                    );
-
-
-                    const data =
-                        await response.json();
-
-
-                    if (data.success) {
-
-                        this.reset();
-
-
-                        // Open verification popup
-                        openVerificationPopup(
-                            data.email ||
-                            formData.get("email"),
-
-                            "Your account has been created. Please check your email and click the verification link to activate your account."
-                        );
-
-                    } else {
+                    // VALIDATE PASSWORD
+                    if (!validatePassword(password)) {
 
                         showFeedback(
-                            data.message,
+                            "Password must be at least 8 characters long, include a letter and a number.",
                             "error"
                         );
 
+                        return;
                     }
 
-                } catch (error) {
 
-                    console.error(
-                        "Signup error:",
-                        error
-                    );
+                    // CONFIRM PASSWORD
+                    if (password !== confirmPassword) {
 
-                    showFeedback(
-                        "An error occurred. Please try again.",
-                        "error"
-                    );
+                        showFeedback(
+                            "Passwords do not match. Please re-enter.",
+                            "error"
+                        );
+
+                        return;
+                    }
+
+
+                    // PREVENT DOUBLE SUBMISSION
+                    const submitButton =
+                        this.querySelector(
+                            'button[type="submit"]'
+                        );
+
+                    if (submitButton) {
+
+                        submitButton.disabled = true;
+
+                        submitButton.textContent =
+                            "Creating Account...";
+
+                    }
+
+
+                    try {
+
+                        const response =
+                            await fetch(
+                                "/api/users/signup",
+                                {
+                                    method: "POST",
+
+                                    headers: {
+                                        "Content-Type":
+                                            "application/json"
+                                    },
+
+                                    body:
+                                        JSON.stringify(
+                                            Object.fromEntries(
+                                                formData.entries()
+                                            )
+                                        )
+                                }
+                            );
+
+
+                        const data =
+                            await response.json();
+
+
+                        if (data.success) {
+
+                            this.reset();
+
+                            if (submitButton) {
+
+                                submitButton.disabled = true;
+
+                                submitButton.textContent =
+                                    "Account Created";
+
+                            }
+
+                            openVerificationPopup(
+                                data.email ||
+                                formData.get("email"),
+
+                                "Your account has been created. Please check your email and click the verification link to activate your account."
+                            );
+
+                            return;
+                        }
+
+
+                        // SERVER ERROR — ALLOW RETRY
+                        showFeedback(
+                            data.message ||
+                            "Unable to create your account.",
+                            "error"
+                        );
+
+                        if (submitButton) {
+
+                            submitButton.disabled = false;
+
+                            submitButton.textContent =
+                                "Sign Up";
+
+                        }
+
+
+                    } catch (error) {
+
+                        console.error(
+                            "Signup error:",
+                            error
+                        );
+
+                        showFeedback(
+                            "An error occurred. Please try again.",
+                            "error"
+                        );
+
+                        // NETWORK ERROR — ALLOW RETRY
+                        if (submitButton) {
+
+                            submitButton.disabled = false;
+
+                            submitButton.textContent =
+                                "Sign Up";
+
+                        }
+
+                    }
 
                 }
+            );
 
-            }
-        );
-
-    }
+        }
 
 
     // ==========================================
@@ -679,6 +766,46 @@ document.addEventListener("DOMContentLoaded", function () {
         );
 
     }
+
+    const backToSignin =
+    document.getElementById("back-to-signin");
+
+
+if (backToSignin) {
+
+    backToSignin.addEventListener(
+        "click",
+        function (event) {
+
+            event.preventDefault();
+
+
+            // Hide Forgot Password
+            forgotPasswordForm?.classList.add("hidden");
+
+
+            // Show switcher again
+            document
+                .querySelector(".switcher")
+                ?.classList.remove("hidden");
+
+
+            // Show Sign In
+            signinFormElement?.classList.remove("hidden");
+
+
+            // Hide Sign Up
+            signupFormElement?.classList.add("hidden");
+
+
+            // Make Sign In active
+            signupBtn?.classList.remove("active");
+            signinBtn?.classList.add("active");
+
+        }
+    );
+
+}
 
 
     // ==========================================

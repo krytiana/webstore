@@ -33,7 +33,7 @@ export const handleSignUp = async (req: Request, res: Response) => {
         success: false,
         message:
           existingUser.email === email
-            ? "Email already exists."
+            ? "Email already exists. Log in"
             : "Username already exists.",
       });
     }
