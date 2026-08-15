@@ -44,6 +44,9 @@ nav a {
   gap: 10px;
 
   z-index: 9999;
+
+  /* IMPORTANT */
+  pointer-events: none;
 }
 
 
@@ -135,8 +138,10 @@ nav a {
     transform 0.3s ease,
     background 0.3s ease,
     box-shadow 0.3s ease;
-}
 
+  /* IMPORTANT */
+  pointer-events: auto;
+}
 
 .chat-fab:hover {
   transform: scale(1.1);
@@ -174,7 +179,7 @@ nav a {
 
   .chat-widget {
     right: 18px;
-    bottom: 34px;
+    bottom: 24px;
   }
 
 
