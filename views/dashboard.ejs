@@ -6,7 +6,9 @@
   <section class="dashboard">
     <div class="top-bar">
       <h1>Welcome, <%= user.username || user.email %></h1>
-      <a href="/api/auth/logout" class="logout-btn">Logout</a>
+      <a href="/api/auth/logout" class="logout-btn" id="logout-btn">
+        Logout
+      </a>
     </div>
     
     <h4>Your Downloads</h4>
@@ -187,6 +189,15 @@
   </section>
 
 <script>
+
+  const logoutBtn = document.getElementById("logout-btn");
+
+    if (logoutBtn) {
+      logoutBtn.addEventListener("click", () => {
+        localStorage.removeItem("token");
+        localStorage.removeItem("refreshToken");
+      });
+    }
 
 document.querySelectorAll(".notify-admin-btn")
   .forEach(button => {

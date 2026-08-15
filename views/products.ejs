@@ -58,9 +58,9 @@
           <div class="card-actions">
             <% if (product.media.demoUrl) { %>
               <a
-                href="<%= product.media.demoUrl %>"
-                target="_blank"
-                class="btn-demo"
+                href="#"
+                class="btn outline btn-demo"
+                data-demo-url="<%= product.media.demoUrl %>"
               >
                 Live Demo
               </a>
@@ -81,5 +81,94 @@
   </div>
 </section>
 
+<script type="module">
+
+import { getCurrentUser } from "/js/userService.js";
+
+
+// ============================================================
+// LIVE DEMO — LOGGED-IN USERS ONLY
+// ============================================================
+
+const demoButtons =
+  document.querySelectorAll(".btn-demo");
+
+
+demoButtons.forEach(button => {
+
+  button.addEventListener("click", async event => {
+
+    event.preventDefault();
+
+    const demoUrl =
+      button.dataset.demoUrl;
+
+    if (!demoUrl) {
+      console.error("Demo URL is missing.");
+      return;
+    }
+
+    const originalText =
+      button.textContent;
+
+    button.disabled = true;
+    button.textContent = "Checking...";
+
+    try {
+
+      const user =
+        await getCurrentUser();
+
+      // ------------------------------------------------------
+      // NOT LOGGED IN
+      // ------------------------------------------------------
+
+      if (!user) {
+
+        const redirectUrl =
+          window.location.pathname +
+          window.location.search;
+
+        window.location.href =
+          "/register?redirect=" +
+          encodeURIComponent(redirectUrl);
+
+        return;
+      }
+
+      // ------------------------------------------------------
+      // LOGGED IN
+      // ------------------------------------------------------
+
+      window.open(
+        demoUrl,
+        "_blank",
+        "noopener,noreferrer"
+      );
+
+      button.disabled = false;
+      button.textContent = originalText;
+
+    } catch (error) {
+
+      console.error(
+        "Demo authentication check failed:",
+        error
+      );
+
+      alert(
+        "Please log in to view the demo."
+      );
+
+      button.disabled = false;
+      button.textContent = originalText;
+
+    }
+
+  });
+
+});
+
+</script>
 
 <%- include("partials/footer") %>

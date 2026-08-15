@@ -23,7 +23,7 @@
     </div>
 
     <p class="tagline">
-      A complete business website with admin dashboard and database integration.
+      A complete fullstack website with admin dashboard and database integration.
     </p>
 
     <p class="starting-price">
@@ -38,14 +38,15 @@
       </a>
 
       <% if (product.media.demoUrl) { %>
+
         <a
-          href="<%= product.media.demoUrl %>"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="btn outline"
+          href="#"
+          class="btn outline demo-btn"
+          data-demo-url="<%= product.media.demoUrl %>"
         >
           Live Demo
         </a>
+
       <% } %>
 
     </div>

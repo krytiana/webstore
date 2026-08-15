@@ -44,6 +44,106 @@ document.querySelectorAll('a[href^="#"]').forEach(link => {
 
 });
 
+// ============================================================
+// LIVE DEMO — LOGGED-IN USERS ONLY
+// ============================================================
+
+const demoButtons =
+  document.querySelectorAll(".demo-btn");
+
+
+demoButtons.forEach(button => {
+
+  button.addEventListener("click", async event => {
+
+    event.preventDefault();
+
+
+    const demoUrl =
+      button.dataset.demoUrl;
+
+
+    if (!demoUrl) {
+
+      console.error(
+        "Demo URL is missing."
+      );
+
+      return;
+    }
+
+
+    const originalText =
+      button.textContent;
+
+
+    button.disabled = true;
+
+    button.textContent =
+      "Checking...";
+
+
+    try {
+
+      const user =
+        await getCurrentUser();
+
+
+      // ------------------------------------------------------
+      // NOT LOGGED IN
+      // ------------------------------------------------------
+
+      if (!user) {
+
+        const redirectUrl =
+          window.location.pathname +
+          window.location.search;
+
+
+        window.location.href =
+          "/register?redirect=" +
+          encodeURIComponent(redirectUrl);
+
+
+        return;
+      }
+
+
+      // ------------------------------------------------------
+      // LOGGED IN
+      // ------------------------------------------------------
+
+      window.open(
+        demoUrl,
+        "_blank",
+        "noopener,noreferrer"
+      );
+
+
+    } catch (error) {
+
+      console.error(
+        "Demo authentication check failed:",
+        error
+      );
+
+
+      alert(
+        "Please log in to view the demo."
+      );
+
+
+      button.disabled = false;
+
+      button.textContent =
+        originalText;
+
+    }
+
+  });
+
+});
+
 
 // ============================================================
 // DESCRIPTION FORMATTER
