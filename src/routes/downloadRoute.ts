@@ -48,9 +48,7 @@ router.get("/:id", async (req: Request, res: Response) => {
     const product = link.product as any;
 
     if (!product) {
-      console.log(
-        "❌ Product not found for download link"
-      );
+
 
       return res.status(404).send(
         "Product associated with this download link was not found."

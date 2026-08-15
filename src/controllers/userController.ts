@@ -65,7 +65,7 @@ export const handleSignUp = async (req: Request, res: Response) => {
     });
 
     await newUser.save();
-    console.log("User saved to database");
+
 
     await sendVerificationEmail(
       newUser.email,
@@ -109,7 +109,6 @@ export const handleSignIn = async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
   try {
-    console.log(`Attempting sign-in for email: ${email}`);
 
     const user = await User.findOne({
       email: email.toLowerCase(),
@@ -191,9 +190,7 @@ export const handleForgotPassword = async (
   const { email } = req.body;
 
   try {
-    console.log(
-      `Received forgot password request for email: ${email}`
-    );
+
 
     const user = await User.findOne({ email });
 
@@ -212,7 +209,6 @@ export const handleForgotPassword = async (
 
     await user.save();
 
-    console.log("Reset token generated:", token);
 
     await sendResetEmail(email, token);
 

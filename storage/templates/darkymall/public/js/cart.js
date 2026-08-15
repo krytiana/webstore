@@ -198,10 +198,7 @@ function initializePaymentMethods() {
     radio.addEventListener("change", () => {
       selectedPayment = radio.value;
 
-      console.log(
-        "Selected payment method:",
-        selectedPayment
-      );
+
     });
 
   });
@@ -259,9 +256,6 @@ document.querySelector(".checkout-btn")
 
         const rawResponse = await res.text();
 
-        console.log("Paystack HTTP status:", res.status);
-        console.log("Paystack raw response:", rawResponse);
-
         let data;
 
         try {
@@ -280,10 +274,6 @@ document.querySelector(".checkout-btn")
           return;
         }
 
-        console.log(
-          "Paystack parsed response:",
-          data
-        );
 
         if (!res.ok || !data.success) {
 
@@ -359,11 +349,6 @@ document.querySelector(".checkout-btn")
 
           return;
         }
-
-        console.log(
-          "Stripe checkout response:",
-          data
-        );
 
         if (!res.ok || !data.url) {
 

@@ -15,12 +15,12 @@ export async function getCurrentUser() {
 
     const user = await res.json();
 
-    console.log("User from /me:", user); // 👈 DEBUG
+    
 
     return user;
 
   } catch (err) {
-    console.log("User fetch failed:", err.message);
+    
     return null;
   }
 }

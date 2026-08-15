@@ -18,7 +18,3 @@ secrets += `\nREFRESH_TOKEN_SECRET=${refreshTokenSecret}\n`;
 // Save the updated secrets back to the .env file
 fs.writeFileSync(envFilePath, secrets);
 
-// Log the existing JWT_SECRET
-console.log('JWT_SECRET and REFRESH_TOKEN_SECRET have been generated and saved to .env:');
-console.log(`JWT_SECRET=${process.env.JWT_SECRET}`); // This should now show the correct value
-console.log(`REFRESH_TOKEN_SECRET=${refreshTokenSecret}`);

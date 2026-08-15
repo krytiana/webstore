@@ -35,7 +35,6 @@ export const sendResetEmail = async (email: string, token: string) => {
       }
     );
 
-    console.log("✅ Reset email sent:", response.data);
 
   } catch (error) {
     console.error("❌ Error sending email:", error);

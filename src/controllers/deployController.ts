@@ -29,9 +29,7 @@ export const showDeployPage = async (
       previousProductId &&
       previousProductId !== productId
     ) {
-      console.log(
-        `🔄 Switching deployment: ${previousProductId} → ${productId}`
-      );
+
 
       // Keep GitHub connection
       // but reset deployment-specific state.

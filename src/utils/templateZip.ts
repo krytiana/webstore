@@ -66,13 +66,8 @@ export const createTemplateZip = async (
 
     // ZIP completed
     output.on("close", () => {
-      console.log(
-        `✅ Template ZIP created: ${zipFilePath}`
-      );
 
-      console.log(
-        `📦 ZIP size: ${archive.pointer()} bytes`
-      );
+
 
       resolve(zipFilePath);
     });

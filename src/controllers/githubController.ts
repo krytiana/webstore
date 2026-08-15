@@ -59,9 +59,7 @@ export const githubLogin = (
   req.session.sourceCodePushed =
     false;
 
-  console.log(
-    `🚀 Starting GitHub deployment for product: ${productId}`
-  );
+
 
   const clientId =
     process.env.GITHUB_CLIENT_ID;
@@ -126,10 +124,7 @@ export const githubCallback = async (req: Request, res: Response) => {
       return res.redirect("/dashboard");
     }
 
-    // Optional: log success
-    console.log(
-      `GitHub connected: ${githubUser.login} (${githubUser.id})`
-    );
+ 
 
     return res.redirect(`/deploy/${productId}`);
 
@@ -188,8 +183,6 @@ export const createRepo = async (req: Request, res: Response) => {
       req.session.githubRepoUrl = repoUrl;
       req.session.githubRepoName = repoName;
 
-      console.log("Repo already exists, reusing it");
-
       return res.redirect(`/deploy/${req.session.currentProductId}`);
     }
 
@@ -210,7 +203,6 @@ export const createRepo = async (req: Request, res: Response) => {
 
     req.session.githubRepoUrl = repoUrl;
     req.session.githubRepoName = repoName;
-    console.log("Repo created:", repoUrl);
 
     return res.redirect(`/deploy/${req.session.currentProductId}`);
 
@@ -306,10 +298,6 @@ export const deployToRepo = async (
       );
     }
 
-    console.log(
-      `📦 Using template: ${templateDirectory}`
-    );
-
     // ---------------------------------------
     // 5. Create temporary deployment directory
     // ---------------------------------------
@@ -322,9 +310,6 @@ export const deployToRepo = async (
       recursive: true,
     });
 
-    console.log(
-      `📁 Temporary deployment directory: ${tempDir}`
-    );
 
     // ---------------------------------------
     // 6. Copy template into temp directory
@@ -338,9 +323,6 @@ export const deployToRepo = async (
       }
     );
 
-    console.log(
-      `✅ ${product.name} copied to deployment directory`
-    );
 
     // ---------------------------------------
     // 7. Initialize Git repository
@@ -350,14 +332,6 @@ export const deployToRepo = async (
 
     await repoGit.init();
 
-    console.log(
-      "✅ Temporary Git repository initialized"
-    );
-
-    // ---------------------------------------
-    // 8. Configure Git identity
-    // ---------------------------------------
-    //
     // Git requires a user identity when
     // creating the commit.
     //
@@ -374,9 +348,6 @@ export const deployToRepo = async (
       gitEmail
     );
 
-    console.log(
-      `👤 Git identity configured: ${username}`
-    );
 
     // ---------------------------------------
     // 9. Add customer's GitHub repository
@@ -389,28 +360,18 @@ export const deployToRepo = async (
       repoUrl
     );
 
-    console.log(
-      `🔗 GitHub repository connected: ${username}/${repoName}`
-    );
 
     // ---------------------------------------
     // 10. Add template files
     // ---------------------------------------
     await repoGit.add(".");
 
-    console.log(
-      "📦 Template files added to Git"
-    );
 
     // ---------------------------------------
     // 11. Create commit
     // ---------------------------------------
     await repoGit.commit(
       `Deploy ${product.name}`
-    );
-
-    console.log(
-      `✅ Source code committed for ${product.name}`
     );
 
     // ---------------------------------------
@@ -421,9 +382,7 @@ export const deployToRepo = async (
       "main",
     ]);
 
-    console.log(
-      "🌿 Branch set to main"
-    );
+
 
     // ---------------------------------------
     // 13. Push to customer's repository
@@ -436,9 +395,7 @@ export const deployToRepo = async (
       }
     );
 
-    console.log(
-      `🚀 ${product.name} pushed to GitHub`
-    );
+
 
     // ---------------------------------------
     // 14. Remove authenticated remote
@@ -451,18 +408,13 @@ export const deployToRepo = async (
       "origin"
     );
 
-    console.log(
-      "🔐 Authenticated Git remote removed"
-    );
 
     // ---------------------------------------
     // 15. Mark deployment complete
     // ---------------------------------------
     req.session.sourceCodePushed = true;
 
-    console.log(
-      `✅ Source code deployment completed for ${product.name}`
-    );
+ 
 
     return res.redirect(
       `/deploy/${productId}`
@@ -499,10 +451,6 @@ export const deployToRepo = async (
             recursive: true,
             force: true,
           }
-        );
-
-        console.log(
-          `🗑️ Temporary deployment directory deleted: ${tempDir}`
         );
 
       } catch (cleanupError) {

@@ -26,7 +26,6 @@ import deployGuideRoute from "./routes/deployGuideRoute";
 import chatRoutes from "./routes/chat.routes";
 import serviceOrderRoute from "./routes/serviceOrderRoute";
 import testTemplateRoute from "./routes/testTemplateRoute";
-import testZipRoute from "./routes/testZipRoute";
 import marketingRoute from "./routes/marketingRoute";
 
 import Product from "./models/ProductModel";
@@ -86,7 +85,6 @@ app.use(githubRoute);
 app.use(deployGuideRoute);
 app.use("/chat",chatRoutes);
 app.use("/", testTemplateRoute);
-app.use("/test-zip", testZipRoute);
 app.use("/api/marketing", marketingRoute);
 
 

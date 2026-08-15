@@ -159,9 +159,7 @@ export const handleForgotPassword = async (
   const { email } = req.body;
 
   try {
-    console.log(
-      `Received forgot password request for email: ${email}`
-    );
+
 
     const user = await User.findOne({ email });
 

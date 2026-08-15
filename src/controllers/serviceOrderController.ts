@@ -15,16 +15,6 @@ export const notifyAdminDoneForYou = async (
     const { orderId } =
       req.body;
 
-
-    console.log(
-      "📩 Done For You admin notification request:",
-      {
-        userId,
-        orderId
-      }
-    );
-
-
     // --------------------------------------------------------
     // AUTH CHECK
     // --------------------------------------------------------
@@ -124,11 +114,6 @@ export const notifyAdminDoneForYou = async (
       order
     );
 
-
-    console.log(
-      "✅ Admin notified for Done For You order:",
-      order._id
-    );
 
 
     return res.json({

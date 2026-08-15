@@ -195,18 +195,6 @@ export const createCartCheckoutSession = async (
       Math.round(ghsPrice * 100);
 
 
-    console.log(
-      "💱 Currency conversion:",
-      {
-        usdPrice,
-        ghsPrice,
-        rate: conversion.rate,
-        rateDate: conversion.rateDate,
-        paystackAmount
-      }
-    );
-
-
     // --------------------------------------------------------
     // BASE URL
     // --------------------------------------------------------
@@ -276,12 +264,6 @@ export const createCartCheckoutSession = async (
     );
 
 
-    console.log(
-      "✅ Paystack transaction initialized:",
-      transaction.data.reference
-    );
-
-
     // --------------------------------------------------------
     // RETURN CHECKOUT URL
     // --------------------------------------------------------
@@ -342,12 +324,6 @@ export const paystackCallback = async (
       );
 
     }
-
-
-    console.log(
-      "🔎 Verifying Paystack transaction:",
-      reference
-    );
 
 
     // --------------------------------------------------------
@@ -427,10 +403,6 @@ export const paystackWebhook = async (
 ) => {
 
   try {
-    console.log(
-      "Webhook body type:",
-      Buffer.isBuffer(req.body)
-    );
 
     const signature =
       req.headers["x-paystack-signature"];
@@ -478,13 +450,6 @@ export const paystackWebhook = async (
 
     const event =
       JSON.parse(req.body.toString());
-
-
-    console.log(
-      "📩 Paystack webhook:",
-      event.event
-    );
-
 
     // --------------------------------------------------------
     // PAYMENT SUCCESS
@@ -621,30 +586,6 @@ const processSuccessfulPayment = async (
         expectedGhsAmount * 100
       );
 
-
-    console.log(
-      "💰 Payment amount verification:",
-      {
-        transactionAmount:
-          transaction.amount,
-
-        expectedPaystackAmount,
-
-        currency:
-          transaction.currency,
-
-        usdPrice:
-          metadata.usdPrice,
-
-        ghsAmount:
-          expectedGhsAmount,
-
-        exchangeRate:
-          metadata.exchangeRate
-      }
-    );
-
-
     if (
       transaction.amount !==
       expectedPaystackAmount
@@ -692,10 +633,6 @@ const processSuccessfulPayment = async (
 
       if (existingDownload) {
 
-        console.log(
-          "ℹ️ Source code payment already fulfilled:",
-          transaction.reference
-        );
 
         return;
 
@@ -716,11 +653,6 @@ const processSuccessfulPayment = async (
         });
 
       if (existingServiceOrder) {
-
-        console.log(
-          "ℹ️ Service order already fulfilled:",
-          transaction.reference
-        );
 
         return;
 

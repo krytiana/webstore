@@ -403,7 +403,7 @@ function renderDemoLink(data) {
 }
 
 function renderFeatures(data) {
-    console.log("Rendering features:", data);
+   
 
     const { name, features } = data;
 

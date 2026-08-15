@@ -52,7 +52,7 @@ export const requestPasswordReset = async (req: Request, res: Response) => {
     const user = await User.findOne({ email });
 
     if (!user) {
-      console.log("❌ User not found:", email);
+     
       return res.status(404).json({ message: "User not found" });
     }
 

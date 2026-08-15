@@ -86,7 +86,6 @@ export const sendResetEmail = async (email: string, token: string) => {
       `,
     });
 
-    console.log(`✅ Password reset email sent to ${email}`);
   } catch (error) {
     console.error("❌ Error sending password reset email:", error);
   }
@@ -127,7 +126,6 @@ export const sendDownloadLinkEmail = async (
       `,
     });
 
-    console.log(`✅ Download email sent to ${email}`);
   } catch (error) {
     console.error("❌ Error sending download email:", error);
   }
@@ -175,7 +173,6 @@ export const sendVerificationEmail = async (
       `,
     });
 
-    console.log(`✅ Verification email sent to ${email}`);
   } catch (error) {
     console.error("❌ Error sending verification email:", error);
     throw error;
@@ -222,9 +219,6 @@ export const sendDashboardLinkEmail = async (
       `,
     });
 
-    console.log(
-      `✅ Dashboard email sent to ${email}`
-    );
 
   } catch (error) {
 

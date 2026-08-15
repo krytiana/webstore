@@ -154,8 +154,6 @@ export const postAddProduct = async (
     });
 
 
-    console.log("✅ Product added:", name);
-
     res.redirect("/admin");
 
   } catch (error) {
@@ -334,8 +332,6 @@ export const postEditProduct = async (
     );
 
 
-    console.log("✅ Product updated:", name);
-
     res.redirect("/admin");
 
   } catch (error) {
@@ -356,8 +352,6 @@ export const deleteProduct = async (
   try {
 
     await Product.findByIdAndDelete(req.params.id);
-
-    console.log("🗑️ Product deleted:", req.params.id);
 
     res.redirect("/admin");
 

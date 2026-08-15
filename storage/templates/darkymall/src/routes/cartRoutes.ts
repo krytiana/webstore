@@ -12,7 +12,6 @@ from "../middlewares/authMiddleware";
 
 const router = express.Router();
 
-console.log("Cart routes loaded");
 
 router.post("/add", authenticateToken, addToCart);
 

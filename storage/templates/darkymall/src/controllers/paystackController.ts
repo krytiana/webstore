@@ -713,10 +713,6 @@ export const paystackWebhook = async (
 
     if (!cart || cart.items.length === 0) {
 
-      console.log(
-        "Cart not found or already cleared"
-      );
-
       return res.status(200).json({
         received: true
       });
