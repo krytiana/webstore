@@ -88,9 +88,9 @@ export const requireAdmin = async (
 
     if (req.originalUrl.startsWith("/api")) {
 
+      console.error("Admin authorization error:", error);
       return res.status(500).json({
-        message: "Server error",
-        error
+        message: "Server error"
       });
 
     } else {

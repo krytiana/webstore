@@ -1,3 +1,19 @@
+function escapeHtml(value) {
+  return String(value ?? "").replace(/[&<>"']/g, char => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+  }[char]));
+}
+
+function safeImageUrl(value) {
+  const url = String(value ?? "").trim();
+  try {
+    const parsed = new URL(url, window.location.origin);
+    return ["http:", "https:"].includes(parsed.protocol) ? parsed.href : "";
+  } catch (_) {
+    return "";
+  }
+}
+
 //public/js/dashboard.js
 import { getCurrentUser } from "./userService.js";
 
@@ -22,6 +38,9 @@ document.querySelectorAll(".sidebar li")
 function openProduct(productId){
   window.location.href = `/product/${productId}`;
 }
+
+// ------------------ SETTINGS ------------------
+async function loadSettings() { try { const res = await fetch("/api/settings"); if(res.ok){ const settings=await res.json(); window.STORE_CURRENCY_SYMBOL=settings.currencySymbol || window.STORE_CURRENCY_SYMBOL || "GH₵"; } } catch {} }
 
 // ------------------ INIT ------------------
 async function init() {
@@ -89,13 +108,13 @@ async function loadCart() {
     div.innerHTML = `
     
       <img
-        src="${p.images?.[0] || ''}"
-        alt="${p.name}"
+        src="${escapeHtml(safeImageUrl(p.images?.[0]))}"
+        alt="${escapeHtml(p.name)}"
       >
 
       <div class="product-info">
 
-        <h4>${p.name}</h4>
+        <h4>${escapeHtml(p.name)}</h4>
 
         <p>Qty: ${item.quantity}</p>
 
@@ -186,15 +205,15 @@ async function loadWishlist() {
 
     div.innerHTML = `
       <img
-        src="${p.images?.[0] || ''}"
-        alt="${p.name}"
+        src="${escapeHtml(safeImageUrl(p.images?.[0]))}"
+        alt="${escapeHtml(p.name)}"
       >
 
       <div class="product-info">
 
-        <h4>${p.name}</h4>
+        <h4>${escapeHtml(p.name)}</h4>
 
-        <p>$${p.price.toFixed(2)}</p>
+        <p>${window.STORE_CURRENCY_SYMBOL || "GH₵"}${p.price.toFixed(2)}</p>
 
         <button class="btn remove-btn">
           Remove
@@ -235,6 +254,8 @@ async function loadWishlist() {
         );
 
         const result = await res.json();
+
+        console.log(result);
 
         loadWishlist();
       });
@@ -295,15 +316,15 @@ async function loadRecent() {
 
       div.innerHTML = `
         <img
-          src="${p.images?.[0] || ''}"
-          alt="${p.name}"
+          src="${escapeHtml(safeImageUrl(p.images?.[0]))}"
+          alt="${escapeHtml(p.name)}"
         >
 
         <div class="product-info">
 
-          <h4>${p.name}</h4>
+          <h4>${escapeHtml(p.name)}</h4>
 
-          <p>$${p.price.toFixed(2)}</p>
+          <p>${window.STORE_CURRENCY_SYMBOL || "GH₵"}${p.price.toFixed(2)}</p>
 
         </div>
       `;
@@ -366,17 +387,17 @@ async function loadOrders() {
 
     div.innerHTML = `
       <div class="order-top">
-        <h4>Order #${order.orderNumber || order._id.slice(-6)}</h4>
-        <span class="status-badge status-${order.orderStatus}">
-          ${order.orderStatus}
+        <h4>Order #${escapeHtml(order.orderNumber || order._id.slice(-6))}</h4>
+        <span class="status-badge status-${escapeHtml(order.orderStatus)}">
+          ${escapeHtml(order.orderStatus)}
         </span>
       </div>
 
       <div class="order-body">
-        <p><strong>Products:</strong> ${preview}</p>
-        <p><strong>Total:</strong> $${order.totalAmount}</p>
+        <p><strong>Products:</strong> ${escapeHtml(preview)}</p>
+        <p><strong>Total:</strong> ${window.STORE_CURRENCY_SYMBOL || "GH₵"}${order.totalAmount}</p>
         <p style="font-size:12px; opacity:0.7;">
-          Payment: ${order.paymentStatus} via ${order.paymentProvider}
+          Payment: ${escapeHtml(order.paymentStatus)} via ${escapeHtml(order.paymentProvider)}
         </p>
       </div>
     `;

@@ -1,944 +1,274 @@
-// src/controllers/paystackController.ts
-
 import { Request, Response } from "express";
 import crypto from "crypto";
-
-import { Cart } from "../models/cart";
 import Order from "../models/Order";
-import Address from "../models/address";
+import { Settings } from "../models/Settings";
+import { clearUserCart, createPendingOrder, getCheckoutSnapshot } from "../services/checkoutService";
+import { env } from "../config/env";
+const PAYSTACK_SECRET = process.env.PAYSTACK_SECRET_KEY || "";
+async function verifyWithPaystack(reference: string) {
+  if (!PAYSTACK_SECRET) throw new Error("Paystack is not configured");
+  const response = await fetch(`https://api.paystack.co/transaction/verify/${encodeURIComponent(reference)}`, { headers: { Authorization: `Bearer ${PAYSTACK_SECRET}` } });
+  const result: any = await response.json(); if (!response.ok || !result.status || result.data?.status !== "success") throw new Error("Paystack payment was not successful"); return result.data;
+}
+async function markPaystackOrderPaid(payment: any) {
+  const settings = await Settings.findOne({}).lean();
 
-const PAYSTACK_SECRET =
-  process.env.PAYSTACK_SECRET_KEY || "";
+  const paystackCurrency = (
+    settings?.currencyCode ||
+    env.paystackCurrency
+  ).toUpperCase();
 
+  const reference =
+    typeof payment?.reference === "string"
+      ? payment.reference
+      : "";
 
-// =====================================================
-// Create Paystack Checkout
-// =====================================================
+  const orderId =
+    typeof payment?.metadata?.orderId === "string"
+      ? payment.metadata.orderId
+      : "";
 
-export const createPaystackCheckout = async (
-  req: any,
-  res: Response
-) => {
+  if (!reference) {
+    throw new Error("Missing Paystack reference");
+  }
+
+  const order = orderId
+    ? await Order.findById(orderId)
+    : await Order.findOne({
+        paystackReference: reference
+      });
+
+  if (!order) {
+    throw new Error("Order snapshot not found");
+  }
+
+  if (order.paymentStatus === "paid") {
+    return order;
+  }
+
+  if (
+    order.paymentProvider !== "paystack" ||
+    order.paystackReference !== reference
+  ) {
+    throw new Error("Paystack reference mismatch");
+  }
+
+  if (
+    payment?.metadata?.userId &&
+    String(payment.metadata.userId) !== order.user.toString()
+  ) {
+    throw new Error("Paystack user mismatch");
+  }
+
+  if (
+    !Number.isFinite(Number(payment.amount)) ||
+    Number(payment.amount) !==
+      Math.round(order.totalAmount * 100)
+  ) {
+    throw new Error("Paystack amount mismatch");
+  }
+
+  if (
+    payment.currency &&
+    String(payment.currency).toUpperCase() !== paystackCurrency
+  ) {
+    throw new Error("Paystack currency mismatch");
+  }
+
+  order.paymentStatus = "paid";
+  order.orderStatus = "confirmed";
+
+  order.trackingHistory.push({
+    status: "confirmed",
+    message: "Order placed successfully",
+    updatedAt: new Date()
+  });
+
+  await order.save();
+
+  await clearUserCart(
+    order.user.toString()
+  );
+
+  return order;
+}
+export const createPaystackCheckout = async (req: any, res: Response) => {
+  if (!PAYSTACK_SECRET) {
+    return res.status(503).json({
+      success: false,
+      message: "Paystack is not configured"
+    });
+  }
 
   try {
+    const settings = await Settings.findOne({}).lean();
 
-    const userId = req.user.userId;
-
-    // ---------------------------------------------
-    // Get cart
-    // ---------------------------------------------
-
-    const cart = await Cart.findOne({
-      userId
-    }).populate("items.productId");
-
-    if (!cart || cart.items.length === 0) {
-
-      return res.status(400).json({
+    if (settings && !settings.enablePaystack) {
+      return res.status(403).json({
         success: false,
-        message: "Cart is empty"
+        message: "Paystack payments are disabled"
       });
-
     }
 
+    const paystackCurrency = (
+      settings?.currencyCode ||
+      env.paystackCurrency
+    ).toUpperCase();
 
-    // ---------------------------------------------
-    // Get user's default address
-    // ---------------------------------------------
-
-    const address = await Address.findOne({
-      userId,
-      isDefault: true
-    });
-
-    if (!address) {
-
-      return res.status(400).json({
-        success: false,
-        message: "No default address found"
-      });
-
-    }
-
-
-    // ---------------------------------------------
-    // Build cart items
-    // ---------------------------------------------
-
-    const cartItems = cart.items.map(
-      item => item as any
-    );
-
-
-    // ---------------------------------------------
-    // Calculate total on SERVER
-    // ---------------------------------------------
-
-    const totalAmount = cartItems.reduce(
-      (total, item) => {
-
-        const product = item.productId;
-
-        return total +
-          product.price * item.quantity;
-
-      },
-      0
-    );
-
-
-    if (totalAmount <= 0) {
-
-      return res.status(400).json({
-        success: false,
-        message: "Invalid cart amount"
-      });
-
-    }
-
-
-    // ---------------------------------------------
-    // Get user email
-    // ---------------------------------------------
-
-    const email =
-      req.user.email;
+    const userId = String(req.user.userId);
+    const email = String(req.user.email || "");
 
     if (!email) {
-
       return res.status(400).json({
         success: false,
         message: "User email is required"
       });
-
     }
 
-
-    // ---------------------------------------------
-    // Unique reference
-    // ---------------------------------------------
+    const snapshot = await getCheckoutSnapshot(userId);
 
     const reference =
-      `PAY-${Date.now()}-${crypto
-        .randomBytes(4)
-        .toString("hex")}`;
+      `PAY-${Date.now()}-${crypto.randomBytes(8).toString("hex")}`;
 
+    const order = await createPendingOrder(
+      userId,
+      "paystack",
+      snapshot,
+      reference
+    );
 
-    // ---------------------------------------------
-    // Callback URL
-    // ---------------------------------------------
+    try {
+      const response = await fetch(
+        "https://api.paystack.co/transaction/initialize",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${PAYSTACK_SECRET}`,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            amount: Math.round(snapshot.totalAmount * 100),
 
-    const baseUrl =
-      `${req.protocol}://${req.get("host")}`;
+            email,
 
-    const callbackUrl =
-      process.env.PAYSTACK_CALLBACK_URL ||
-      `${baseUrl}/api/paystack/callback`;
-
-
-    // ---------------------------------------------
-    // Initialize Paystack
-    // ---------------------------------------------
-
-    const response = await fetch(
-      "https://api.paystack.co/transaction/initialize",
-      {
-        method: "POST",
-
-        headers: {
-          Authorization:
-            `Bearer ${PAYSTACK_SECRET}`,
-
-          "Content-Type":
-            "application/json"
-        },
-
-        body: JSON.stringify({
-
-          amount:
-            Math.round(totalAmount * 100),
-
-          email,
-
-          currency: "GHS",
-
-          reference,
-
-          callback_url:
-            callbackUrl,
-
-          metadata: {
-            userId:
-              userId.toString(),
+            currency: paystackCurrency,
 
             reference,
 
-            fullname:
-              address.fullName,
+            callback_url:
+              process.env.PAYSTACK_CALLBACK_URL ||
+              `${env.clientUrl}/api/paystack/callback`,
 
-            phone:
-              address.phone
-          }
-
-        })
-      }
-    );
-
-
-    const result: any =
-      await response.json();
-
-
-    if (!result.status) {
-
-      console.error(
-        "Paystack initialization failed:",
-        result
+            metadata: {
+              userId,
+              orderId: order._id.toString(),
+              reference,
+              fullname: snapshot.shippingAddress.fullName,
+              phone: snapshot.shippingAddress.phone
+            }
+          })
+        }
       );
 
-      return res.status(400).json({
-        success: false,
-        message:
-          result.message ||
-          "Paystack initialization failed"
+      const result: any = await response.json();
+
+      if (
+        !response.ok ||
+        !result.status ||
+        !result.data?.authorization_url
+      ) {
+        throw new Error(
+          result.message || "Paystack initialization failed"
+        );
+      }
+
+      return res.json({
+        success: true,
+        authorization_url: result.data.authorization_url,
+        access_code: result.data.access_code,
+        reference: result.data.reference
       });
 
+    } catch (paymentError) {
+      await order.deleteOne();
+      throw paymentError;
     }
 
+  } catch (error: any) {
+    console.error("Paystack checkout error:", error);
 
-    // ---------------------------------------------
-    // Return checkout URL
-    // ---------------------------------------------
+    const known = new Set([
+      "Cart is empty",
+      "No default address found",
+      "Invalid cart amount",
+      "Cart contains an invalid product"
+    ]);
 
-    return res.json({
-
-      success: true,
-
-      authorization_url:
-        result.data.authorization_url,
-
-      access_code:
-        result.data.access_code,
-
-      reference:
-        result.data.reference
-
-    });
-
-  } catch (error) {
-
-    console.error(
-      "Paystack checkout error:",
-      error
-    );
-
-    return res.status(500).json({
+    return res.status(400).json({
       success: false,
-      message:
-        "Paystack checkout failed"
+      message: known.has(error?.message)
+        ? error.message
+        : "Paystack checkout failed"
     });
-
   }
-
 };
-
-// =====================================================
-// Verify Paystack Payment
-// =====================================================
-
 export const verifyPaystackPayment = async (
-  req: any,
+  req: Request,
   res: Response
 ) => {
+  const reference =
+    typeof req.query.reference === "string"
+      ? req.query.reference
+      : "";
+
+  if (!reference) {
+    return res.redirect(
+      "/success.html?payment=paystack&status=failed"
+    );
+  }
 
   try {
-
-    const reference =
-      req.query.reference as string;
-
-
-    if (!reference) {
-
-      return res.redirect(
-        "/success.html?payment=paystack&status=failed&message=Missing%20payment%20reference"
-      );
-
-    }
-
-
-    // ---------------------------------------------
-    // Verify payment with Paystack
-    // ---------------------------------------------
-
-    const response = await fetch(
-      `https://api.paystack.co/transaction/verify/${reference}`,
-      {
-        method: "GET",
-
-        headers: {
-          Authorization:
-            `Bearer ${PAYSTACK_SECRET}`
-        }
-      }
-    );
-
-
-    const result: any =
-      await response.json();
-
-
-    if (
-      !result.status ||
-      result.data?.status !== "success"
-    ) {
-
-      return res.redirect(
-        `/success.html?payment=paystack&status=failed&reference=${encodeURIComponent(reference)}`
-      );
-
-    }
-
+    console.log("Paystack callback reference:", reference);
 
     const payment =
-      result.data;
-
-
-    // ---------------------------------------------
-    // Get user from metadata
-    // ---------------------------------------------
-
-    const userId =
-      payment.metadata?.userId;
-
-
-    if (!userId) {
-
-      return res.redirect(
-        `/success.html?payment=paystack&status=failed&reference=${encodeURIComponent(reference)}`
-      );
-
-    }
-
-
-    // ---------------------------------------------
-    // Prevent duplicate order
-    // ---------------------------------------------
-
-    const existingOrder =
-      await Order.findOne({
-        paystackReference:
-          payment.reference
-      });
-
-
-    if (existingOrder) {
-
-      return res.redirect(
-        `/success.html?payment=paystack&status=success&reference=${encodeURIComponent(reference)}`
-      );
-
-    }
-
-
-    // ---------------------------------------------
-    // Get cart
-    // ---------------------------------------------
-
-    const cart =
-      await Cart.findOne({
-        userId
-      }).populate(
-        "items.productId"
-      );
-
-
-    if (!cart || cart.items.length === 0) {
-
-      return res.redirect(
-        `/success.html?payment=paystack&status=failed&reference=${encodeURIComponent(reference)}`
-      );
-
-    }
-
-
-    const cartItems =
-      cart.items.map(
-        item => item as any
-      );
-
-
-    // ---------------------------------------------
-    // Build order items
-    // ---------------------------------------------
-
-    const orderItems =
-      cartItems.map(item => {
-
-        const product =
-          item.productId;
-
-        return {
-
-          product:
-            product._id,
-
-          name:
-            product.name,
-
-          price:
-            product.price,
-
-          image:
-            product.images?.[0] || "",
-
-          quantity:
-            item.quantity,
-
-          selectedOptions:
-            item.selectedOptions || {}
-
-        };
-
-      });
-
-
-    // ---------------------------------------------
-    // Calculate total
-    // ---------------------------------------------
-
-    const totalAmount =
-      orderItems.reduce(
-        (acc, item) =>
-          acc +
-          item.price *
-          item.quantity,
-        0
-      );
-
-
-    // ---------------------------------------------
-    // Verify paid amount
-    // ---------------------------------------------
-
-    const paidAmount =
-      payment.amount / 100;
-
-
-    if (
-      Math.round(paidAmount * 100) !==
-      Math.round(totalAmount * 100)
-    ) {
-
-      console.error(
-        "Paystack amount mismatch",
-        {
-          paidAmount,
-          totalAmount,
-          reference:
-            payment.reference
-        }
-      );
-
-
-      return res.redirect(
-        `/success.html?payment=paystack&status=failed&reference=${encodeURIComponent(reference)}`
-      );
-
-    }
-
-
-    // ---------------------------------------------
-    // Get default address
-    // ---------------------------------------------
-
-    const address =
-      await Address.findOne({
-        userId,
-        isDefault: true
-      });
-
-
-    if (!address) {
-
-      return res.redirect(
-        `/success.html?payment=paystack&status=failed&reference=${encodeURIComponent(reference)}`
-      );
-
-    }
-
-
-    // ---------------------------------------------
-    // Generate order number
-    // ---------------------------------------------
-
-    const orderNumber =
-      "FF-" +
-      Date.now()
-        .toString(36)
-        .toUpperCase() +
-      "-" +
-      crypto
-        .randomBytes(4)
-        .toString("hex")
-        .toUpperCase();
-
-
-    // ---------------------------------------------
-    // Create order
-    // ---------------------------------------------
-
-    await Order.create({
-
-      user:
-        userId,
-
-      items:
-        orderItems,
-
-      shippingAddress: {
-
-        fullName:
-          address.fullName,
-
-        phone:
-          address.phone,
-
-        addressLine:
-          address.addressLine,
-
-        city:
-          address.city,
-
-        region:
-          address.region,
-
-        country:
-          address.country
-
-      },
-
-      totalAmount,
-
-      paymentProvider:
-        "paystack",
-
-      paystackReference:
-        payment.reference,
-
-      paymentStatus:
-        "paid",
-
-      orderStatus:
-        "confirmed",
-
-      orderNumber,
-
-      trackingHistory: [
-
-        {
-
-          status:
-            "confirmed",
-
-          message:
-            "Order placed successfully",
-
-          updatedAt:
-            new Date()
-
-        }
-
-      ]
-
+      await verifyWithPaystack(reference);
+
+    console.log("Paystack verified payment:", {
+      reference: payment.reference,
+      amount: payment.amount,
+      currency: payment.currency,
+      status: payment.status,
+      metadata: payment.metadata
     });
 
-
-    // ---------------------------------------------
-    // Clear cart
-    // ---------------------------------------------
-
-    cart.items = [];
-
-    await cart.save();
-
-
-    // ---------------------------------------------
-    // Redirect to success page
-    // ---------------------------------------------
+    await markPaystackOrderPaid(payment);
 
     return res.redirect(
       `/success.html?payment=paystack&status=success&reference=${encodeURIComponent(reference)}`
     );
 
-
-  } catch (error) {
+  } catch (error: any) {
 
     console.error(
       "Paystack verification error:",
       error
     );
 
-
     return res.redirect(
-      "/success.html?payment=paystack&status=failed"
+      `/success.html?payment=paystack&status=failed&reference=${encodeURIComponent(reference)}&error=${encodeURIComponent(
+        error?.message || "Unknown Paystack verification error"
+      )}`
     );
-
   }
-
 };
-
-
-// =====================================================
-// Paystack Webhook
-// =====================================================
-
-export const paystackWebhook = async (
-  req: Request,
-  res: Response
-) => {
-
+export const paystackWebhook = async (req: Request, res: Response) => {
+  if (!PAYSTACK_SECRET) return res.status(503).send("Paystack is not configured");
   try {
-
-    const signature =
-      req.headers[
-        "x-paystack-signature"
-      ] as string;
-
-
-    // ---------------------------------------------
-    // Verify webhook signature
-    // ---------------------------------------------
-
-    const hash =
-      crypto
-        .createHmac(
-          "sha512",
-          PAYSTACK_SECRET
-        )
-        .update(
-          JSON.stringify(req.body)
-        )
-        .digest("hex");
-
-
-    if (hash !== signature) {
-
-      console.error(
-        "Invalid Paystack webhook signature"
-      );
-
-      return res
-        .status(401)
-        .send("Invalid signature");
-
-    }
-
-
-    const event =
-      req.body;
-
-
-    // ---------------------------------------------
-    // Only process successful charges
-    // ---------------------------------------------
-
-    if (
-      event.event !==
-      "charge.success"
-    ) {
-
-      return res.status(200).json({
-        received: true
-      });
-
-    }
-
-
-    const payment =
-      event.data;
-
-
-    const reference =
-      payment.reference;
-
-
-    // ---------------------------------------------
-    // Prevent duplicate order
-    // ---------------------------------------------
-
-    const existingOrder =
-      await Order.findOne({
-        paystackReference:
-          reference
-      });
-
-
-    if (existingOrder) {
-
-      return res.status(200).json({
-        received: true
-      });
-
-    }
-
-
-    const userId =
-      payment.metadata?.userId;
-
-
-    if (!userId) {
-
-      console.error(
-        "No userId in Paystack metadata"
-      );
-
-      return res.status(200).json({
-        received: true
-      });
-
-    }
-
-
-    // ---------------------------------------------
-    // Get cart
-    // ---------------------------------------------
-
-    const cart =
-      await Cart.findOne({
-        userId
-      }).populate(
-        "items.productId"
-      );
-
-
-    if (!cart || cart.items.length === 0) {
-
-      console.log(
-        "Cart not found or already cleared"
-      );
-
-      return res.status(200).json({
-        received: true
-      });
-
-    }
-
-
-    const cartItems =
-      cart.items.map(
-        item => item as any
-      );
-
-
-    // ---------------------------------------------
-    // Build order items
-    // ---------------------------------------------
-
-    const orderItems =
-      cartItems.map(item => {
-
-        const product =
-          item.productId;
-
-        return {
-
-          product:
-            product._id,
-
-          name:
-            product.name,
-
-          price:
-            product.price,
-
-          image:
-            product.images?.[0] || "",
-
-          quantity:
-            item.quantity,
-
-          selectedOptions:
-            item.selectedOptions || {}
-
-        };
-
-      });
-
-
-    const totalAmount =
-      orderItems.reduce(
-        (acc, item) =>
-          acc +
-          item.price *
-          item.quantity,
-        0
-      );
-
-
-    // ---------------------------------------------
-    // Verify amount
-    // ---------------------------------------------
-
-    const paidAmount =
-      payment.amount / 100;
-
-
-    if (
-      Math.round(paidAmount * 100) !==
-      Math.round(totalAmount * 100)
-    ) {
-
-      console.error(
-        "Webhook amount mismatch",
-        {
-          paidAmount,
-          totalAmount,
-          reference
-        }
-      );
-
-      return res.status(200).json({
-        received: true
-      });
-
-    }
-
-
-    // ---------------------------------------------
-    // Address
-    // ---------------------------------------------
-
-    const address =
-      await Address.findOne({
-        userId,
-        isDefault: true
-      });
-
-
-    if (!address) {
-
-      console.error(
-        "No default address found"
-      );
-
-      return res.status(200).json({
-        received: true
-      });
-
-    }
-
-
-    // ---------------------------------------------
-    // Generate order number
-    // ---------------------------------------------
-
-    const orderNumber =
-      "FF-" +
-      Date.now()
-        .toString(36)
-        .toUpperCase() +
-      "-" +
-      crypto
-        .randomBytes(4)
-        .toString("hex")
-        .toUpperCase();
-
-
-    // ---------------------------------------------
-    // Create order
-    // ---------------------------------------------
-
-    await Order.create({
-
-      user:
-        userId,
-
-      items:
-        orderItems,
-
-      shippingAddress: {
-
-        fullName:
-          address.fullName,
-
-        phone:
-          address.phone,
-
-        addressLine:
-          address.addressLine,
-
-        city:
-          address.city,
-
-        region:
-          address.region,
-
-        country:
-          address.country
-
-      },
-
-      totalAmount,
-
-      paymentProvider:
-        "paystack",
-
-      paystackReference:
-        reference,
-
-      paymentStatus:
-        "paid",
-
-      orderStatus:
-        "confirmed",
-
-      orderNumber,
-
-      trackingHistory: [
-
-        {
-
-          status:
-            "confirmed",
-
-          message:
-            "Order placed successfully",
-
-          updatedAt:
-            new Date()
-
-        }
-
-      ]
-
-    });
-
-
-    // ---------------------------------------------
-    // Clear cart
-    // ---------------------------------------------
-
-    cart.items = [];
-
-    await cart.save();
-
-
-    return res.status(200).json({
-      received: true
-    });
-
-
-  } catch (error) {
-
-    console.error(
-      "Paystack webhook error:",
-      error
-    );
-
-    return res.status(200).json({
-      received: true
-    });
-
-  }
-
+    const signature = req.headers["x-paystack-signature"]; const rawBody = (req as any).rawBody;
+    if (typeof signature !== "string" || !Buffer.isBuffer(rawBody) || !/^[a-f0-9]{128}$/i.test(signature)) return res.status(401).send("Invalid signature");
+    const expectedBuffer = Buffer.from(crypto.createHmac("sha512", PAYSTACK_SECRET).update(rawBody).digest("hex"), "utf8"); const providedBuffer = Buffer.from(signature, "utf8");
+    if (expectedBuffer.length !== providedBuffer.length || !crypto.timingSafeEqual(expectedBuffer, providedBuffer)) return res.status(401).send("Invalid signature");
+    if (req.body?.event !== "charge.success") return res.status(200).json({ received: true });
+    await markPaystackOrderPaid(req.body.data); return res.status(200).json({ received: true });
+  } catch (error) { console.error("Paystack webhook error:", error); return res.status(500).json({ received: false, message: "Webhook processing failed" }); }
 };

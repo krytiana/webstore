@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Payment Success | FashionFemme</title>
+  <title>Payment Success | Store</title>
 
   <link rel="stylesheet" href="/css/cart.css">
 
@@ -94,23 +94,46 @@
         // Paystack callback has already verified
         // the payment on the server before redirecting here.
 
-        if (
-          status !== "success" ||
-          !reference
-        ) {
+        if (payment === "paystack") {
+
+          const verificationError =
+            params.get("error");
+
+          if (
+            status !== "success" ||
+            !reference
+          ) {
+
+            title.textContent =
+              "❌ Payment Failed";
+
+            message.textContent =
+              verificationError ||
+              "Your Paystack payment could not be verified.";
+
+            message.className =
+              "error";
+
+            return;
+          }
 
           title.textContent =
-            "❌ Payment Failed";
+            "✅ Payment Successful!";
 
           message.textContent =
-            "Your Paystack payment could not be verified.";
+            "Your Paystack payment has been verified and your order has been created.";
 
-          message.className =
-            "error";
+          message.className = "";
+
+          referenceText.textContent =
+            `Payment Reference: ${reference}`;
+
+          setTimeout(() => {
+            window.location.href = "/dashboard";
+          }, 2000);
 
           return;
         }
-
 
         // Payment is already verified
         title.textContent =
@@ -168,7 +191,6 @@
                     "application/json"
                 },
 
-                credentials: "include",
 
                 body: JSON.stringify({
                   session_id:

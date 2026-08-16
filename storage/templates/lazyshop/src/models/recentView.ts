@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const recentViewSchema = new mongoose.Schema({
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true, unique: true, index: true },
 
   items: [
     {

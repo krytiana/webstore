@@ -16,7 +16,9 @@ const cartSchema = new mongoose.Schema<ICart>({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
-    required: true
+    required: true,
+    unique: true,
+    index: true
   },
 
   items: [
@@ -29,7 +31,9 @@ const cartSchema = new mongoose.Schema<ICart>({
 
       quantity: {
         type: Number,
-        default: 1
+        default: 1,
+        min: 1,
+        max: 100
       },
 
       selectedOptions: {

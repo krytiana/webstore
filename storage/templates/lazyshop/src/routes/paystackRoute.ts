@@ -9,6 +9,7 @@ import {
 } from "../controllers/paystackController";
 
 import { authenticateToken } from "../middlewares/authMiddleware";
+import { rateLimit } from "../middlewares/rateLimit";
 
 const router = express.Router();
 
@@ -18,6 +19,7 @@ const router = express.Router();
 
 router.post(
   "/cart-checkout",
+  rateLimit(10 * 60 * 1000, 10),
   authenticateToken,
   createPaystackCheckout
 );

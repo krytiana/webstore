@@ -27,17 +27,22 @@
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
   },
-  "name": "temperate",
-  "version": "1.0.0",
-  "description": "npm install stripe mongoose express dotenv\r npm install -D typescript @types/express @types/node",
-  "main": "index.js",
+  "name": "DarkyMall-business-store",
+  "version": "2.0.0",
+  "description": "Client-ready full-stack business storefront template with Express, TypeScript, MongoDB, EJS, configurable payments, admin management and ImageKit uploads.",
+  "main": "dist/server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon --watch src --ext ts --exec \"npx ts-node\" src/server.ts",
     "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "test": "node --test",
+    "check": "npm run typecheck && npm test",
     "start": "node dist/server.js"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "SEE LICENSE.md",
+  "engines": {
+    "node": ">=20.0.0"
+  }
 }

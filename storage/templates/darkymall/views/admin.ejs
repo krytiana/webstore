@@ -266,7 +266,7 @@ button:hover {
 
         <div class="card" style="background:#e7eee7;">
           <h4>Total Stock Revenue</h4>
-          <p id="totalRevenue">$0</p>
+          <p id="totalRevenue"><%= settings.currencySymbol || "GH₵" %>0</p>
         </div>
 
         <div class="card" style="background:#e7eee7;">
@@ -276,7 +276,7 @@ button:hover {
 
         <div class="card" style="background:#e7eee7;">
           <h4>Total Orders Revenue</h4>
-          <p id="totalOrdersRevenue">$0</p>
+          <p id="totalOrdersRevenue"><%= settings.currencySymbol || "GH₵" %>0</p>
         </div>        
 
 
@@ -344,6 +344,12 @@ button:hover {
 
         <label>Business Name</label>
         <input id="siteName" placeholder="Business Name">
+
+        <label>Currency Code</label>
+        <input id="currencyCode" maxlength="3" placeholder="GHS">
+
+        <label>Currency Symbol</label>
+        <input id="currencySymbol" maxlength="8" placeholder="GH₵">
 
         <label>Logo</label>
 
@@ -447,6 +453,14 @@ button:hover {
 </div>
 
 <script>
+function escapeHtml(value) {
+  return String(value ?? "").replace(/[&<>"']/g, char => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+  }[char]));
+}
+</script>
+<script>
+const currencySymbol = <%- JSON.stringify(settings.currencySymbol || "GH₵") %>;
 const API = "/api/products";
 let allProducts = [];
 let allOrders = [];
@@ -587,11 +601,11 @@ function renderProductList(products) {
   }
 
   products.forEach(p => {
-    totalRevenue += p.price * (p.stock || 1); // Assuming each product has a stock count
+    totalRevenue += p.price;
     totalProducts++;
     container.innerHTML += `
       <div class="product-item">
-        <strong>${p.name}</strong> - $${p.price}
+        <strong>${escapeHtml(p.name)}</strong> - ${currencySymbol}${p.price}
 
         <div class="actions">
           <button onclick="editProduct('${p._id}')">Edit</button>
@@ -602,7 +616,7 @@ function renderProductList(products) {
   });
   // Update dashboard metrics
   document.getElementById("totalProducts").innerText = totalProducts;
-  document.getElementById("totalRevenue").innerText = `$${totalRevenue.toFixed(2)}`;
+  document.getElementById("totalRevenue").innerText = `${currencySymbol}${totalRevenue.toFixed(2)}`;
 }
 
 document.getElementById("productSearch").addEventListener("input", function () {
@@ -843,6 +857,8 @@ async function loadSettings() {
 
   document.getElementById("siteName").value = s.siteName || "";
   document.getElementById("logo").value = s.logo || "";
+  document.getElementById("currencyCode").value = s.currencyCode || "GHS";
+  document.getElementById("currencySymbol").value = s.currencySymbol || "GH₵";
 
   document.getElementById("primaryColor").value = s.primaryColor || "";
   document.getElementById("secondaryColor").value = s.secondaryColor || "";
@@ -881,36 +897,64 @@ document.getElementById("settingsForm").addEventListener("submit", async (e) => 
 
   const heroImages = Array.from(
     document.querySelectorAll("#heroContainer .hero-url")
-  ).map(i => i.value);
+  )
+    .map(i => i.value.trim())
+    .filter(Boolean);
 
   const data = {
     siteName: document.getElementById("siteName").value,
     logo: document.getElementById("logo").value,
+    currencyCode: document.getElementById("currencyCode").value,
+    currencySymbol: document.getElementById("currencySymbol").value,
+
     primaryColor: document.getElementById("primaryColor").value,
     secondaryColor: document.getElementById("secondaryColor").value,
+
     backgroundColor: document.getElementById("backgroundColor").value,
     surfaceColor: document.getElementById("surfaceColor").value,
     surfaceAltColor: document.getElementById("surfaceAltColor").value,
+
     headingColor: document.getElementById("headingColor").value,
     textColor: document.getElementById("textColor").value,
     mutedTextColor: document.getElementById("mutedTextColor").value,
     interactionColor: document.getElementById("interactionColor").value,
     borderColor: document.getElementById("borderColor").value,
+
     enableStripe: document.getElementById("enableStripe").checked,
     enablePaystack: document.getElementById("enablePaystack").checked,
+
     contactEmail: document.getElementById("contactEmail").value,
     contactPhone: document.getElementById("contactPhone").value,
     footerText: document.getElementById("footerText").value,
+
     heroImages
   };
 
-  await fetch("/api/settings", {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data)
-  });
+  try {
+    const res = await fetch("/api/settings", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      credentials: "include",
+      body: JSON.stringify(data)
+    });
 
-  alert("Settings saved ✅");
+    const result = await res.json();
+
+    if (!res.ok || !result.success) {
+      throw new Error(result.message || "Failed to save settings");
+    }
+
+    // Reload settings from MongoDB
+    await loadSettings();
+
+    alert("Settings saved ✅");
+
+  } catch (error) {
+    console.error("Settings save error:", error);
+    alert(error.message || "Failed to save settings");
+  }
 });
 
 async function loadOrdersAdmin() {
@@ -934,7 +978,7 @@ async function loadOrdersAdmin() {
 
   // Update dashboard revenue
   document.getElementById("totalOrdersRevenue").innerText =
-    `$${totalSales.toFixed(2)}`;
+    `${currencySymbol}${totalSales.toFixed(2)}`;
 
   renderOrders(allOrders);
 }
@@ -956,18 +1000,18 @@ function renderOrders(orders) {
     <div class="order-card">
 
       <h4>
-        Order #${order.orderNumber || order._id.slice(-6)}
+        Order #${escapeHtml(order.orderNumber || order._id.slice(-6))}
       </h4>
 
       <div class="order-meta">
-        Total: $${order.totalAmount} <br>
+        Total: ${currencySymbol}${order.totalAmount} <br>
 
         Customer:
-        ${order.user?.email || "N/A"}
+        ${escapeHtml(order.user?.email || "N/A")}
       </div>
 
-      <span class="status-badge status-${order.orderStatus}">
-        ${order.orderStatus}
+      <span class="status-badge status-${escapeHtml(order.orderStatus)}">
+        ${escapeHtml(order.orderStatus)}
       </span>
 
       <div class="order-actions">

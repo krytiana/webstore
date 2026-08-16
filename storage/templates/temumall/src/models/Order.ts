@@ -105,7 +105,9 @@ const OrderSchema = new Schema(
 
         quantity: {
           type: Number,
-          default: 1
+          default: 1,
+          min: 1,
+          max: 100
         },
 
         selectedOptions: {
@@ -150,7 +152,8 @@ const OrderSchema = new Schema(
 
     totalAmount: {
       type: Number,
-      required: true
+      required: true,
+      min: 0
     },
 
     // ----------------------------
@@ -192,7 +195,9 @@ const OrderSchema = new Schema(
 
     orderNumber: {
       type: String,
-      unique: true
+      required: true,
+      unique: true,
+      index: true
     },
 
     orderStatus: {

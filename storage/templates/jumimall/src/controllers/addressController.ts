@@ -1,230 +1,184 @@
-// src/controllers/addressController.ts
-
 import { Response } from "express";
-
 import Address from "../models/address";
-
 import { RequestWithUser } from "../middlewares/authMiddleware";
 
+const addressFields = [
+  "fullName",
+  "phone",
+  "addressLine",
+  "city",
+  "region",
+  "country",
+  "latitude",
+  "longitude",
+] as const;
 
-// ➕ Add Address
-export const addAddress = async (
-  req: RequestWithUser,
-  res: Response
-) => {
+function pickAddress(body: any) {
+  const result: Record<string, unknown> = {};
 
+  for (const field of addressFields) {
+    if (body?.[field] !== undefined) {
+      result[field] = body[field];
+    }
+  }
+
+  return result;
+}
+
+export const addAddress = async (req: RequestWithUser, res: Response) => {
   try {
-
     const userId = req.user?.userId;
+    if (!userId) return res.status(401).json({ success: false, message: "Unauthorized" });
+
+    const data = pickAddress(req.body);
+
+    for (const field of ["fullName", "phone", "addressLine", "city", "region", "country"]) {
+      if (typeof data[field] !== "string" || !(data[field] as string).trim()) {
+        return res.status(400).json({
+          success: false,
+          message: `${field} is required`,
+        });
+      }
+    }
 
     const address = await Address.create({
-      ...req.body,
-      userId
+      ...data,
+      userId,
+      isDefault: false,
     });
 
-    res.json({
+    res.status(201).json({
       success: true,
       message: "Address added",
-      address
+      address,
     });
-
   } catch (err) {
-
     console.error(err);
-
-    res.status(500).json({
+    res.status(400).json({
       success: false,
-      message: "Error adding address"
+      message: "Invalid address",
     });
   }
 };
 
-
-// 📄 Get All Addresses
-export const getAddresses = async (
-  req: RequestWithUser,
-  res: Response
-) => {
-
+export const getAddresses = async (req: RequestWithUser, res: Response) => {
   try {
-
-    const userId = req.user?.userId;
-
     const addresses = await Address.find({
-      userId
-    }).sort({
-      createdAt: -1
-    });
+      userId: req.user?.userId,
+    }).sort({ createdAt: -1 });
 
     res.json(addresses);
-
   } catch (err) {
-
     console.error(err);
-
     res.status(500).json({
       success: false,
-      message: "Error fetching addresses"
+      message: "Error fetching addresses",
     });
   }
 };
 
-
-// ✏️ Update Address
-export const updateAddress = async (
-  req: RequestWithUser,
-  res: Response
-) => {
-
+export const updateAddress = async (req: RequestWithUser, res: Response) => {
   try {
-
-    const userId = req.user?.userId;
-
-    const id = Array.isArray(req.params.id)
-      ? req.params.id[0]
-      : req.params.id;
-
     const updated = await Address.findOneAndUpdate(
       {
-        _id: id,
-        userId
+        _id: req.params.id,
+        userId: req.user?.userId,
       },
       {
-        $set: req.body
+        $set: pickAddress(req.body),
       },
       {
-        returnDocument: "after"
+        returnDocument: "after",
+        runValidators: true,
       }
     );
 
     if (!updated) {
       return res.status(404).json({
         success: false,
-        message: "Address not found"
+        message: "Address not found",
       });
     }
 
     res.json({
       success: true,
       message: "Updated",
-      address: updated
+      address: updated,
     });
-
   } catch (err) {
-
     console.error(err);
-
-    res.status(500).json({
+    res.status(400).json({
       success: false,
-      message: "Error updating"
+      message: "Invalid address",
     });
   }
 };
 
-
-// ❌ Delete Address
-export const deleteAddress = async (
-  req: RequestWithUser,
-  res: Response
-) => {
-
+export const deleteAddress = async (req: RequestWithUser, res: Response) => {
   try {
-
-    const userId = req.user?.userId;
-
-    const id = Array.isArray(req.params.id)
-      ? req.params.id[0]
-      : req.params.id;
-
     const deleted = await Address.findOneAndDelete({
-      _id: id,
-      userId
+      _id: req.params.id,
+      userId: req.user?.userId,
     });
 
     if (!deleted) {
       return res.status(404).json({
         success: false,
-        message: "Address not found"
+        message: "Address not found",
       });
     }
 
     res.json({
       success: true,
-      message: "Deleted"
+      message: "Deleted",
     });
-
   } catch (err) {
-
     console.error(err);
-
-    res.status(500).json({
+    res.status(400).json({
       success: false,
-      message: "Error deleting"
+      message: "Invalid address",
     });
   }
 };
 
-
-// ⭐ Set Default Address
 export const setDefaultAddress = async (
   req: RequestWithUser,
   res: Response
 ) => {
-
   try {
-
     const userId = req.user?.userId;
 
-    const id = Array.isArray(req.params.id)
-      ? req.params.id[0]
-      : req.params.id;
+    const address = await Address.findOne({
+      _id: req.params.id,
+      userId,
+    });
 
-    // remove existing default
-    await Address.updateMany(
-      { userId },
-      {
-        $set: {
-          isDefault: false
-        }
-      }
-    );
-
-    // set new default
-    const updated = await Address.findOneAndUpdate(
-      {
-        _id: id,
-        userId
-      },
-      {
-        $set: {
-          isDefault: true
-        }
-      },
-      {
-        returnDocument: "after"
-      }
-    );
-
-    if (!updated) {
+    if (!address) {
       return res.status(404).json({
         success: false,
-        message: "Address not found"
+        message: "Address not found",
       });
     }
+
+    // Keep the operation scoped to the authenticated user.
+    await Address.updateMany(
+      { userId },
+      { $set: { isDefault: false } }
+    );
+
+    address.isDefault = true;
+    await address.save();
 
     res.json({
       success: true,
       message: "Default set",
-      address: updated
+      address,
     });
-
   } catch (err) {
-
     console.error(err);
-
-    res.status(500).json({
+    res.status(400).json({
       success: false,
-      message: "Error setting default"
+      message: "Unable to set default address",
     });
   }
 };

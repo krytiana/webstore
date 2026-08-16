@@ -25,7 +25,6 @@ import githubRoute from "./routes/githubRoute";
 import deployGuideRoute from "./routes/deployGuideRoute";
 import chatRoutes from "./routes/chat.routes";
 import serviceOrderRoute from "./routes/serviceOrderRoute";
-import testTemplateRoute from "./routes/testTemplateRoute";
 import marketingRoute from "./routes/marketingRoute";
 
 import Product from "./models/ProductModel";
@@ -84,7 +83,6 @@ app.use("/deploy", deployRoute);
 app.use(githubRoute);
 app.use(deployGuideRoute);
 app.use("/chat",chatRoutes);
-app.use("/", testTemplateRoute);
 app.use("/api/marketing", marketingRoute);
 
 

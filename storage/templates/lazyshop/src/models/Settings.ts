@@ -3,6 +3,8 @@ import mongoose, { Schema, Document } from "mongoose";
 
 export interface ISettings extends Document {
 siteName: string;
+currencyCode: string;
+currencySymbol: string;
 logo: string;
 heroImages: string[];
 
@@ -41,6 +43,8 @@ siteName: {
 type: String,
 default: "My Store"
 },
+currencyCode: { type: String, default: "GHS" },
+currencySymbol: { type: String, default: "GH₵" },
 
 logo: {
 type: String,
@@ -129,7 +133,7 @@ default: false
 
 enablePaystack: {
 type: Boolean,
-default: true
+default: false
 },
 
 // =====================================================

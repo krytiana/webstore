@@ -157,14 +157,16 @@
 </footer>
 
 <!-- SCRIPTS -->
-<script src="/js/cartUtils.js"></script>
 <script src="/js/cartBadge.js"></script>
 <script src="/js/login.js"></script>
 
 <script>
 
 /* ================= BACKEND DATA ================= */
-const products = <%- JSON.stringify(products || []) %>;
+const products = <%- JSON.stringify(products || [])
+  .replace(/</g, "\\u003c")
+  .replace(/>/g, "\\u003e")
+  .replace(/&/g, "\\u0026") %>;
 
 const grid = document.getElementById('productGrid');
 const searchInput = document.getElementById('search');
@@ -172,6 +174,26 @@ const searchInput = document.getElementById('search');
 let currentCategory = 'all';
 
 /* ================= RENDER ================= */
+function escapeHtml(value) {
+  return String(value ?? "").replace(/[&<>"']/g, char => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  }[char]));
+}
+
+function safeUrl(value, fallback = "/images/placeholder.jpg") {
+  const url = String(value ?? "").trim();
+  if (!url) return fallback;
+  try {
+    const parsed = new URL(url, window.location.origin);
+    if (parsed.protocol === "http:" || parsed.protocol === "https:") return parsed.href;
+  } catch (_) {}
+  return fallback;
+}
+
 function render(list) {
   grid.innerHTML = '';
 
@@ -180,12 +202,12 @@ function render(list) {
     card.className = 'card';
 
     card.innerHTML = `
-      <a href="/product/${p._id}" class="product-link">
-        <img src="${p.images?.[0] || '/images/placeholder.jpg'}" />
+      <a href="/product/${encodeURIComponent(String(p._id))}" class="product-link">
+        <img src="${escapeHtml(safeUrl(p.images?.[0]))}" />
 
         <div class="card-body">
-          <strong>${p.name}</strong>
-          <div class="price">$${Number(p.price || 0)}</div>
+          <strong>${escapeHtml(p.name)}</strong>
+          <div class="price"><%= settings.currencySymbol || "GH₵" %>${Number(p.price || 0).toFixed(2)}</div>
           <div class="rating">⭐ ${p.rating || 0} (${p.reviews || 0})</div>
 
           <button class="add-to-cart">View Details</button>

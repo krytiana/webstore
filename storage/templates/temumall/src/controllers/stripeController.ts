@@ -1,347 +1,173 @@
-// src/controllers/stripeController.ts
-import { Request, Response } from "express";
-import { stripe } from "../config/stripe";
-import { Cart } from "../models/cart";
+import { Response } from "express";
+import { getStripe } from "../config/stripe";
 import Order from "../models/Order";
-import crypto from "crypto";
-import Address from "../models/address";
-
-// ----------------------------
-// Cart-based checkout
-// ----------------------------
+import { Settings } from "../models/Settings";
+import { clearUserCart, createPendingOrder, getCheckoutSnapshot } from "../services/checkoutService";
+import { env } from "../config/env";
 export const createCartCheckoutSession = async (req: any, res: Response) => {
+  if (!process.env.STRIPE_SECRET_KEY) return res.status(503).json({ success: false, message: "Stripe is not configured" });
   try {
-    const userId = req.user.userId;
+    const settings = await Settings.findOne({}).lean();
 
-    // Fetch user's cart and populate product details
-    const cart = await Cart.findOne({ userId }).populate("items.productId");
-
-    if (!cart || cart.items.length === 0) {
-      return res.status(400).json({ success: false, message: "Cart is empty" });
+    if (settings && !settings.enableStripe) {
+      return res.status(403).json({
+        success: false,
+        message: "Stripe payments are disabled"
+      });
     }
 
-    // Type assertion: tell TS each item.productId is populated
-    const cartItems = cart.items.map(item => item as any);
+    const stripeCurrency = (
+      settings?.currencyCode ||
+      env.stripeCurrency
+    ).toLowerCase();
 
-    // Map cart items to Stripe line items
-    const line_items = cartItems.map(item => {
-      const product = item.productId;
-      return {
+    const userId = String(req.user.userId), email = String(req.user.email || "");
+    if (!email) return res.status(400).json({ success: false, message: "User email is required" });
+    const snapshot = await getCheckoutSnapshot(userId); const order = await createPendingOrder(userId, "stripe", snapshot);
+    try {
+      const stripe = getStripe();
+      const lineItems = snapshot.items.map((item) => ({
         price_data: {
-          currency: "usd",
-          product_data: {
-            name: product.name,
-            
-          },
-          unit_amount: Math.round(product.price * 100),
+          currency: stripeCurrency,
+          product_data: { name: item.name },
+          unit_amount: Math.round(item.price * 100)
         },
-        quantity: item.quantity,
-      };
-    });
-
-    const baseUrl = `${req.protocol}://${req.get("host")}`;
-    // Create Stripe checkout session
-    const session = await stripe.checkout.sessions.create({
-      payment_method_types: ["card"],
-      line_items,
-      mode: "payment",
-      success_url: `${baseUrl}/success.html?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${baseUrl}/cancel.html`,
-      metadata: {
-        userId: userId.toString(),
-      },
-    });
-
-    res.json({ url: session.url });
-
-  } catch (err) {
-    console.error("Stripe cart checkout error:", err);
-    res.status(500).json({ success: false, message: "Stripe checkout failed" });
+        quantity: item.quantity
+      }));
+      const session = await stripe.checkout.sessions.create({ payment_method_types: ["card"], line_items: lineItems, mode: "payment", customer_email: email, success_url: `${env.clientUrl}/success.html?session_id={CHECKOUT_SESSION_ID}`, cancel_url: `${env.clientUrl}/cancel.html`, metadata: { userId, orderId: order._id.toString() } });
+      order.stripeSessionId = session.id; await order.save(); return res.json({ success: true, url: session.url });
+    } catch (paymentError) { await order.deleteOne(); throw paymentError; }
+  } catch (err: any) {
+    console.error("Stripe checkout error:", err); const known = new Set(["Cart is empty", "No default address found", "Invalid cart amount", "Cart contains an invalid product"]);
+    return res.status(400).json({ success: false, message: known.has(err?.message) ? err.message : "Stripe checkout failed" });
   }
 };
+async function markStripeOrderPaid(session: any) {
+  const settings = await Settings.findOne({}).lean();
 
+  const stripeCurrency = (
+    settings?.currencyCode ||
+    env.stripeCurrency
+  ).toLowerCase();
 
-// ----------------------------
-// Verify successful payment
-// Create order manually
-// ----------------------------
-export const verifyStripeSuccess = async (
-  req: any,
-  res: Response
-) => {
-  try {
+  const orderId =
+    typeof session.metadata?.orderId === "string"
+      ? session.metadata.orderId
+      : "";
 
-    const { session_id } = req.body;
+  const order = orderId
+    ? await Order.findById(orderId)
+    : await Order.findOne({ stripeSessionId: session.id });
 
-    if (!session_id) {
-      return res.status(400).json({
-        success: false,
-        message: "Missing session ID"
-      });
-    }
+  if (!order) throw new Error("Order snapshot not found");
 
-    // Verify Stripe session
-    const session =
-      await stripe.checkout.sessions.retrieve(
-        session_id
-      );
+  if (order.paymentStatus === "paid") return order;
 
-    if (session.payment_status !== "paid") {
-      return res.status(400).json({
-        success: false,
-        message: "Payment not completed"
-      });
-    }
+  if (order.paymentProvider !== "stripe") {
+    throw new Error("Invalid payment provider");
+  }
 
-    const userId = session.metadata?.userId;
+  if (
+    order.user.toString() !==
+    String(session.metadata?.userId || "")
+  ) {
+    throw new Error("Stripe user mismatch");
+  }
 
-    // Prevent duplicate orders
-    const existingOrder = await Order.findOne({
-      stripeSessionId: session.id
-    });
+  if (
+    order.stripeSessionId &&
+    order.stripeSessionId !== session.id
+  ) {
+    throw new Error("Stripe session mismatch");
+  }
 
-    if (existingOrder) {
+  if (session.payment_status !== "paid") {
+    throw new Error("Payment not completed");
+  }
+
+  if (
+    session.amount_total !==
+    Math.round(order.totalAmount * 100)
+  ) {
+    throw new Error("Stripe amount mismatch");
+  }
+
+  if (
+    session.currency &&
+    session.currency.toLowerCase() !== stripeCurrency
+  ) {
+    throw new Error("Stripe currency mismatch");
+  }
+
+  order.stripeSessionId = session.id;
+  order.paymentStatus = "paid";
+  order.orderStatus = "confirmed";
+
+  order.trackingHistory.push({
+    status: "confirmed",
+    message: "Order placed successfully",
+    updatedAt: new Date()
+  });
+
+  await order.save();
+  await clearUserCart(order.user.toString());
+
+  return order;
+}
+  export const verifyStripeSuccess = async (req: any, res: Response) => {
+    try {
+      const sessionId = req.body?.session_id;
+
+      if (
+        typeof sessionId !== "string" ||
+        sessionId.length < 10 ||
+        sessionId.length > 200
+      ) {
+        return res.status(400).json({
+          success: false,
+          message: "Missing session ID"
+        });
+      }
+
+      const session = await getStripe()
+        .checkout
+        .sessions
+        .retrieve(sessionId);
+
+      if (!session) {
+        return res.status(400).json({
+          success: false,
+          message: "Stripe session not found"
+        });
+      }
+
+      const order = await markStripeOrderPaid(session);
+
       return res.json({
         success: true,
-        order: existingOrder
-      });
-    }
-
-    // Get cart
-    const cart = await Cart.findOne({
-      userId
-    }).populate("items.productId");
-
-    if (!cart) {
-      return res.status(404).json({
-        success: false,
-        message: "Cart not found"
-      });
-    }
-
-    const cartItems = cart.items.map(
-      item => item as any
-    );
-
-    // Build order items
-    const orderItems = cartItems.map(item => {
-      const product = item.productId;
-
-      return {
-        product: product._id,
-
-        name: product.name,
-
-        price: product.price,
-
-        image: product.images?.[0] || "",
-
-        quantity: item.quantity,
-
-        selectedOptions:
-          item.selectedOptions || {}
-      };
-    });
-
-    const totalAmount = orderItems.reduce(
-      (acc, item) =>
-        acc + item.price * item.quantity,
-      0
-    );
-
-    const orderNumber =
-      "FF-" +
-      Date.now().toString(36).toUpperCase() +
-      "-" +
-      crypto.randomBytes(4).toString("hex").toUpperCase();
-
-    // Get user's addresses
-      const address = await Address.findOne({
-        userId,
-        isDefault: true
+        message: "Payment verified",
+        orderId: order._id
       });
 
-      if (!address) {
-        return res.status(400).json({
-          success: false,
-          message: "No default address found"
-        });
-      }
-
-    // Create order
-    const order = await Order.create({
-      user: userId,
-
-      items: orderItems,
-
-      shippingAddress: {
-        fullName: address.fullName,
-        phone: address.phone,
-        addressLine: address.addressLine,
-        city: address.city,
-        region: address.region,
-        country: address.country
-      },
-
-      totalAmount,
-
-      paymentProvider: "stripe",
-
-      stripeSessionId: session.id,
-
-      paymentStatus: "paid",
-
-      orderStatus: "confirmed",
-
-      orderNumber,
-
-      trackingHistory: [
-        {
-          status: "confirmed",
-          message: "Order placed successfully",
-          updatedAt: new Date(),
-        }
-      ]
-    });
-    
-
-    // Clear cart
-    cart.items = [];
-    await cart.save();
-
-    res.json({
-      success: true,
-      order
-    });
-
-  } catch (err) {
-    console.error("Verify payment error:", err);
-
-    res.status(500).json({
-      success: false,
-      message: "Failed to verify payment"
-    });
-  }
-};
-
-
-// ----------------------------
-// Stripe webhook for order creation
-// ----------------------------
-export const stripeWebhook = async (req: Request, res: Response) => {
-  const sig = req.headers["stripe-signature"];
-  const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET!;
-
-  let event;
-  try {
-    event = stripe.webhooks.constructEvent(req.body, sig!, endpointSecret);
-  } catch (err: any) {
-    console.error("⚠️ Webhook signature mismatch", err.message);
-    return res.status(400).send(`Webhook Error: ${err.message}`);
-  }
-
-  if (event.type === "checkout.session.completed") {
-    const session: any = event.data.object;
-
-    try {
-      const userId = session.metadata.userId;
-
-      // Fetch cart and populate products
-      const cart = await Cart.findOne({ userId }).populate("items.productId");
-      if (!cart) throw new Error("Cart not found");
-
-      const cartItems = cart.items.map(item => item as any);
-
-      // Map cart items to order items
-      const orderItems = cartItems.map(item => {
-        const product = item.productId;
-        return {
-          product: product._id,
-          name: product.name,
-          price: product.price,
-          image: product.images?.[0] || "",
-          quantity: item.quantity,
-          selectedOptions: item.selectedOptions || {}
-        };
-      });
-
-      const totalAmount = orderItems.reduce(
-        (acc, item) => acc + item.price * item.quantity,
-        0
+    } catch (error) {
+      console.error(
+        "Stripe payment verification error:",
+        error
       );
 
-      const orderNumber =
-        "FF-" +
-        Date.now().toString(36).toUpperCase() +
-        "-" +
-        crypto.randomBytes(4).toString("hex").toUpperCase();
-
-      const existingOrder = await Order.findOne({
-        stripeSessionId: session.id
+      return res.status(400).json({
+        success: false,
+        message: "Payment verification failed"
       });
-
-      if (existingOrder) {
-        return res.status(200).json({
-          received: true
-        });
-      }
-
-      // Get user's addresses
-      const address = await Address.findOne({
-        userId,
-        isDefault: true
-      });
-
-      if (!address) {
-        return res.status(400).json({
-          success: false,
-          message: "No default address found"
-        });
-      }
-
-    // Create order
-    const order = await Order.create({
-      user: userId,
-
-      items: orderItems,
-
-      shippingAddress: {
-        fullName: address.fullName,
-        phone: address.phone,
-        addressLine: address.addressLine,
-        city: address.city,
-        region: address.region,
-        country: address.country
-      },
-
-      totalAmount,
-
-      paymentProvider: "stripe", 
-
-      stripeSessionId: session.id,
-
-      paymentStatus: "paid",
-
-      orderStatus: "confirmed",
-
-      orderNumber,
-
-      trackingHistory: [
-        {
-          status: "confirmed",
-          message: "Order placed successfully",
-          updatedAt: new Date(),
-        }
-      ]
-    });
-      // Clear cart
-      cart.items = [];
-      await cart.save();
-
-    } catch (err) {
-      console.error("❌ Error creating order from webhook:", err);
     }
-  }
-
-  res.status(200).json({ received: true });
+  };
+export const stripeWebhook = async (req: any, res: Response) => {
+  const secret = process.env.STRIPE_WEBHOOK_SECRET; if (!secret) return res.status(503).send("Stripe webhook is not configured");
+  try {
+    const signature = req.headers["stripe-signature"] as string | undefined;
+    if (!signature || !Buffer.isBuffer(req.body)) return res.status(400).send("Invalid webhook payload");
+    const event = getStripe().webhooks.constructEvent(req.body, signature, secret);
+    if (event.type === "checkout.session.completed" || event.type === "checkout.session.async_payment_succeeded") await markStripeOrderPaid(event.data.object);
+    return res.json({ received: true });
+  } catch (error) { console.error("Stripe webhook error:", error); return res.status(400).send("Webhook signature or processing error"); }
 };

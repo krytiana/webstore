@@ -1,46 +1,57 @@
-// src/routes/shopRoutes.ts
 import express from "express";
-import { 
-  getProducts, 
-  getProductDetail, 
-  createProduct, 
-  updateProduct, 
+import {
+  getProducts,
+  getProductDetail,
+  createProduct,
+  updateProduct,
   deleteProduct,
   getProductsJSON,
   getProduct,
-  renderCategoryPage
+  renderCategoryPage,
 } from "../controllers/productController";
 import { authenticateToken } from "../middlewares/authMiddleware";
 import { requireAdmin } from "../middlewares/adminMiddleware";
+import { Settings } from "../models/Settings";
 
 const router = express.Router();
 
-// =====================
-// FRONTEND PAGES
-// =====================
+// Frontend pages
 router.get("/", getProducts);
 router.get("/category/:category", renderCategoryPage);
 router.get("/product/:id", getProductDetail);
 
-// =====================
-// ADMIN PAGE
-// =====================
-router.get("/admin",
+// Admin page
+router.get(
+  "/admin",
   authenticateToken,
   requireAdmin,
-  (req, res) => {
-    res.render("admin");
-  }
+  async (_req, res) => { const settings = await Settings.findOne().lean() || new Settings().toObject(); res.render("admin", { settings }); }
 );
 
-// =====================
-// API ROUTES (CLEAN)
-// =====================
+// Public product API
 router.get("/api/products", getProductsJSON);
-router.get("/api/products/:id", getProduct); // 🔥 REQUIRED
+router.get("/api/products/:id", getProduct);
 
-router.post("/api/products", createProduct);
-router.put("/api/products/:id", updateProduct);
-router.delete("/api/products/:id", deleteProduct);
+// Admin product mutations
+router.post(
+  "/api/products",
+  authenticateToken,
+  requireAdmin,
+  createProduct
+);
+
+router.put(
+  "/api/products/:id",
+  authenticateToken,
+  requireAdmin,
+  updateProduct
+);
+
+router.delete(
+  "/api/products/:id",
+  authenticateToken,
+  requireAdmin,
+  deleteProduct
+);
 
 export default router;

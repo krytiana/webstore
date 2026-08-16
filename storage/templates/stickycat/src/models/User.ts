@@ -16,11 +16,11 @@ interface IUser extends Document {
 
 const UserSchema = new Schema<IUser>(
   {
-    fullname: { type: String, required: true },
-    email: { type: String, required: true, unique: true },
-    username: { type: String, required: true, unique: true },
+    fullname: { type: String, required: true, trim: true, maxlength: 150 },
+    email: { type: String, required: true, unique: true, lowercase: true, trim: true, maxlength: 254 },
+    username: { type: String, required: true, unique: true, trim: true, maxlength: 80 },
     password: { type: String, required: true },
-    country: { type: String, required: true },
+    country: { type: String, required: true, trim: true, maxlength: 100 },
     refreshToken: { type: String, default: null },
     resetToken: { type: String, default: null, index: true }, // Indexed for faster lookup
     resetTokenExpiry: { type: Date, default: null },

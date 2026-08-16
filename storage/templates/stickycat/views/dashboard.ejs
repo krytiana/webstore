@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard | FashionFemme</title>
+<title>Dashboard | <%= settings.siteName || "My Store" %></title>
 
 <link rel="stylesheet" href="/css/dashboard.css">
 
@@ -118,6 +118,7 @@
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script>window.STORE_CURRENCY_SYMBOL = <%- JSON.stringify(settings.currencySymbol || "GH₵") %>;</script>
 <script type="module" src="/js/dashboard.js"></script>
 <script src="/js/address.js"></script>
 </body>

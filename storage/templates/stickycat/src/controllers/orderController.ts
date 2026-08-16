@@ -3,6 +3,7 @@ import { Request, Response }
 from "express";
 
 import Order from "../models/Order";
+import User from "../models/User";
 
 // ---------------- GET USER ORDERS ----------------
 export const getUserOrders = async (
@@ -45,6 +46,7 @@ export const getOrderTracking = async (
   try {
 
     const { orderId } = req.params;
+    if (!/^[a-f\d]{24}$/i.test(orderId)) return res.status(400).json({ success: false, message: "Invalid order ID" });
 
     const order = await Order.findOne({
       _id: orderId,
@@ -97,7 +99,7 @@ export const updateOrderStatus = async (
   try {
 
     const { orderId } = req.params;
-
+    if (!/^[a-f\d]{24}$/i.test(String(orderId))) return res.status(400).json({ success: false, message: "Invalid order ID" });
     const {
       status,
       message,
@@ -105,6 +107,23 @@ export const updateOrderStatus = async (
       courier,
       estimatedDelivery
     } = req.body;
+
+    const allowedStatuses = [
+      "pending",
+      "confirmed",
+      "processing",
+      "shipped",
+      "out_for_delivery",
+      "delivered",
+      "cancelled",
+    ];
+
+    if (!allowedStatuses.includes(status)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid order status",
+      });
+    }
 
     const order =
       await Order.findById(orderId);
@@ -163,20 +182,17 @@ export const getOrderById = async (
 
   try {
 
-    let query: any = {
-      _id: req.params.id
-    };
-
-    // Normal users can only see their own order
-    if (req.user.role !== "admin") {
-      query.user = req.user.userId;
-    }
+    if (!/^[a-f\d]{24}$/i.test(req.params.id)) return res.status(400).json({ success: false, message: "Invalid order ID" });
+    const currentUser = await User.findById(req.user.userId).select("role").lean();
+    if (!currentUser) return res.status(401).json({ success: false, message: "Unauthorized" });
+    const query: any = { _id: req.params.id };
+    if (currentUser.role !== "admin") query.user = req.user.userId;
 
     const order = await Order.findOne(query)
 
       .populate("items.product")
 
-      .populate("user", "email name");
+      .populate("user", "email fullname");
 
     if (!order) {
 
@@ -212,7 +228,7 @@ export const getAllOrders = async (
 
     const orders = await Order.find()
 
-      .populate("user", "name email")
+      .populate("user", "fullname email")
 
       .populate("items.product")
 

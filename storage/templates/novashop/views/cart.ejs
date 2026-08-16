@@ -53,8 +53,8 @@
   <div class="cart-summary">
     <h3>Order Summary</h3>
     <p>Total Items: <span id="totalItems">0</span></p>
-    <p>Total Price: <strong>$<span id="totalPrice">0.00</span></strong></p>
-    <p>Shipping Fee: <strong>$<span id="shippingFee">0.00</span></strong></p>
+    <p>Total Price: <strong><%= settings.currencySymbol || "GH₵" %><span id="totalPrice">0.00</span></strong></p>
+    <p>Shipping Fee: <strong><%= settings.currencySymbol || "GH₵" %><span id="shippingFee">0.00</span></strong></p>
 
     <!-- Default shipping address -->
     <div class="shipping-address">
@@ -135,6 +135,7 @@
 </footer>
 
 <!-- Scripts -->
+<script>window.STORE_CURRENCY_SYMBOL = <%- JSON.stringify(settings.currencySymbol || "GH₵") %>;</script>
 <script src="/js/cart.js"></script>
 <script src="/js/cartBadge.js"></script>
 

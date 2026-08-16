@@ -1,103 +1,91 @@
-//src/controllers/authController.ts
 import type { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import crypto from "crypto";
 import User from "../models/User";
 import { sendResetEmail } from "../services/emailService";
-import jwt from "jsonwebtoken";
-import { RequestWithUser } from "../middlewares/authMiddleware"; // Import the custom Request interface
+import { RequestWithUser } from "../middlewares/authMiddleware";
+
+const normalizeEmail = (value: unknown) =>
+  typeof value === "string" ? value.trim().toLowerCase() : "";
 
 export const resetPassword = async (req: Request, res: Response) => {
-  const { token } = req.params;
-  const { newPassword } = req.body;
+  const token = typeof req.params.token === "string" ? req.params.token : "";
+  const newPassword = req.body?.newPassword;
+
+  if (!/^[a-f0-9]{64}$/i.test(token) || typeof newPassword !== "string" || newPassword.length < 8 || newPassword.length > 128) {
+    return res.status(400).json({ message: "Invalid reset request" });
+  }
 
   try {
-    // Find user by reset token & check if token is still valid
     const user = await User.findOne({
       resetToken: token,
-      resetTokenExpiry: { $gt: new Date() }, // Check if token is not expired
+      resetTokenExpiry: { $gt: new Date() },
     });
 
     if (!user) {
       return res.status(400).json({ message: "Invalid or expired token" });
     }
 
-    // Hash the new password
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
-    
-
-    // Update user password & clear reset token
-    user.password = hashedPassword;
+    user.password = await bcrypt.hash(newPassword, 12);
     user.resetToken = null;
     user.resetTokenExpiry = null;
+    // Invalidate existing sessions after a password change.
+    user.refreshToken = null;
+
     await user.save();
 
     res.json({ message: "Password has been reset successfully" });
-
   } catch (error) {
-    console.error("❌ Error resetting password:", error);
+    console.error("Error resetting password:", error);
     res.status(500).json({ message: "Server error" });
   }
 };
 
 export const requestPasswordReset = async (req: Request, res: Response) => {
-  const { email } = req.body;
- 
-  try {
-    const user = await User.findOne({
-      email: email.toLowerCase()
-      });
+  const email = normalizeEmail(req.body?.email);
 
-    if (!user) {
-      return res.status(404).json({ message:"If this email exists, a reset link has been sent" });
+  if (!email) {
+    return res.status(200).json({
+      message: "If the email exists, a reset link will be sent.",
+    });
+  }
+
+  try {
+    const user = await User.findOne({ email });
+
+    if (user) {
+      const resetToken = crypto.randomBytes(32).toString("hex");
+
+      user.resetToken = resetToken;
+      user.resetTokenExpiry = new Date(Date.now() + 60 * 60 * 1000);
+      await user.save();
+
+      try {
+        await sendResetEmail(email, resetToken);
+      } catch (error) {
+        console.error("Password reset email failed:", error);
+      }
     }
 
-    // Generate reset token
-    const resetToken = crypto.randomBytes(32).toString("hex");
-     
-    user.resetToken = resetToken;
-    user.resetTokenExpiry = new Date(Date.now() + 3600000); // Token valid for 1 hour
-    await user.save();
-
-    // Send reset email
-    await sendResetEmail(email, resetToken);
-
-    res.json({ message: "Password reset email sent" });
-
+    return res.status(200).json({
+      message: "If the email exists, a reset link will be sent.",
+    });
   } catch (error) {
-    console.error("❌ Error in password reset request:", error);
+    console.error("Error in password reset request:", error);
     res.status(500).json({ message: "Server error" });
   }
 };
 
 export const validateToken = (req: RequestWithUser, res: Response) => {
-  const authHeader = req.header('Authorization');
-
-  if (!authHeader) {
-    return res.status(401).json({ message: 'No token provided' });
-  }
-
-  const token = authHeader.split(' ')[1];
-
-  if (!token) {
-    return res.status(401).json({ message: 'No token provided' });
-  }
-
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET as string);
-    // Token is valid
-    res.status(200).json({ message: 'Token is valid', decoded });
-  } catch (err) {
-    console.error('Token validation error:', err);
-    res.status(401).json({ message: 'Token is invalid or expired' });
-  }
+  res.status(200).json({
+    message: "Token is valid",
+    user: req.user,
+  });
 };
 
 export const getMe = async (req: RequestWithUser, res: Response) => {
   try {
-    const userId = req.user?.userId;
-
-    const user = await User.findById(userId).select("username email");
+    const user = await User.findById(req.user?.userId).select("username email role");
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
@@ -105,10 +93,10 @@ export const getMe = async (req: RequestWithUser, res: Response) => {
 
     res.json({
       name: user.username,
-      email: user.email
+      email: user.email,
+      role: user.role,
     });
-
-  } catch (error) {
+  } catch {
     res.status(500).json({ message: "Server error" });
   }
 };

@@ -61,7 +61,7 @@ function renderCart(cart) {
         <h4>${p.name}</h4>
         ${item.size ? `<p>Size: ${item.size}</p>` : ""}
         ${item.color ? `<p>Color: ${item.color}</p>` : ""}
-        <p>$${p.price?.toFixed(2) || 0}</p>
+        <p>${window.STORE_CURRENCY_SYMBOL || "GH₵"}${p.price?.toFixed(2) || 0}</p>
         <div class="cart-qty">
           <button class="qty-btn decrease">−</button>
           <span>${item.quantity}</span>

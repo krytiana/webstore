@@ -1,20 +1,29 @@
-//src/utils/generateSecrets.ts
-const crypto = require('crypto');
-const fs = require('fs');
-const path = require('path');
-require('dotenv').config(); // Load environment variables
+const crypto = require("crypto");
+const fs = require("fs");
+const path = require("path");
 
-// Load existing secrets from .env if it exists
-const envFilePath = path.join(__dirname, '../../.env');
-const envContents = fs.existsSync(envFilePath) ? fs.readFileSync(envFilePath, 'utf-8') : '';
+const envFilePath = path.join(__dirname, "../../.env");
+const envContents = fs.existsSync(envFilePath)
+  ? fs.readFileSync(envFilePath, "utf8")
+  : "";
 
-// Generate a new refresh token secret
-const refreshTokenSecret = crypto.randomBytes(64).toString('hex');
+const values = {
+  JWT_SECRET: crypto.randomBytes(64).toString("hex"),
+  REFRESH_TOKEN_SECRET: crypto.randomBytes(64).toString("hex"),
+};
 
-// Combine existing secrets with the new refresh token secret
-let secrets = envContents.split('\n').filter(line => !line.startsWith('REFRESH_TOKEN_SECRET')).join('\n');
-secrets += `\nREFRESH_TOKEN_SECRET=${refreshTokenSecret}\n`;
+let lines = envContents
+  .split("\n")
+  .filter(
+    (line) =>
+      !line.startsWith("JWT_SECRET=") &&
+      !line.startsWith("REFRESH_TOKEN_SECRET=")
+  );
 
-// Save the updated secrets back to the .env file
-fs.writeFileSync(envFilePath, secrets);
+lines.push(`JWT_SECRET=${values.JWT_SECRET}`);
+lines.push(`REFRESH_TOKEN_SECRET=${values.REFRESH_TOKEN_SECRET}`);
 
+fs.writeFileSync(envFilePath, lines.join("\n").replace(/\n+$/, "\n"));
+
+console.log("JWT_SECRET and REFRESH_TOKEN_SECRET generated successfully.");
+console.log("The secret values were written to .env and were not printed.");

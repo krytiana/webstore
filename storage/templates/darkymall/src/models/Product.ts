@@ -21,14 +21,19 @@ const productSchema = new Schema<IProduct>(
     category: {
       type: String,
       required: true,
+      trim: true,
+      maxlength: 100,
     },
     name: {
       type: String,
       required: true,
+      trim: true,
+      maxlength: 200,
     },
     price: {
       type: Number,
       required: true,
+      min: 0,
     },
     images: {
       type: [String],
@@ -45,10 +50,13 @@ const productSchema = new Schema<IProduct>(
     rating: {
       type: Number,
       default: 0,
+      min: 0,
+      max: 5,
     },
     reviews: {
       type: Number,
       default: 0,
+      min: 0,
     },
     options: {
       type: Object,

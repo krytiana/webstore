@@ -1,16 +1,22 @@
-//src/routes/stripeRoute.ts
 import express from "express";
-import { createCartCheckoutSession, verifyStripeSuccess } from "../controllers/stripeController";
+import {
+  createCartCheckoutSession,
+  verifyStripeSuccess,
+} from "../controllers/stripeController";
 import { authenticateToken } from "../middlewares/authMiddleware";
+import { rateLimit } from "../middlewares/rateLimit";
 
 const router = express.Router();
 
-// Only logged-in users can create checkout session
-router.post("/cart-checkout", authenticateToken, createCartCheckoutSession);
+router.post(
+  "/cart-checkout",
+  rateLimit(10 * 60 * 1000, 10),
+  authenticateToken,
+  createCartCheckoutSession
+);
 
 router.post(
   "/verify-success",
-  authenticateToken,
   verifyStripeSuccess
 );
 

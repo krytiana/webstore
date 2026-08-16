@@ -72,7 +72,7 @@
   <!-- INFO -->
   <div class="product-info">
     <h1><%= product.name %></h1>
-    <p class="price">$<%= product.price.toFixed(2) %></p>
+    <p class="price"><%= settings.currencySymbol || "GH₵" %><%= product.price.toFixed(2) %></p>
 
     <div class="rating">
       <% 
@@ -162,7 +162,7 @@
           <img src="<%= r.images[0] %>" />
         </a>
         <h4><%= r.name %></h4>
-        <p>$<%= r.price.toFixed(2) %></p>
+        <p><%= settings.currencySymbol || "GH₵" %><%= r.price.toFixed(2) %></p>
         <a href="/product/<%= r._id %>">
           <button data-id="<%= r._id %>">View Details</button>
         </a>

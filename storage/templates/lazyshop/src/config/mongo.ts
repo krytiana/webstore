@@ -1,25 +1,24 @@
-//src/config/mango.ts
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 
-dotenv.config(); // Load environment variables
+dotenv.config();
 
-const MONGO_URI = process.env.MONGO_URI; // Get from .env
+const MONGO_URI = process.env.MONGO_URI;
 
 if (!MONGO_URI) {
-    console.error("❌ MONGO_URI is missing in .env file");
-    process.exit(1);
+  throw new Error("MONGO_URI is missing");
 }
 
 export const connectDB = async () => {
-    try {
-        await mongoose.connect(MONGO_URI); // ✅ No need for empty options
-        console.log("✅ Connected to MongoDB");
-    } catch (error) {
-        console.error("❌ MongoDB connection error:", error);
-        process.exit(1);
-    }
+  try {
+    await mongoose.connect(MONGO_URI, {
+      serverSelectionTimeoutMS: 10_000,
+    });
+    
+  } catch (error) {
+    console.error("MongoDB connection error:", error);
+    throw error;
+  }
 };
 
-// Export the database connection
 export const db = mongoose.connection;

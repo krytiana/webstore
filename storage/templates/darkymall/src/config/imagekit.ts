@@ -1,24 +1,11 @@
-// src/config/imagekit.ts
 import ImageKit from "imagekit";
-
-
-
-const {
-  IMAGEKIT_PUBLIC_KEY,
-  IMAGEKIT_PRIVATE_KEY,
-  IMAGEKIT_URL_ENDPOINT,
-} = process.env;
-
-if (!IMAGEKIT_PUBLIC_KEY || !IMAGEKIT_PRIVATE_KEY || !IMAGEKIT_URL_ENDPOINT) {
-  throw new Error(
-    "Missing ImageKit config: set IMAGEKIT_PUBLIC_KEY, IMAGEKIT_PRIVATE_KEY and IMAGEKIT_URL_ENDPOINT in the environment."
-  );
-}
-
-const imagekit = new ImageKit({
-  publicKey: IMAGEKIT_PUBLIC_KEY,
-  privateKey: IMAGEKIT_PRIVATE_KEY,
-  urlEndpoint: IMAGEKIT_URL_ENDPOINT,
-});
-
-export default imagekit;
+let client: ImageKit | null = null;
+export const getImageKit = () => {
+  if (client) return client;
+  const publicKey = process.env.IMAGEKIT_PUBLIC_KEY;
+  const privateKey = process.env.IMAGEKIT_PRIVATE_KEY;
+  const urlEndpoint = process.env.IMAGEKIT_URL_ENDPOINT;
+  if (!publicKey || !privateKey || !urlEndpoint) throw new Error("ImageKit is not configured. Set IMAGEKIT_PUBLIC_KEY, IMAGEKIT_PRIVATE_KEY and IMAGEKIT_URL_ENDPOINT.");
+  client = new ImageKit({ publicKey, privateKey, urlEndpoint });
+  return client;
+};

@@ -37,32 +37,38 @@ const AddressSchema = new Schema<IAddress>({
 
   fullName: {
     type: String,
-    required: true
+    required: true,
+    trim: true
   },
 
   phone: {
     type: String,
-    required: true
+    required: true,
+    trim: true
   },
 
   addressLine: {
     type: String,
-    required: true
+    required: true,
+    trim: true
   },
 
   city: {
     type: String,
-    required: true
+    required: true,
+    trim: true
   },
 
   region: {
     type: String,
-    required: true
+    required: true,
+    trim: true
   },
 
   country: {
     type: String,
-    required: true
+    required: true,
+    trim: true
   },
 
   latitude: Number,

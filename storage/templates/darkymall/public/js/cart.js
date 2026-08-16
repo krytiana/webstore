@@ -61,7 +61,7 @@ function renderCart(cart) {
         <h4>${p.name}</h4>
         ${item.size ? `<p>Size: ${item.size}</p>` : ""}
         ${item.color ? `<p>Color: ${item.color}</p>` : ""}
-        <p>$${p.price?.toFixed(2) || 0}</p>
+        <p>${window.STORE_CURRENCY_SYMBOL || "GH₵"}${p.price?.toFixed(2) || 0}</p>
         <div class="cart-qty">
           <button class="qty-btn decrease">−</button>
           <span>${item.quantity}</span>
@@ -198,7 +198,10 @@ function initializePaymentMethods() {
     radio.addEventListener("change", () => {
       selectedPayment = radio.value;
 
-
+      console.log(
+        "Selected payment method:",
+        selectedPayment
+      );
     });
 
   });
@@ -256,6 +259,9 @@ document.querySelector(".checkout-btn")
 
         const rawResponse = await res.text();
 
+        console.log("Paystack HTTP status:", res.status);
+        console.log("Paystack raw response:", rawResponse);
+
         let data;
 
         try {
@@ -274,6 +280,10 @@ document.querySelector(".checkout-btn")
           return;
         }
 
+        console.log(
+          "Paystack parsed response:",
+          data
+        );
 
         if (!res.ok || !data.success) {
 
@@ -349,6 +359,11 @@ document.querySelector(".checkout-btn")
 
           return;
         }
+
+        console.log(
+          "Stripe checkout response:",
+          data
+        );
 
         if (!res.ok || !data.url) {
 
