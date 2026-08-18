@@ -132,10 +132,12 @@ body{background:#f2f2f2;}
 
 <div class="products-grid" id="productsGrid"></div>
 
+<div class="products" id="productContainer"></div>
 <script src="js/data.js"></script>
-<script src="js/logins.js" defer></script>
-
-<script>
+<script src="js/cartUtils.js" defer></script>
+<script src="js/cartBadge.js" defer></script>
+<script src="js/login.js" defer></script>
+<script type="module">
 
 /* ===== GET CATEGORY FROM URL ===== */
 const params = new URLSearchParams(window.location.search);
@@ -173,7 +175,7 @@ function renderProducts(searchValue=""){
   productsGrid.innerHTML = filtered.map(product=>`
     <div class="product-card">
       ${product.discount ? `<div class="discount-badge">-${product.discount}%</div>`:""}
-      <a href="productDetail.html?id=${product.id}" style="text-decoration:none;color:black;">
+      <a href="/demos/ecommerce/productDetail.html?id=${product.id}" style="text-decoration:none;color:black;">
         <img src="${product.images[0]}" alt="${product.name}">
         <div class="title">${product.name}</div>
         <div class="price">GH₵ ${product.price.toFixed(2)}</div>

@@ -43,17 +43,22 @@ product.description.split("||").forEach(line => {
 const mainImage = document.getElementById("mainProductImage");
 const thumbnailRow = document.querySelector(".thumbnail-row");
 
-mainImage.src = product.images[0];
+mainImage.src = "/demos/ecommerce/" + product.images[0];
 thumbnailRow.innerHTML = "";
 
 product.images.forEach((img, index) => {
   const thumb = document.createElement("img");
-  thumb.src = img;
+
+  thumb.src = "/demos/ecommerce/" + img;
   thumb.className = "thumb" + (index === 0 ? " active" : "");
 
   thumb.onclick = () => {
-    mainImage.src = img;
-    document.querySelectorAll(".thumb").forEach(t => t.classList.remove("active"));
+    mainImage.src = "/" + img;
+
+    document.querySelectorAll(".thumb").forEach(t =>
+      t.classList.remove("active")
+    );
+
     thumb.classList.add("active");
   };
 
@@ -223,8 +228,8 @@ function renderRecommendedLazy() {
     card.className = "recommended-card";
 
     card.innerHTML = `
-      <a href="productDetail.html?id=${p.id}">
-        <img src="${p.images[0]}" loading="lazy">
+      <a href="/demos/ecommerce/productDetail.html?id=${p.id}">
+        <img src="/demos/ecommerce/${p.images[0]}" loading="lazy">
       </a>
       <h4>${p.name}</h4>
       <p>$${p.price.toFixed(2)}</p>

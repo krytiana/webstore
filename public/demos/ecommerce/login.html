@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Login — StikyCat</title>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  >
+
+  <style>
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      font-family: Inter, sans-serif;
+
+      background: #f6f7fb;
+      color: #111827;
+
+      padding: 20px;
+    }
+
+    .lock-card {
+      width: 100%;
+      max-width: 450px;
+
+      background: #fff;
+
+      padding: 40px 30px;
+
+      border-radius: 20px;
+
+      text-align: center;
+
+      box-shadow: 0 10px 35px rgba(0, 0, 0, .08);
+    }
+
+    .lock-icon {
+      width: 70px;
+      height: 70px;
+
+      margin: 0 auto 20px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      border-radius: 50%;
+
+      background: #f3f4f6;
+
+      font-size: 32px;
+    }
+
+    h1 {
+      font-size: 25px;
+      margin-bottom: 12px;
+    }
+
+    p {
+      color: #6b7280;
+      line-height: 1.6;
+      margin-bottom: 25px;
+    }
+
+    .demo-label {
+      display: inline-block;
+
+      padding: 6px 12px;
+
+      margin-bottom: 20px;
+
+      border-radius: 20px;
+
+      background: #f3f4f6;
+      color: #6b7280;
+
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .back-btn {
+      display: inline-block;
+
+      padding: 12px 18px;
+
+      border-radius: 12px;
+
+      background: #111827;
+      color: #fff;
+
+      text-decoration: none;
+
+      font-weight: 600;
+    }
+
+    .back-btn:hover {
+      opacity: .9;
+    }
+
+    .note {
+      margin-top: 20px;
+
+      font-size: 13px;
+      color: #9ca3af;
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+  <main class="lock-card">
+
+    <div class="lock-icon">
+      🔒
+    </div>
+
+    <span class="demo-label">
+      LIVE DEMO
+    </span>
+
+    <h1>
+      Feature Locked
+    </h1>
+
+    <p>
+      Login and account features are available
+      in the full version of this template.
+      You're currently viewing the live demo.
+    </p>
+
+    <a href="#" id="backButton" class="back-btn">
+      ← Back
+    </a>
+
+    <div class="note">
+      This demo does not process real accounts or credentials.
+    </div>
+
+  </main>
+
+</body>
+<script>
+  document.getElementById("backButton").addEventListener("click", function (e) {
+    e.preventDefault();
+
+    if (window.history.length > 1) {
+      history.back();
+    } else {
+      window.location.href = "index.html";
+    }
+  });
+</script>
+
+</html>

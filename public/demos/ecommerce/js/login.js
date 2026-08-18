@@ -9,8 +9,8 @@ function checkLogin(){
     `;
   }else{
     userSection.innerHTML = `
-      <a href="login.html">Login</a>
-      <a href="register.html">Register</a>
+      <a href="/demos/ecommerce/login.html">Login</a>
+      <a href="/demos/ecommerce/login.html">Register</a>
     `;
   }
 }

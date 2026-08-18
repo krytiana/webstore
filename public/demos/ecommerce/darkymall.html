@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DarkyMall</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+   <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: Inter, sans-serif;
+  background: linear-gradient(135deg, #0f172a, #1e293b);
+  color: #f1f5f9;
+  min-height: 100vh;
+}
+
+/* Theme */
+:root {
+  --primary: #7c3aed;
+  --accent: #22d3ee;
+  --glass: rgba(255,255,255,0.06);
+  --border: rgba(255,255,255,0.1);
+  --radius: 16px;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+/* HEADER */
+header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  backdrop-filter: blur(12px);
+  background: rgba(15,23,42,0.7);
+  border-bottom: 1px solid var(--border);
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+}
+
+.logo {
+  font-weight: 800;
+  font-size: 22px;
+  background: linear-gradient(to right, var(--primary), var(--accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.nav-right {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+input {
+  padding: 10px 14px;
+  border-radius: 50px;
+  border: 1px solid var(--border);
+  background: var(--glass);
+  color: white;
+  outline: none;
+}
+
+input::placeholder {
+  color: #94a3b8;
+}
+
+button {
+  border: none;
+  border-radius: 50px;
+  padding: 10px 18px;
+  background: linear-gradient(to right, var(--primary), var(--accent));
+  color: white;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+button:hover {
+  transform: scale(1.05);
+}
+
+button.outline {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: white;
+}
+
+/* HERO */
+.hero {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 50px;
+  align-items: center;
+  margin-top: 40px;
+}
+
+.hero h1 {
+  font-size: 48px;
+  background: linear-gradient(to right, #fff, #cbd5e1);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero p {
+  margin-top: 14px;
+  color: #94a3b8;
+}
+
+.hero img {
+  width: 100%;
+  border-radius: var(--radius);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+  transition: 0.4s;
+}
+
+.hero img:hover {
+  transform: scale(1.05);
+}
+
+/* SECTION TITLE */
+.section-title {
+  font-size: 26px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+/* FILTERS */
+.filters {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 25px;
+  flex-wrap: wrap;
+}
+
+.filters button {
+  background: var(--glass);
+  border: 1px solid var(--border);
+}
+
+.filters button.active {
+  background: linear-gradient(to right, var(--primary), var(--accent));
+}
+
+/* PRODUCTS GRID */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+}
+
+.card {
+  background: var(--glass);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: 0.4s;
+}
+
+.card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+}
+
+.card img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.card-body {
+  padding: 16px;
+}
+a {
+  text-decoration: none;
+  color: inherit;
+}
+.cart-icon {
+  text-decoration: none;
+}
+
+.price {
+  color: #94a3b8;
+  margin-top: 6px;
+}
+
+.rating {
+  font-size: 13px;
+  color: #cbd5e1;
+  margin-top: 4px;
+}
+
+.card-body button {
+  width: 100%;
+  margin-top: 14px;
+}
+
+/* FLOATING CART */
+.floating-cart {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: linear-gradient(to right, var(--primary), var(--accent));
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  text-decoration: none;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+  transition: 0.3s;
+}
+
+.floating-cart:hover {
+  transform: scale(1.1);
+}
+
+.floating-cart-count {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: #ef4444;
+  color: white;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 50%;
+  display: none;
+}
+
+/* DRAWER */
+.drawer {
+  background: #0f172a;
+  border-right: 1px solid var(--border);
+}
+
+.drawer-links a,
+.drawer-links button {
+  background: var(--glass);
+  border: 1px solid var(--border);
+  color: white;
+  border-radius: 12px;
+}
+
+    /* ================= FOOTER ================= */
+
+    .footer {
+      background: var(--surface);
+
+      color: var(--text);
+
+      padding: 35px 20px 12px;
+
+      margin-top: 40px;
+
+      border-top: 1px solid var(--border);
+    }
+
+    .footer-container {
+      max-width: 1200px;
+
+      margin: auto;
+
+      display: grid;
+
+      grid-template-columns:
+        repeat(auto-fit, minmax(200px, 1fr));
+
+      gap: 25px;
+    }
+
+    .footer-section h3,
+    .footer-section h4 {
+      margin-bottom: 10px;
+
+      color: var(--heading);
+    }
+
+    .footer-section p {
+      font-size: 14px;
+
+      margin-bottom: 6px;
+
+      color: var(--text);
+    }
+
+    .footer-section a {
+      display: block;
+
+      font-size: 14px;
+
+      color: var(--text);
+
+      margin-bottom: 6px;
+
+      text-decoration: none;
+    }
+
+    .footer-section a:hover {
+      color: var(--secondary);
+    }
+
+    .footer-bottom {
+      text-align: center;
+
+      max-width: 1200px;
+
+      margin: 25px auto 0;
+
+      border-top: 1px solid var(--border);
+
+      padding-top: 12px;
+
+      font-size: 13px;
+
+      color: var(--muted);
+    }
+/* RESPONSIVE */
+@media(max-width: 900px) {
+  .hero { grid-template-columns: 1fr; }
+  .grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media(max-width: 520px) {
+  
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .card img {
+    height: 170px;
+  }
+
+  .card-body {
+    padding: 12px;
+  }
+
+  .card-body strong {
+    font-size: 14px;
+  }
+
+  .price {
+    font-size: 13px;
+  }
+
+  .rating {
+    font-size: 11px;
+  }
+
+  .card-body button {
+    padding: 8px;
+    font-size: 12px;
+  }
+
+    .nav {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .logo {
+    text-align: center;
+  }
+
+  .nav-right {
+    width: 100%;
+    display: flex;
+    gap: 10px;
+  }
+
+  .nav-right input {
+    flex: 1;
+  }
+
+  .cart-icon {
+    text-decoration: none;
+  }
+
+}
+  
+  
+   </style>
+
+</head>
+<body>
+
+
+<header>
+  <div class="nav">
+    
+    <div class="logo">DarkyMall</div>
+    <div class="nav-right">
+      <input id="search" type="text" placeholder="Search products…" />
+          <a href="/demos/ecommerce/login.html" class="cart-icon">
+            <button class="outline cart-btn" >
+                    🧑
+                
+                    
+                </button>
+          </a>
+      
+
+    </div>
+  </div>
+</header>
+
+<section class="container hero">
+  <div>
+    <h1>Modern essentials for everyday life</h1>
+    <p>Discover clean design, quality products, and fast delivery.</p>
+    <br />
+    <button>Shop Now</button>
+  </div>
+  <img src="https://images.unsplash.com/photo-1512436991641-6745cdb1723f?q=80&w=1000" />
+</section>
+
+<section class="container">
+  <div class="section-title">Products</div>
+  <div class="filters">
+    <button class="active" data-cat="all">All</button>
+    <button data-cat="dress">Dresses</button>
+    <button data-cat="shoe">Shoes</button>
+    <button data-cat="accessories">Accessories</button>
+    <button data-cat="light">Lighting & Deco</button>
+    <button data-cat="kitchen">Cooking equipments</button>
+    
+  </div>
+
+  <div id="productGrid" class="grid"></div>
+</section>
+
+  <!-- Floating Cart -->
+  <a href="/demos/ecommerce/cart.html" class="floating-cart">
+    🛒
+    <span id="floatingCartCount" class="floating-cart-count">0</span>
+  </a>
+
+  <footer class="footer">
+
+    <div class="footer-container">
+
+
+      <!-- BRAND -->
+
+      <div class="footer-section">
+
+        <h3>
+          DarkyMall
+        </h3>
+
+        <p>
+          Your one-stop shop for everything.
+        </p>
+
+      </div>
+
+
+      <!-- CONTACT -->
+
+      <div class="footer-section">
+
+        <h4>
+          Contact
+        </h4>
+
+        <p>
+          Email: support@email.com
+        </p>
+
+        <p>
+          Phone: +233...
+        </p>
+
+      </div>
+
+
+      <!-- LINKS -->
+
+      <div class="footer-section">
+
+        <h4>
+          Quick Links
+        </h4>
+
+        <a href="#">
+          Home
+        </a>
+
+        <a href="/demos/ecommerce/login.html">
+          Cart
+        </a>
+
+        <a href="/demos/ecommerce/login.html">
+          Account
+        </a>
+
+      </div>
+
+
+    </div>
+
+
+    <div class="footer-bottom">
+
+      © 2026 DarkyMall — All rights reserved.
+
+    </div>
+
+  </footer>
+
+<script src="js/data.js"></script>
+<script src="js/cartUtils.js" defer></script>
+<script src="js/cartBadge.js" defer></script>
+<script src="js/login.js" defer></script>
+<script type="module">
+  
+const grid = document.getElementById('productGrid');
+const searchInput = document.getElementById('search');
+let currentCategory = 'all';
+
+function render(list) {
+  grid.innerHTML = "";
+
+  list.forEach(p => {
+    const card = document.createElement("div");
+    card.className = "card";
+
+    card.innerHTML = `
+      <a
+        href="/demos/ecommerce/productDetail.html?id=${encodeURIComponent(p.id)}"
+        class="product-link"
+      >
+        <img src="${p.images[0]}" alt="${p.name}" />
+
+        <div class="card-body">
+          <strong>${p.name}</strong>
+
+          <div class="price">
+            $${Number(p.price).toFixed(2)}
+          </div>
+
+          <div class="rating">
+            ⭐ ${p.rating} (${p.reviews})
+          </div>
+
+          <button
+            type="button"
+            class="add-to-cart"
+            data-id="${p.id}"
+          >
+            Add to Cart
+          </button>
+        </div>
+      </a>
+    `;
+
+    const btn = card.querySelector(".add-to-cart");
+
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      addToCart(p);
+    });
+
+    grid.appendChild(card);
+  });
+}
+
+function applyFilters(){
+  const q = searchInput.value.toLowerCase();
+  let list = products.filter(p => p.name.toLowerCase().includes(q));
+  if(currentCategory !== 'all') list = list.filter(p => p.category === currentCategory);
+  render(list);
+}
+
+render(products);
+
+searchInput.addEventListener('input', applyFilters);
+
+document.querySelectorAll('.filters button').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.filters button').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    currentCategory = btn.dataset.cat;
+    applyFilters();
+  })
+});
+
+function addToCart(product) {
+  const cart = getCart();
+
+  const existing = cart.find(item => item.id === product.id);
+
+  if (existing) {
+    existing.quantity += 1;
+  } else {
+    cart.push({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      image: product.images[0],
+      quantity: 1
+    });
+  }
+
+  saveCart(cart);
+}
+
+
+</script>
+
+
+
+</body>
+</html>

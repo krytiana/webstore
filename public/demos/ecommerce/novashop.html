@@ -1,0 +1,1478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NovaShop</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: Inter, sans-serif;
+  background: #f0f6ff;
+  color: #0f172a;
+  line-height: 1.5;
+}
+
+
+/* =========================
+   THEME
+========================= */
+
+:root {
+  --primary: #2563eb;
+  --primary-dark: #1d4ed8;
+  --primary-soft: #eff6ff;
+
+  --muted: #64748b;
+
+  --card: #ffffff;
+  --surface: #ffffff;
+  --background: #f0f6ff;
+
+  --border: #e2e8f0;
+
+  --heading: #0f172a;
+  --text: #334155;
+
+  --success: #16a34a;
+
+  --radius: 18px;
+  --radius-sm: 12px;
+
+  --shadow-sm:
+    0 4px 14px rgba(15, 23, 42, .05);
+
+  --shadow:
+    0 12px 30px rgba(15, 23, 42, .07);
+
+  --shadow-hover:
+    0 20px 45px rgba(37, 99, 235, .14);
+}
+
+
+/* =========================
+   GLOBAL
+========================= */
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input {
+  font-family: inherit;
+}
+
+button {
+  border: none;
+  cursor: pointer;
+}
+
+button:focus-visible,
+input:focus-visible,
+a:focus-visible {
+  outline: 3px solid rgba(37, 99, 235, .25);
+  outline-offset: 3px;
+}
+
+
+/* =========================
+   LAYOUT
+========================= */
+
+.container {
+  width: min(1200px, calc(100% - 40px));
+  margin: 0 auto;
+  padding: 30px 0;
+}
+
+
+/* =========================
+   HEADER
+========================= */
+
+header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+
+  background: rgba(255, 255, 255, .94);
+
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+
+  border-bottom: 1px solid rgba(226, 232, 240, .9);
+
+  box-shadow:
+    0 4px 18px rgba(15, 23, 42, .04);
+}
+
+.nav {
+  width: min(1200px, calc(100% - 40px));
+  margin: 0 auto;
+
+  min-height: 72px;
+
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.logo {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -.6px;
+  color: var(--primary);
+
+  white-space: nowrap;
+}
+
+.nav-right {
+  margin-left: auto;
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+
+/* =========================
+   SEARCH
+========================= */
+
+input {
+  width: 260px;
+
+  padding: 11px 16px;
+
+  border-radius: 999px;
+
+  border: 1px solid var(--border);
+
+  background: #f8fafc;
+
+  color: var(--heading);
+
+  outline: none;
+
+  transition:
+    border-color .2s ease,
+    box-shadow .2s ease,
+    background .2s ease;
+}
+
+input::placeholder {
+  color: #94a3b8;
+}
+
+input:hover {
+  background: #fff;
+}
+
+input:focus {
+  background: #fff;
+
+  border-color: var(--primary);
+
+  box-shadow:
+    0 0 0 4px rgba(37, 99, 235, .10);
+}
+
+
+/* =========================
+   BUTTONS
+========================= */
+
+button {
+  border-radius: 999px;
+
+  padding: 10px 18px;
+
+  background: var(--primary);
+
+  color: #fff;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  transition:
+    background .2s ease,
+    transform .2s ease,
+    box-shadow .2s ease;
+}
+
+button:hover {
+  background: var(--primary-dark);
+
+  transform: translateY(-1px);
+
+  box-shadow:
+    0 8px 18px rgba(37, 99, 235, .20);
+}
+
+button:active {
+  transform: translateY(0);
+}
+
+button.outline {
+  background: #fff;
+
+  color: var(--primary);
+
+  border: 1px solid #bfdbfe;
+
+  box-shadow: none;
+}
+
+button.outline:hover {
+  background: var(--primary-soft);
+
+  border-color: var(--primary);
+}
+
+
+/* =========================
+   MENU BUTTON
+========================= */
+
+.menu-btn {
+  width: 42px;
+  height: 42px;
+
+  padding: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: var(--primary-soft);
+
+  color: var(--primary);
+
+  border-radius: 12px;
+
+  font-size: 20px;
+
+  box-shadow: none;
+}
+
+.menu-btn:hover {
+  background: #dbeafe;
+
+  color: var(--primary-dark);
+
+  box-shadow: none;
+}
+
+
+/* =========================
+   HERO
+========================= */
+
+.hero {
+  min-height: 430px;
+
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    minmax(0, 1fr);
+
+  gap: 55px;
+
+  align-items: center;
+}
+
+.hero > div:first-child {
+  max-width: 560px;
+}
+
+.hero h1 {
+  font-size: clamp(34px, 4vw, 54px);
+
+  line-height: 1.05;
+
+  letter-spacing: -1.8px;
+
+  color: var(--heading);
+
+  margin-bottom: 18px;
+}
+
+.hero p {
+  max-width: 500px;
+
+  font-size: 17px;
+
+  line-height: 1.7;
+
+  color: var(--muted);
+
+  margin-bottom: 24px;
+}
+
+
+/* HERO IMAGE */
+
+.hero > img {
+  width: 100%;
+
+  height: 360px;
+
+  object-fit: cover;
+
+  border-radius: 26px;
+
+  box-shadow:
+    0 20px 50px rgba(37, 99, 235, .14);
+
+  border: 1px solid rgba(255,255,255,.7);
+
+  transition:
+    transform .35s ease,
+    box-shadow .35s ease;
+}
+
+.hero > img:hover {
+  transform: translateY(-4px);
+
+  box-shadow:
+    0 26px 60px rgba(37, 99, 235, .18);
+}
+
+
+/* =========================
+   PRODUCTS SECTION
+========================= */
+
+.section-title {
+  font-size: 28px;
+
+  font-weight: 750;
+
+  letter-spacing: -.7px;
+
+  color: var(--heading);
+
+  margin-bottom: 18px;
+}
+
+
+/* =========================
+   FILTERS
+========================= */
+
+.filters {
+  display: flex;
+
+  gap: 9px;
+
+  margin-bottom: 26px;
+
+  flex-wrap: wrap;
+}
+
+.filters button {
+  background: #fff;
+
+  color: #475569;
+
+  border: 1px solid var(--border);
+
+  box-shadow: none;
+
+  padding: 9px 16px;
+}
+
+.filters button:hover {
+  background: var(--primary-soft);
+
+  color: var(--primary);
+
+  border-color: #bfdbfe;
+
+  box-shadow: none;
+}
+
+.filters button.active {
+  background: var(--primary);
+
+  color: #fff;
+
+  border-color: var(--primary);
+
+  box-shadow:
+    0 7px 16px rgba(37, 99, 235, .18);
+}
+
+
+/* =========================
+   PRODUCT GRID
+========================= */
+
+.grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+
+  gap: 22px;
+}
+
+
+/* =========================
+   PRODUCT CARD
+========================= */
+
+.card {
+  position: relative;
+
+  background: var(--card);
+
+  border-radius: var(--radius);
+
+  overflow: hidden;
+
+  border: 1px solid rgba(226, 232, 240, .8);
+
+  box-shadow: var(--shadow-sm);
+
+  transition:
+    transform .25s ease,
+    box-shadow .25s ease,
+    border-color .25s ease;
+}
+
+.card:hover {
+  transform: translateY(-6px);
+
+  box-shadow: var(--shadow-hover);
+
+  border-color: #dbeafe;
+}
+
+
+/* PRODUCT IMAGE */
+
+.card > a {
+  display: block;
+}
+
+.card img {
+  display: block;
+
+  width: 100%;
+
+  height: 210px;
+
+  object-fit: cover;
+
+  background: #f8fafc;
+
+  transition:
+    transform .35s ease;
+}
+
+.card:hover img {
+  transform: scale(1.035);
+}
+
+
+/* CARD CONTENT */
+
+.card-body {
+  padding: 16px;
+}
+
+.card-body strong {
+  display: block;
+
+  font-size: 15px;
+
+  line-height: 1.4;
+
+  color: var(--heading);
+
+  min-height: 42px;
+}
+
+.price {
+  color: var(--primary);
+
+  font-size: 16px;
+
+  font-weight: 700;
+
+  margin-top: 8px;
+}
+
+.rating {
+  font-size: 13px;
+
+  color: var(--muted);
+
+  margin-top: 5px;
+}
+
+
+/*
+   Product button
+
+   Keep it visually inside
+   the card without making
+   the whole product feel heavy.
+*/
+
+.card-body button {
+  width: 100%;
+
+  margin-top: 14px;
+
+  padding: 11px 14px;
+
+  border-radius: 11px;
+
+  background: var(--primary);
+
+  box-shadow: none;
+}
+
+.card-body button:hover {
+  box-shadow:
+    0 8px 18px rgba(37, 99, 235, .18);
+}
+
+
+/* =========================
+   FLOATING CART
+========================= */
+
+.floating-cart {
+  position: fixed;
+
+  right: 24px;
+  bottom: 24px;
+
+  width: 58px;
+  height: 58px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  background: var(--primary);
+
+  color: #fff;
+
+  border-radius: 50%;
+
+  font-size: 23px;
+
+  text-decoration: none;
+
+  box-shadow:
+    0 14px 32px rgba(37, 99, 235, .32);
+
+  z-index: 1000;
+
+  transition:
+    transform .2s ease,
+    box-shadow .2s ease;
+}
+
+.floating-cart:hover {
+  transform: translateY(-4px);
+
+  box-shadow:
+    0 18px 40px rgba(37, 99, 235, .40);
+}
+
+.floating-cart-count {
+  position: absolute;
+
+  top: -4px;
+  right: -4px;
+
+  min-width: 20px;
+  height: 20px;
+
+  padding: 2px 5px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #ef4444;
+
+  color: #fff;
+
+  border: 2px solid #fff;
+
+  border-radius: 50%;
+
+  font-size: 11px;
+
+  font-weight: 700;
+}
+
+
+/* =========================
+   FOOTER
+========================= */
+
+footer {
+  background: #fff;
+
+  border-top: 1px solid var(--border);
+
+  margin-top: 70px;
+}
+
+footer .container {
+  padding-top: 25px;
+  padding-bottom: 25px;
+
+  color: var(--muted);
+
+  font-size: 14px;
+
+  text-align: center;
+}
+
+
+/* =========================
+   DRAWER OVERLAY
+========================= */
+
+.drawer-overlay {
+  position: fixed;
+
+  inset: 0;
+
+  background:
+    rgba(15, 23, 42, .48);
+
+  backdrop-filter: blur(2px);
+
+  display: none;
+
+  opacity: 0;
+
+  transition: opacity .25s ease;
+
+  z-index: 90;
+}
+
+.drawer-overlay.show {
+  display: block;
+
+  opacity: 1;
+}
+
+
+/* =========================
+   DRAWER
+========================= */
+
+.drawer {
+  position: fixed;
+
+  top: 0;
+  left: 0;
+
+  width: 290px;
+  height: 100vh;
+
+  background: #fff;
+
+  transform: translateX(-105%);
+
+  transition:
+    transform .3s cubic-bezier(.4,0,.2,1);
+
+  z-index: 100;
+
+  padding: 20px;
+
+  overflow-y: auto;
+
+  box-shadow:
+    12px 0 35px rgba(15,23,42,.14);
+}
+
+.drawer.open {
+  transform: translateX(0);
+}
+
+
+/* DRAWER HEADER */
+
+.drawer-header {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  padding-bottom: 18px;
+
+  margin-bottom: 14px;
+
+  border-bottom: 1px solid var(--border);
+
+  color: var(--primary);
+}
+
+.drawer-header strong {
+  font-size: 21px;
+
+  letter-spacing: -.5px;
+}
+
+.drawer-header button {
+  width: 36px;
+  height: 36px;
+
+  padding: 0;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  background: #f1f5f9;
+
+  color: #475569;
+
+  box-shadow: none;
+}
+
+.drawer-header button:hover {
+  background: #fee2e2;
+
+  color: #dc2626;
+
+  box-shadow: none;
+}
+
+
+/* DRAWER LINKS */
+
+.drawer-links {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 8px;
+}
+
+.drawer-links a,
+.drawer-links button {
+  width: 100%;
+
+  text-align: left;
+
+  padding: 11px 13px;
+
+  border-radius: 11px;
+
+  background: #f8fafc;
+
+  color: #334155;
+
+  border: 1px solid transparent;
+
+  font-size: 14px;
+
+  box-shadow: none;
+}
+
+.drawer-links a:hover,
+.drawer-links button:hover {
+  background: var(--primary-soft);
+
+  color: var(--primary);
+
+  border-color: #dbeafe;
+
+  box-shadow: none;
+
+  transform: none;
+}
+
+.drawer-links hr {
+  border: none;
+
+  border-top: 1px solid var(--border);
+
+  margin: 10px 0;
+}
+
+.drawer-title {
+  font-size: 12px;
+
+  font-weight: 700;
+
+  text-transform: uppercase;
+
+  letter-spacing: .7px;
+
+  color: var(--muted);
+
+  margin-bottom: 2px;
+}
+
+
+/* =========================
+   EMPTY PRODUCTS
+========================= */
+
+.no-products {
+  grid-column: 1 / -1;
+
+  padding: 70px 20px;
+
+  text-align: center;
+
+  color: var(--muted);
+
+  background: #fff;
+
+  border: 1px dashed var(--border);
+
+  border-radius: var(--radius);
+}
+
+    /* ================= FOOTER ================= */
+
+    .footer {
+      background: var(--primary-dark);
+
+      color: wheat;
+
+      padding: 35px 20px 12px;
+
+      margin-top: 40px;
+
+      border-top: 1px solid var(--border);
+    }
+
+    .footer-container {
+      max-width: 1200px;
+
+      margin: auto;
+
+      display: grid;
+
+      grid-template-columns:
+        repeat(auto-fit, minmax(200px, 1fr));
+
+      gap: 25px;
+    }
+
+    .footer-section h3,
+    .footer-section h4 {
+      margin-bottom: 10px;
+
+      color: whitesmoke;
+    }
+
+    .footer-section p {
+      font-size: 14px;
+
+      margin-bottom: 6px;
+
+      color: wheat;
+    }
+
+    .footer-section a {
+      display: block;
+
+      font-size: 14px;
+
+      color: wheat;
+
+      margin-bottom: 6px;
+
+      text-decoration: none;
+    }
+
+    .footer-section a:hover {
+      color: silver;
+    }
+
+    .footer-bottom {
+      text-align: center;
+
+      max-width: 1200px;
+
+      margin: 25px auto 0;
+
+      border-top: 1px solid var(--border);
+
+      padding-top: 12px;
+
+      font-size: 13px;
+
+      color: silver;
+    }
+
+/* =========================
+   TABLET
+========================= */
+
+@media (max-width: 1000px) {
+
+  .grid {
+    grid-template-columns:
+      repeat(3, minmax(0, 1fr));
+  }
+
+  .hero {
+    gap: 35px;
+  }
+
+  .hero h1 {
+    font-size: 42px;
+  }
+
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 760px) {
+
+  .container {
+    width: min(100% - 28px, 600px);
+
+    padding: 24px 0;
+  }
+
+  .nav {
+    width: calc(100% - 28px);
+
+    min-height: 64px;
+
+    gap: 10px;
+  }
+
+  .logo {
+    font-size: 19px;
+  }
+
+  .nav-right {
+    flex: 1;
+
+    justify-content: flex-end;
+  }
+
+  .nav-right input {
+    width: min(100%, 230px);
+  }
+
+  .cart-icon {
+    display: none;
+  }
+
+
+  .hero {
+    grid-template-columns: 1fr;
+
+    gap: 25px;
+
+    padding-top: 25px;
+  }
+
+  .hero h1 {
+    font-size: 36px;
+
+    letter-spacing: -1.2px;
+  }
+
+  .hero p {
+    font-size: 15px;
+  }
+
+  .hero > img {
+    height: 280px;
+
+    border-radius: 20px;
+  }
+
+
+  .grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+
+    gap: 14px;
+  }
+
+  .card img {
+    height: 190px;
+  }
+
+  .card-body {
+    padding: 13px;
+  }
+
+}
+
+
+/* =========================
+   SMALL PHONES
+========================= */
+
+@media (max-width: 520px) {
+
+  .container {
+    width: calc(100% - 24px);
+
+    padding: 20px 0;
+  }
+
+  .nav {
+    width: calc(100% - 24px);
+
+    min-height: 60px;
+  }
+
+  .logo {
+    font-size: 18px;
+  }
+
+  .menu-btn {
+    width: 38px;
+    height: 38px;
+
+    font-size: 18px;
+  }
+
+  .nav-right {
+    min-width: 0;
+  }
+
+  .nav-right input {
+    width: 100%;
+
+    min-width: 0;
+
+    padding: 10px 13px;
+  }
+
+
+  .hero {
+    padding-top: 15px;
+  }
+
+  .hero h1 {
+    font-size: 29px;
+
+    line-height: 1.08;
+  }
+
+  .hero p {
+    font-size: 14px;
+
+    line-height: 1.6;
+  }
+
+  .hero > img {
+    height: 235px;
+  }
+
+
+  .section-title {
+    font-size: 23px;
+
+    margin-bottom: 14px;
+  }
+
+
+  .filters {
+    overflow-x: auto;
+
+    flex-wrap: nowrap;
+
+    padding-bottom: 5px;
+
+    scrollbar-width: none;
+  }
+
+  .filters::-webkit-scrollbar {
+    display: none;
+  }
+
+  .filters button {
+    flex-shrink: 0;
+
+    font-size: 13px;
+
+    padding: 8px 13px;
+  }
+
+
+  .grid {
+    grid-template-columns: 1fr 1fr;
+
+    gap: 11px;
+  }
+
+  .card {
+    border-radius: 14px;
+  }
+
+  .card img {
+    height: 155px;
+  }
+
+  .card-body {
+    padding: 11px;
+  }
+
+  .card-body strong {
+    font-size: 13px;
+
+    min-height: 37px;
+  }
+
+  .price {
+    font-size: 14px;
+  }
+
+  .rating {
+    font-size: 11px;
+  }
+
+  .card-body button {
+    padding: 9px 8px;
+
+    font-size: 12px;
+  }
+
+
+  .floating-cart {
+    right: 16px;
+    bottom: 16px;
+
+    width: 54px;
+    height: 54px;
+  }
+
+
+  .drawer {
+    width: min(290px, 85vw);
+  }
+
+}
+
+
+/* =========================
+   VERY SMALL PHONES
+========================= */
+
+@media (max-width: 370px) {
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .card img {
+    height: 210px;
+  }
+
+  .nav-right input {
+    max-width: 150px;
+  }
+
+}
+
+</style>
+
+</head>
+<body>
+  <!-- Overlay -->
+<div id="drawerOverlay" class="drawer-overlay"></div>
+
+<!-- Left Drawer -->
+<aside id="drawer" class="drawer">
+  <div class="drawer-header">
+    <strong>NovaShop</strong>
+    <button id="closeDrawer">✕</button>
+  </div>
+
+  <nav class="drawer-links">
+    <p class="drawer-title">Categories</p>
+    <button data-cat="all">All Products</button>
+    <button data-cat="dress">Dresses</button>
+    <button data-cat="shoe">Shoes</button>
+    <button data-cat="accessories">Accessories</button>
+    <button data-cat="light">Lighting & Deco</button>
+    <button data-cat="kitchen">Cooking Equipments</button>
+
+    <hr />
+
+    <a   <div class="top-bar">
+    <div id="userSection"></div>
+  </div></a>
+
+    <a href="/demos/ecommerce/login.html">❤️ Wishlist</a>
+    <a href="/demos/ecommerce/cart.html">🛒 Cart</a>
+  </nav>
+</aside>
+
+<header>
+  <div class="nav">
+    <button id="menuBtn" class="menu-btn">☰</button>
+    <div class="logo">NovaShop</div>
+    <div class="nav-right">
+      <input id="search" type="text" placeholder="Search products…" />
+          <a href="/demos/ecommerce/cart.html" class="cart-icon">
+            <button class="outline cart-btn">
+                    Cart
+                    <span id="cartCount" class="cart-badge" style="display:none">0</span>
+                </button>
+          </a>
+      
+
+    </div>
+  </div>
+</header>
+
+<section class="container hero">
+  <div>
+    <h1>Modern essentials for everyday life</h1>
+    <p>Discover clean design, quality products, and fast delivery.</p>
+    <br />
+    <button>Shop Now</button>
+  </div>
+  <img src="https://images.unsplash.com/photo-1512436991641-6745cdb1723f?q=80&w=1000" />
+</section>
+
+<section class="container">
+  <div class="section-title">Products</div>
+  <div class="filters">
+    <button class="active" data-cat="all">All</button>
+    <button data-cat="dress">Dresses</button>
+    <button data-cat="shoe">Shoes</button>
+    <button data-cat="accessories">Accessories</button>
+    <button data-cat="light">Lighting & Deco</button>
+    <button data-cat="kitchen">Cooking equipments</button>
+    
+  </div>
+
+  <div id="productGrid" class="grid"></div>
+</section>
+
+  <!-- Floating Cart -->
+  <a href="/demos/ecommerce/cart.html" class="floating-cart">
+    🛒
+    <span id="floatingCartCount" class="floating-cart-count">0</span>
+  </a>
+
+  <footer class="footer">
+
+    <div class="footer-container">
+
+
+      <!-- BRAND -->
+
+      <div class="footer-section">
+
+        <h3>
+          NovaShop
+        </h3>
+
+        <p>
+          Your one-stop shop for everything.
+        </p>
+
+      </div>
+
+
+      <!-- CONTACT -->
+
+      <div class="footer-section">
+
+        <h4>
+          Contact
+        </h4>
+
+        <p>
+          Email: support@email.com
+        </p>
+
+        <p>
+          Phone: +233...
+        </p>
+
+      </div>
+
+
+      <!-- LINKS -->
+
+      <div class="footer-section">
+
+        <h4>
+          Quick Links
+        </h4>
+
+        <a href="#">
+          Home
+        </a>
+
+        <a href="/demos/ecommerce/login.html">
+          Cart
+        </a>
+
+        <a href="/demos/ecommerce/login.html">
+          Account
+        </a>
+
+      </div>
+
+
+    </div>
+
+
+    <div class="footer-bottom">
+
+      © 2026 NovaShop — All rights reserved.
+
+    </div>
+
+  </footer>>
+
+<script src="js/data.js"></script>
+<script src="js/cartUtils.js" defer></script>
+<script src="js/cartBadge.js" defer></script>
+<script src="js/login.js" defer></script>
+<script type="module">
+
+const grid = document.getElementById('productGrid');
+const searchInput = document.getElementById('search');
+let currentCategory = 'all';
+
+function render(list) {
+  grid.innerHTML = '';
+
+  list.forEach(p => {
+    const card = document.createElement('div');
+    card.className = 'card';
+
+    card.innerHTML = `
+      <a href="/demos/ecommerce/productDetail.html?id=${encodeURIComponent(p.id)}" class="product-link">
+        <img src="${p.images[0]}" />
+        <div class="card-body">
+          <strong>${p.name}</strong>
+          <div class="price">$${p.price}</div>
+          <div class="rating">⭐ ${p.rating} (${p.reviews})</div>
+          <button
+            type="button"
+            class="add-to-cart"
+            data-id="${p.id}"
+          >
+            Add to Cart
+          </button>
+        </div>
+      </a>
+    `;
+
+    // Attach event listener INSIDE the loop
+    const btn = card.querySelector(".add-to-cart");
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      addToCart(p);
+    });
+
+    grid.appendChild(card);
+  });
+}
+
+
+function applyFilters(){
+  const q = searchInput.value.toLowerCase();
+  let list = products.filter(p => p.name.toLowerCase().includes(q));
+  if(currentCategory !== 'all') list = list.filter(p => p.category === currentCategory);
+  render(list);
+}
+
+render(products);
+
+searchInput.addEventListener('input', applyFilters);
+
+document.querySelectorAll('.filters button').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.filters button').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    currentCategory = btn.dataset.cat;
+    applyFilters();
+  })
+});
+
+function addToCart(product) {
+  const cart = getCart();
+
+  const existing = cart.find(item => item.id === product.id);
+
+  if (existing) {
+    existing.quantity += 1;
+  } else {
+    cart.push({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      image: product.images[0],
+      quantity: 1
+    });
+  }
+
+  saveCart(cart);
+}
+
+
+const drawer = document.getElementById("drawer");
+const overlay = document.getElementById("drawerOverlay");
+
+document.getElementById("menuBtn").onclick = () => {
+  drawer.classList.add("open");
+  overlay.classList.add("show");
+};
+
+document.getElementById("closeDrawer").onclick = closeDrawer;
+overlay.onclick = closeDrawer;
+
+function closeDrawer() {
+  drawer.classList.remove("open");
+  overlay.classList.remove("show");
+}
+
+/* Category filter from drawer */
+document.querySelectorAll(".drawer-links button[data-cat]").forEach(btn => {
+  btn.addEventListener("click", () => {
+    currentCategory = btn.dataset.cat;
+    applyFilters();
+    closeDrawer();
+  });
+});
+
+</script>
+
+</body>
+</html>

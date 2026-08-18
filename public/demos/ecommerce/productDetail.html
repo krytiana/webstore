@@ -10,9 +10,9 @@
 
 <!-- HEADER -->
 <header class="header">
-  <div class="logo">Bussiness Name</div>
+  <div class="logo">DemoShop</div>
   <nav>
-    <a href="https://codecarthub.com/products">Shop More -></a>
+    <a href="#" id="backButton">Shop More -></a>
 
   </nav>
 </header>
@@ -21,7 +21,7 @@
 <main class="product-container">
 
   <!-- Floating Cart -->
-  <a href="cart.html" class="floating-cart">
+  <a href="/demos/ecommerce/cart.html" class="floating-cart">
     🛒
     <span id="floatingCartCount" class="floating-cart-count">0</span>
   </a>
@@ -57,7 +57,7 @@
 
     <!-- Buttons -->
     <button class="add-to-cart">Add to Cart</button>
-    <button class="wishlist">♡ Add to Wishlist</button>
+    <a href="/demos/ecommerce/login.html"><button class="wishlist">♡ Add to Wishlist</button></a>
   </div>
 
 </main>
@@ -81,6 +81,17 @@
 <script src="js/cartUtils.js"></script>
 <script src="js/cartBadge.js"></script>
 <script src="js/detailedProduct.js"></script>
+<script>
+  document.getElementById("backButton").addEventListener("click", function (e) {
+    e.preventDefault();
+
+    if (window.history.length > 1) {
+      history.back();
+    } else {
+      window.location.href = "index.html";
+    }
+  });
+</script>
 
 </body>
 </html>

@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>DemoShop | Your Cart</title>
+
+  <link rel="stylesheet" href="css/cart.css" />
+
+  <style>
+    :root {
+      --primary: #111827;
+      --secondary: #374151;
+
+      --background: #f6f7fb;
+      --surface: #ffffff;
+      --surfaceAlt: #f9fafb;
+
+      --heading: #111827;
+      --text: #374151;
+      --muted: #6b7280;
+      --interaction: #2563eb;
+
+      --border: #e5e7eb;
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- ==============================
+     HEADER
+================================= -->
+
+<header class="header">
+
+  <a href="#" class="logo-link" id="backButton">
+    <div class="logo">
+      DemoShop
+    </div>
+  </a>
+
+  <nav>
+    <a href="/">Home</a>
+    <a href="/products">Products</a>
+    <a href="/pricing">Pricing</a>
+  </nav>
+
+</header>
+
+
+<!-- ==============================
+     CART
+================================= -->
+
+<main class="cart-container">
+
+  <h1>Your Shopping Cart</h1>
+
+  <div id="cartItems"></div>
+
+
+  <!-- ============================
+       CART SUMMARY
+  ============================= -->
+
+  <div class="cart-summary">
+
+    <h3>Order Summary</h3>
+
+    <p>
+      Total Items:
+      <span id="totalItems">0</span>
+    </p>
+
+    <p>
+      Total Price:
+      <strong>
+        $<span id="totalPrice">0.00</span>
+      </strong>
+    </p>
+
+    <p>
+      Shipping Fee:
+      <strong>
+        $<span id="shippingFee">0.00</span>
+      </strong>
+    </p>
+
+
+    <!-- ==========================
+         SHIPPING ADDRESS
+    =========================== -->
+
+    <div class="shipping-address">
+
+      <h4>Shipping Address</h4>
+
+      <div id="defaultAddress">
+        <p>
+          No shipping address added.
+        </p>
+      </div>
+
+      <a href="/demos/ecommerce/login.html">
+        <button
+          type="button"
+          id="changeAddressBtn"
+        >
+          Change / Add New
+        </button>
+      </a>
+
+    </div>
+
+
+    <!-- ==========================
+         PAYMENT METHOD
+    =========================== -->
+
+    <div class="payment-method">
+
+      <h4>Payment Method</h4>
+
+      <div id="paymentMethods">
+
+        <label>
+          <input
+            type="radio"
+            name="payment"
+            value="paystack"
+            checked
+          >
+
+          Mobile Money / Card
+        </label>
+
+        <br>
+
+        <label>
+          <input
+            type="radio"
+            name="payment"
+            value="stripe"
+          >
+
+          Card Payment
+        </label>
+
+      </div>
+
+    </div>
+
+
+    <!-- ==========================
+         DELIVERY INFO
+    =========================== -->
+
+    <div class="delivery-info">
+
+      <p>
+        🚚 Delivery Guarantee:
+        Your order will arrive on time.
+      </p>
+
+      <p>
+        💳 Card Protection:
+        Payments are securely processed.
+      </p>
+
+      <p>
+        🔒 Privacy:
+        Your data is safe with us.
+      </p>
+
+    </div>
+
+
+    <!-- ==========================
+         CHECKOUT
+    =========================== -->
+
+    <button
+      type="button"
+      class="checkout-btn"
+      id="checkoutBtn"
+    >
+      Proceed to Checkout
+    </button>
+
+  </div>
+
+</main>
+
+
+<!-- ==============================
+     FOOTER
+================================= -->
+
+<footer class="footer">
+
+  <div class="footer-container">
+
+
+    <!-- BRAND -->
+
+    <div class="footer-section">
+
+      <h3>
+        DemoShop
+      </h3>
+
+      <p>
+        Your one-stop shop for everything.
+      </p>
+
+    </div>
+
+
+    <!-- CONTACT -->
+
+    <div class="footer-section">
+
+      <h4>Contact</h4>
+
+      <p>
+        Email:
+        support@example.com
+      </p>
+
+      <p>
+        Phone:
+        +233 000 000 000
+      </p>
+
+    </div>
+
+
+    <!-- LINKS -->
+
+    <div class="footer-section">
+
+      <h4>Quick Links</h4>
+
+      <a href="/">
+        Home
+      </a>
+
+      <a href="/demos/ecommerce/cart.html">
+        Cart
+      </a>
+
+      <a href="/demos/ecommerce/login.html">
+        Account
+      </a>
+
+    </div>
+
+  </div>
+
+
+  <div class="footer-bottom">
+
+    © 2026 DemoShop —
+    All rights reserved.
+
+  </div>
+
+</footer>
+
+
+<!-- ==============================
+     CART SCRIPT
+================================= -->
+
+<script>
+
+  // ==========================================
+  // CART STORAGE
+  // ==========================================
+
+  function getCart() {
+
+    return JSON.parse(
+      localStorage.getItem("cart")
+    ) || [];
+
+  }
+
+
+  function saveCart(cart) {
+
+    localStorage.setItem(
+      "cart",
+      JSON.stringify(cart)
+    );
+
+  }
+
+
+  // ==========================================
+  // RENDER CART
+  // ==========================================
+
+  function renderCart() {
+
+    const cartItemsContainer =
+      document.getElementById("cartItems");
+
+    const totalItemsEl =
+      document.getElementById("totalItems");
+
+    const totalPriceEl =
+      document.getElementById("totalPrice");
+
+    const shippingFeeEl =
+      document.getElementById("shippingFee");
+
+
+    const cart = getCart();
+
+    cartItemsContainer.innerHTML = "";
+
+
+    // ========================================
+    // EMPTY CART
+    // ========================================
+
+    if (cart.length === 0) {
+
+      cartItemsContainer.innerHTML = `
+        <div class="empty-cart">
+
+          <h3>
+            Your cart is empty
+          </h3>
+
+          <p>
+            Add some products before checking out.
+          </p>
+
+          <a href="/">
+            Continue Shopping
+          </a>
+
+        </div>
+      `;
+
+      totalItemsEl.textContent = "0";
+
+      totalPriceEl.textContent = "0.00";
+
+      shippingFeeEl.textContent = "0.00";
+
+      return;
+
+    }
+
+
+    // ========================================
+    // TOTALS
+    // ========================================
+
+    let totalItems = 0;
+
+    let totalPrice = 0;
+
+
+    // ========================================
+    // PRODUCTS
+    // ========================================
+
+    cart.forEach((item, index) => {
+
+      totalItems += Number(item.quantity);
+
+      totalPrice +=
+        Number(item.price) *
+        Number(item.quantity);
+
+
+      const cartItem =
+        document.createElement("div");
+
+      cartItem.className =
+        "cart-item";
+
+
+      // Optional options
+
+      const sizeHtml =
+        item.size
+          ? `<p>Size: ${item.size}</p>`
+          : "";
+
+
+      const colorHtml =
+        item.color
+          ? `<p>Color: ${item.color}</p>`
+          : "";
+
+
+      cartItem.innerHTML = `
+
+        <img
+          src="${item.image}"
+          alt="${item.name}"
+        >
+
+        <div class="cart-info">
+
+          <h4>
+            ${item.name}
+          </h4>
+
+          ${sizeHtml}
+
+          ${colorHtml}
+
+          <p>
+            $${Number(item.price).toFixed(2)}
+          </p>
+
+
+          <div class="cart-qty">
+
+            <button
+              class="qty-btn"
+              data-action="decrease"
+            >
+              −
+            </button>
+
+            <span>
+              ${item.quantity}
+            </span>
+
+            <button
+              class="qty-btn"
+              data-action="increase"
+            >
+              +
+            </button>
+
+          </div>
+
+
+          <button
+            class="remove-btn"
+          >
+            Remove
+          </button>
+
+        </div>
+
+      `;
+
+
+      // ======================================
+      // QUANTITY BUTTONS
+      // ======================================
+
+      cartItem
+        .querySelectorAll(".qty-btn")
+        .forEach(btn => {
+
+          btn.addEventListener(
+            "click",
+            () => {
+
+              if (
+                btn.dataset.action ===
+                "increase"
+              ) {
+
+                item.quantity++;
+
+              }
+
+
+              if (
+                btn.dataset.action ===
+                "decrease" &&
+                item.quantity > 1
+              ) {
+
+                item.quantity--;
+
+              }
+
+
+              saveCart(cart);
+
+              renderCart();
+
+            }
+          );
+
+        });
+
+
+      // ======================================
+      // REMOVE
+      // ======================================
+
+      cartItem
+        .querySelector(".remove-btn")
+        .addEventListener(
+          "click",
+          () => {
+
+            cart.splice(index, 1);
+
+            saveCart(cart);
+
+            renderCart();
+
+          }
+        );
+
+
+      cartItemsContainer.appendChild(
+        cartItem
+      );
+
+    });
+
+
+    // ========================================
+    // UPDATE TOTALS
+    // ========================================
+
+    totalItemsEl.textContent =
+      totalItems;
+
+    totalPriceEl.textContent =
+      totalPrice.toFixed(2);
+
+
+    // Static demo = free shipping
+
+    shippingFeeEl.textContent =
+      "0.00";
+
+  }
+
+
+  // ==========================================
+  // CHECKOUT
+  // ==========================================
+
+  document
+    .getElementById("checkoutBtn")
+    .addEventListener(
+      "click",
+      () => {
+
+        const cart = getCart();
+
+
+        if (cart.length === 0) {
+
+          alert(
+            "Your cart is empty."
+          );
+
+          return;
+
+        }
+
+
+        /*
+          Static demo intentionally does
+          not perform real payment.
+
+          Redirect the visitor to your
+          inactive login/checkout page.
+        */
+
+        window.location.href =
+          "/demos/ecommerce/login.html";
+
+      }
+    );
+
+
+  // ==========================================
+  // INITIALIZE
+  // ==========================================
+
+  renderCart();
+
+</script>
+
+<script>
+  document.getElementById("backButton").addEventListener("click", function (e) {
+    e.preventDefault();
+
+    if (window.history.length > 1) {
+      history.back();
+    } else {
+      window.location.href = "index.html";
+    }
+  });
+</script>
+<!-- Cart badge -->
+
+<script src="js/cartBadge.js"></script>
+
+</body>
+</html>

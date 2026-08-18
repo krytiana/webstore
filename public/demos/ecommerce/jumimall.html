@@ -75,11 +75,7 @@ body{background:#f2f2f2;}
   font-size:14px;
 }
 
-@media(min-width:768px){
-  .search-grid{
-    grid-template-columns:repeat(4,1fr);
-  }
-}
+
 
 /* SECTION STYLE */
 .section{
@@ -208,6 +204,80 @@ body{background:#f2f2f2;}
   text-align: center;
   display: none;
 }
+
+    /* ================= FOOTER ================= */
+
+    .footer {
+      background: #6a1b9a;
+
+      color: wheat;
+
+      padding: 35px 20px 12px;
+
+      margin-top: 40px;
+
+      border-top: 1px solid var(--border);
+    }
+
+    .footer-container {
+      max-width: 1200px;
+
+      margin: auto;
+
+      display: grid;
+
+      grid-template-columns:
+        repeat(auto-fit, minmax(200px, 1fr));
+
+      gap: 25px;
+    }
+
+    .footer-section h3,
+    .footer-section h4 {
+      margin-bottom: 10px;
+
+      color: whitesmoke;
+    }
+
+    .footer-section p {
+      font-size: 14px;
+
+      margin-bottom: 6px;
+
+      color: var(--text);
+    }
+
+    .footer-section a {
+      display: block;
+
+      font-size: 14px;
+
+      color: var(--text);
+
+      margin-bottom: 6px;
+
+      text-decoration: none;
+    }
+
+    .footer-section a:hover {
+      color: var(--secondary);
+    }
+
+    .footer-bottom {
+      text-align: center;
+
+      max-width: 1200px;
+
+      margin: 25px auto 0;
+
+      border-top: 1px solid var(--border);
+
+      padding-top: 12px;
+
+      font-size: 13px;
+
+      color: honeydew;
+    }
 /* DESKTOP */
 @media(min-width:768px){
   .horizontal-products{
@@ -215,6 +285,12 @@ body{background:#f2f2f2;}
   }
   .product-card{
     min-width:200px;
+  }
+}
+
+@media(min-width:768px){
+  .search-grid{
+    grid-template-columns:repeat(4,1fr);
   }
 }
 </style>
@@ -231,7 +307,7 @@ body{background:#f2f2f2;}
     <input type="text" id="searchInput" placeholder="Search products...">
     </div>
 </div>
-  <a href="cart.html" class="floating-cart">
+  <a href="/demos/ecommerce/cart.html" class="floating-cart">
   🛒
   <span id="floatingCartCount" class="floating-cart-count">0</span>
 </a>
@@ -249,12 +325,85 @@ body{background:#f2f2f2;}
 
 <a href="#" class="scroll-top" id="scrollTopBtn">⬆</a>
 
+<div class="products" id="productContainer"></div>
+
+  <footer class="footer">
+
+    <div class="footer-container">
+
+
+      <!-- BRAND -->
+
+      <div class="footer-section">
+
+        <h3>
+          JumiMall
+        </h3>
+
+        <p>
+          Your one-stop shop for everything.
+        </p>
+
+      </div>
+
+
+      <!-- CONTACT -->
+
+      <div class="footer-section">
+
+        <h4>
+          Contact
+        </h4>
+
+        <p>
+          Email: support@email.com
+        </p>
+
+        <p>
+          Phone: +233...
+        </p>
+
+      </div>
+
+
+      <!-- LINKS -->
+
+      <div class="footer-section">
+
+        <h4>
+          Quick Links
+        </h4>
+
+        <a href="#">
+          Home
+        </a>
+
+        <a href="/demos/ecommerce/login.html">
+          Cart
+        </a>
+
+        <a href="/demos/ecommerce/login.html">
+          Account
+        </a>
+
+      </div>
+
+
+    </div>
+
+
+    <div class="footer-bottom">
+
+      © 2026 JumiMall — All rights reserved.
+
+    </div>
+
+  </footer>
 <script src="js/data.js"></script>
 <script src="js/cartUtils.js" defer></script>
 <script src="js/cartBadge.js" defer></script>
 <script src="js/login.js" defer></script>
-
-<script>
+<script type="module">
 
 /* ===== GROUP PRODUCTS ===== */
 function groupByCategory(products){
@@ -286,7 +435,7 @@ function renderSections(){
         ${grouped[category].slice(0,6).map(product=>`
           <div class="product-card">
             ${product.discount ? `<div class="discount-badge">-${product.discount}%</div>`:""}
-            <a href="productDetail.html?id=${product.id}" style="text-decoration:none;color:black;">
+            <a href="/demos/ecommerce/productDetail.html?id=${product.id}" style="text-decoration:none;color:black;">
               <img src="${product.images[0]}" alt="${product.name}">
               <div class="title">${product.name}</div>
               <div class="price">GH₵ ${product.price.toFixed(2)}</div>
@@ -357,7 +506,7 @@ searchInput.addEventListener("input", function(){
       ${filtered.map(product=>`
         <div class="product-card">
           ${product.discount ? `<div class="discount-badge">-${product.discount}%</div>`:""}
-          <a href="productDetail.html?id=${product.id}" style="text-decoration:none;color:black;">
+          <a href="/demos/ecommerce/productDetail.html?id=${product.id}" style="text-decoration:none;color:black;">
             <img src="${product.images[0]}" alt="${product.name}">
             <div class="title">${product.name}</div>
             <div class="price">GH₵ ${product.price.toFixed(2)}</div>
