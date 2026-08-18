@@ -234,12 +234,10 @@
     you want to handle yourself.
   </p>
 
-
   <div
     class="pricing-cards"
     data-product="<%= product.slug %>"
   >
-
 
     <!-- =====================================================
          SOURCE CODE
@@ -256,17 +254,25 @@
         Get the complete website files and set everything up yourself.
       </p>
 
-      <p class="price">
-        $<%= product.pricing.sourceCode %>
+      <p class="discount-label">
+        🔥 80% OFF — Limited Time Promotion
       </p>
+
+      <p class="price">
+        <span class="original-price">
+          $<%= Math.round(product.pricing.sourceCode / 0.2) %>
+        </span>
+        <strong>
+          $<%= product.pricing.sourceCode %>
+        </strong>
+      </p>
+
       <p class="pbf">✔ Full Source Code</p>
       <p class="pbf">✔ Setup Guide (setup.md)</p>
       <p class="pbf">✔ Project Documentation (README.md)</p>
       <p class="pbf">✔ Lifetime Access</p>
       <p class="pls">❌ No support included</p>
       <p class="pls">❌ No installation help</p>
-
-     
 
       <button
         type="button"
@@ -302,19 +308,25 @@
         Get the complete website plus help getting it properly set up.
       </p>
 
+      <p class="discount-label" style="margin: 0px;padding: 0px;">
+        🔥 80% OFF — Limited Time Promotion
+      </p>
+
       <p class="price">
-        $<%= product.pricing.assistedSetup %>
+        <span class="original-price">
+          $<%= Math.round(product.pricing.assistedSetup / 0.2) %>
+        </span>
+        <strong>
+          $<%= product.pricing.assistedSetup %>
+        </strong>
       </p>
 
       <ul>
-
         <p class="pbf">✔ Everything in Basic</p>
         <p class="pbf">✔ Step-by-step assistance</p>
         <p class="pbf">✔ Email support (setup help)</p>
         <p class="pbf">✔ Priority response</p>
         <p class="pls">❌ Do it Yourself</p>
-        
-
       </ul>
 
       <button
@@ -345,18 +357,23 @@
         is ready to use.
       </p>
 
+      <p class="discount-label">
+        🔥 80% OFF — Limited Time Promotion
+      </p>
+
       <p class="price">
-        $<%= product.pricing.doneForYou %>
+        <span class="original-price">
+          $<%= Math.round(product.pricing.doneForYou / 0.2) %>
+        </span>
+        <strong>
+          $<%= product.pricing.doneForYou %>
+        </strong>
       </p>
 
       <ul>
-
         <p class="pbf">✔ Everything in Basic</p>
         <p class="pbf">✔ We handle everything for you</p>
         <p class="pbf">✔ Go live in Hour</p>
-        
-        
-
       </ul>
 
       <button

@@ -6,7 +6,7 @@ export const getPricing = (req: Request, res: Response) => {
   const packages = [
     {
       name: "Basic",
-      priceRange: "$30.99 – $99.99",
+      priceRange: "$80 – $400",
       subtitle: "For Developers & DIY Users",
       bestFor: "Developers or users comfortable with basic setup",
       features: [
@@ -14,20 +14,19 @@ export const getPricing = (req: Request, res: Response) => {
         "Setup Guide (setup.md)",
         "Project Documentation (README.md)",
         "Lifetime Access",
-        "Ai Deployment support"
-
+        "AI Deployment support"
       ],
       notIncluded: [
         "No One Click To Deploy Attached",
         "No Deployment Wizard",
         "No Human Assistant",
-        "No Priority Respond",
+        "No Priority Response",
         "No Handling Everything For Me"
       ]
     },
     {
       name: "Assisted",
-      priceRange: "$100 – $149.99",
+      priceRange: "$100 – $500",
       subtitle: "For Beginners",
       bestFor: "Non-technical users who want guidance",
       features: [
@@ -38,7 +37,7 @@ export const getPricing = (req: Request, res: Response) => {
         "One Click To Deploy Attached",
         "Deployment Wizard",
         "Human Assistant",
-        "Priority Respond",
+        "Priority Response"
       ],
       notIncluded: [
         "Do it Yourself"
@@ -47,7 +46,7 @@ export const getPricing = (req: Request, res: Response) => {
     },
     {
       name: "Done-for-You",
-      priceRange: "$150.99+",
+      priceRange: "$150 – $750",
       subtitle: "Sit Back & Relax",
       bestFor: "Business owners who want everything handled",
       features: [
