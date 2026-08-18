@@ -6,30 +6,42 @@ export const getPricing = (req: Request, res: Response) => {
   const packages = [
     {
       name: "Basic",
-      priceRange: "$30.99 – $49.99",
+      priceRange: "$30.99 – $99.99",
       subtitle: "For Developers & DIY Users",
       bestFor: "Developers or users comfortable with basic setup",
       features: [
-        "Full Source Code",
+        "Full Source Code download",
         "Setup Guide (setup.md)",
         "Project Documentation (README.md)",
-        "Lifetime Access"
+        "Lifetime Access",
+        "Ai Deployment support"
+
       ],
       notIncluded: [
-        "No support included",
-        "No installation help"
+        "No One Click To Deploy Attached",
+        "No Deployment Wizard",
+        "No Human Assistant",
+        "No Priority Respond",
+        "No Handling Everything For Me"
       ]
     },
     {
       name: "Assisted",
-      priceRange: "$50.99 – $149.99",
+      priceRange: "$100 – $149.99",
       subtitle: "For Beginners",
       bestFor: "Non-technical users who want guidance",
       features: [
         "Everything in Basic",
         "Step-by-step assistance",
         "Email support (setup help)",
-        "Priority response"
+        "Priority response",
+        "One Click To Deploy Attached",
+        "Deployment Wizard",
+        "Human Assistant",
+        "Priority Respond",
+      ],
+      notIncluded: [
+        "Do it Yourself"
       ],
       popular: true
     },

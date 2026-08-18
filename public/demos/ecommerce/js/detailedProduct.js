@@ -53,7 +53,7 @@ product.images.forEach((img, index) => {
   thumb.className = "thumb" + (index === 0 ? " active" : "");
 
   thumb.onclick = () => {
-    mainImage.src = "/" + img;
+    mainImage.src = "/demos/ecommerce/" + img;
 
     document.querySelectorAll(".thumb").forEach(t =>
       t.classList.remove("active")
