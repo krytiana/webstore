@@ -114,7 +114,7 @@ export const postAddProduct = async (
 
    
     const demoUrl = demoName
-      ? `/demos/Fashionfamme/${demoName}`
+      ? `/demos/ecommerce/${demoName}`
       : "";
 
 
@@ -288,7 +288,7 @@ export const postEditProduct = async (
     // --------------------------------------------------------
 
     const demoUrl = demoName
-      ? `/demos/Fashionfamme/${demoName}`
+      ? `/demos/ecommerce/${demoName}`
       : existingProduct.media?.demoUrl || "";
 
 
