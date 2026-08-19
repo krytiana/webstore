@@ -108,7 +108,22 @@
 
     <input type="text" name="imageFolder" placeholder="Image folder (e.g business-site)" required maxlength="50" />
     <input type="text" name="imageName" placeholder="Image file name (e.g homepage.jpg)" required maxlength="50" />
-    <input type="text" name="demolink" placeholder="Demo link (darkyMall.html)" maxlength="50" />
+    <input type="text" name="demoName" placeholder="Demo file name (e.g. darkyMall.html)" maxlength="50" />
+
+    <label>
+      Template Folder
+      <input
+        type="text"
+        name="templatePath"
+        placeholder="e.g. darkymall"
+        required
+        maxlength="100"
+      />
+    </label>
+
+    <small style="color:#aaa;">
+      Must match a folder inside <code>storage/templates/</code>.
+    </small>
 
     <button type="button" class="prev">Back</button>
     <button type="submit">Publish Product</button>
